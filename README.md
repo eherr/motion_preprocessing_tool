@@ -59,7 +59,7 @@ Herrmann, E., Du, H., Antalki, A., Rubinstein, D., Schubotz, R., Sprenger, J., H
 ## License
 Copyright (c) 2019 DFKI GmbH.  
 MIT License, see the LICENSE file.  
-The submodules [anim_utils](https://github.com/eherr/anim_utils.git) and [morphablegraphs](https://github.com/eherr/morphablegraphs.git) were developed by DFKI GmbH in coorporation with the Daimler AG and are released under the MIT license.  
+The submodules [anim_utils](https://github.com/eherr/anim_utils.git) and [morphablegraphs](https://github.com/eherr/morphablegraphs.git) were developed by DFKI GmbH in cooperation with the Daimler AG and are released under the MIT license.  
 The submodule [vis_utils](https://github.com/eherr/vis_utils.git) was developed as a side project by developers at the DFKI GmbH and is released under the MIT license.  
 The dependency [PySide2](https://wiki.qt.io/Qt_for_Python) (Qt for Python) is used under the [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html) license.  
 The application uses a stylesheet and icons by [Yasin Uludag](http://discourse.techart.online/t/release-qt-dark-orange-stylesheet/2287).
