@@ -1,0 +1,7 @@
+{
+    "activate_simulation": false,
+    "use_frame_buffer": true,
+    "activate_shadows": false,
+    "db_url":  "https://motion.dfki.de/8888",
+    "data_dir": "data"
+}

@@ -1,0 +1,95 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'D:\Research\physics\workspace\mosi_app_mgtools\motion_analysis\GUI\layout\.\figure_controller_widget.ui',
+# licensing of 'D:\Research\physics\workspace\mosi_app_mgtools\motion_analysis\GUI\layout\.\figure_controller_widget.ui' applies.
+#
+# Created: Wed Jan 15 17:42:06 2020
+#      by: pyside2-uic  running on PySide2 5.13.1
+#
+# WARNING! All changes made in this file will be lost!
+
+from PySide2 import QtCore, QtGui, QtWidgets
+
+class Ui_FigureControllerWidget(object):
+    def setupUi(self, FigureControllerWidget):
+        FigureControllerWidget.setObjectName("FigureControllerWidget")
+        FigureControllerWidget.resize(604, 352)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(FigureControllerWidget)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.visibleCheckBox = QtWidgets.QCheckBox(FigureControllerWidget)
+        self.visibleCheckBox.setObjectName("visibleCheckBox")
+        self.horizontalLayout_2.addWidget(self.visibleCheckBox)
+        self.visibleCOMCheckBox = QtWidgets.QCheckBox(FigureControllerWidget)
+        self.visibleCOMCheckBox.setObjectName("visibleCOMCheckBox")
+        self.horizontalLayout_2.addWidget(self.visibleCOMCheckBox)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.label = QtWidgets.QLabel(FigureControllerWidget)
+        self.label.setObjectName("label")
+        self.horizontalLayout.addWidget(self.label)
+        self.controlModeComboBox = QtWidgets.QComboBox(FigureControllerWidget)
+        self.controlModeComboBox.setObjectName("controlModeComboBox")
+        self.horizontalLayout.addWidget(self.controlModeComboBox)
+        self.kinematicRootCheckBox = QtWidgets.QCheckBox(FigureControllerWidget)
+        self.kinematicRootCheckBox.setObjectName("kinematicRootCheckBox")
+        self.horizontalLayout.addWidget(self.kinematicRootCheckBox)
+        self.externalForceCheckBox = QtWidgets.QCheckBox(FigureControllerWidget)
+        self.externalForceCheckBox.setObjectName("externalForceCheckBox")
+        self.horizontalLayout.addWidget(self.externalForceCheckBox)
+        self.balanceCheckBox = QtWidgets.QCheckBox(FigureControllerWidget)
+        self.balanceCheckBox.setObjectName("balanceCheckBox")
+        self.horizontalLayout.addWidget(self.balanceCheckBox)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.label_2 = QtWidgets.QLabel(FigureControllerWidget)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout_3.addWidget(self.label_2)
+        self.avScaleLineEdit = QtWidgets.QLineEdit(FigureControllerWidget)
+        self.avScaleLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.avScaleLineEdit.setObjectName("avScaleLineEdit")
+        self.horizontalLayout_3.addWidget(self.avScaleLineEdit)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem2)
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
+        self.verticalLayout_2.addLayout(self.verticalLayout)
+        self.pdGainTableWidget = QtWidgets.QTableWidget(FigureControllerWidget)
+        self.pdGainTableWidget.setMaximumSize(QtCore.QSize(16777215, 200))
+        self.pdGainTableWidget.setColumnCount(3)
+        self.pdGainTableWidget.setObjectName("pdGainTableWidget")
+        self.pdGainTableWidget.setColumnCount(3)
+        self.pdGainTableWidget.setRowCount(0)
+        item = QtWidgets.QTableWidgetItem()
+        self.pdGainTableWidget.setHorizontalHeaderItem(0, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.pdGainTableWidget.setHorizontalHeaderItem(1, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.pdGainTableWidget.setHorizontalHeaderItem(2, item)
+        self.verticalLayout_2.addWidget(self.pdGainTableWidget)
+
+        self.retranslateUi(FigureControllerWidget)
+        QtCore.QMetaObject.connectSlotsByName(FigureControllerWidget)
+
+    def retranslateUi(self, FigureControllerWidget):
+        FigureControllerWidget.setWindowTitle(QtWidgets.QApplication.translate("FigureControllerWidget", "Form", None, -1))
+        self.visibleCheckBox.setText(QtWidgets.QApplication.translate("FigureControllerWidget", "Render Figure", None, -1))
+        self.visibleCOMCheckBox.setText(QtWidgets.QApplication.translate("FigureControllerWidget", "Show Center of Mass", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("FigureControllerWidget", "Figure Control Mode", None, -1))
+        self.kinematicRootCheckBox.setText(QtWidgets.QApplication.translate("FigureControllerWidget", "Kinematic Root", None, -1))
+        self.externalForceCheckBox.setText(QtWidgets.QApplication.translate("FigureControllerWidget", "External Force", None, -1))
+        self.balanceCheckBox.setText(QtWidgets.QApplication.translate("FigureControllerWidget", "Balance", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("FigureControllerWidget", "angular velocity scale", None, -1))
+        self.avScaleLineEdit.setText(QtWidgets.QApplication.translate("FigureControllerWidget", "1.0", None, -1))
+        self.pdGainTableWidget.horizontalHeaderItem(0).setText(QtWidgets.QApplication.translate("FigureControllerWidget", "Joint", None, -1))
+        self.pdGainTableWidget.horizontalHeaderItem(1).setText(QtWidgets.QApplication.translate("FigureControllerWidget", "KP", None, -1))
+        self.pdGainTableWidget.horizontalHeaderItem(2).setText(QtWidgets.QApplication.translate("FigureControllerWidget", "KD", None, -1))
+

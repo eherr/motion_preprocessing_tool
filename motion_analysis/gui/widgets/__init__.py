@@ -1,0 +1,13 @@
+
+from .animation_editor_widget import AnimationEditorWidget
+from .animation_player_widget import AnimationPlayerWidget
+from .blend_animation_controller_widget import BlendAnimationControllerWidget
+from .character_widget import CharacterWidget
+from .figure_controller_widget import FigureControllerWidget
+from .group_animation_controller_widget import GroupAnimationPlayerWidget
+from .mg_state_machine_widget import MGStateMachineWidget
+from .morphable_graph_controller_widget import MorphableGraphControllerWidget
+from .motion_primitive_controller_widget import MotionPrimitiveControllerWidget
+from .nav_agent_widget import NavAgentWidget
+from .object_properties_widget import ObjectPropertiesWidget
+from .animated_mesh_widget import AnimatedMeshWidget

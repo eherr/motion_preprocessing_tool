@@ -1,0 +1,9 @@
+[submodule "vis_utils"]
+	path = vis_utils
+	url = git@github.com:eherr/vis_utils.git
+[submodule "anim_utils"]
+	path = anim_utils
+	url = git@github.com:eherr/anim_utils.git
+[submodule "morphablegraphs"]
+	path = morphablegraphs
+	url = git@github.com:eherr/morphablegraphs.git
