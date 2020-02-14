@@ -38,13 +38,13 @@ from anim_utils.motion_editing import MotionGrounding
 from anim_utils.animation_data.bvh import BVHReader
 from anim_utils.animation_data.motion_vector import MotionVector
 from anim_utils.retargeting.analytical import Retargeting, generate_joint_map
+from anim_utils.utilities.log import set_log_mode, LOG_MODE_DEBUG
 from transformations import euler_matrix
 import vis_utils.constants as constants
 from vis_utils.scene.components import ComponentBase
 from morphablegraphs.motion_generator.algorithm_configuration import DEFAULT_ALGORITHM_CONFIG
 from morphablegraphs.motion_model import MotionStateGraphLoader, NODE_TYPE_STANDARD, NODE_TYPE_END, NODE_TYPE_START, NODE_TYPE_IDLE
 from morphablegraphs.motion_model.static_motion_primitive import StaticMotionPrimitive
-from morphablegraphs.utilities import set_log_mode, LOG_MODE_DEBUG
 from morphablegraphs.motion_generator.mg_state_planner import MGStatePlanner, get_node_aligning_2d_transform, ANIMATED_JOINTS_CUSTOM
 from morphablegraphs.constraints.constraint_builder import UnityFrameConstraint
 from morphablegraphs.motion_generator.mg_state_queue import StateQueueEntry

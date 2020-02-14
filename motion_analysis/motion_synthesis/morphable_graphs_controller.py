@@ -26,13 +26,13 @@ from vis_utils.animation.animation_controller import AnimationController, CONTRO
 from vis_utils.animation.skeleton_animation_controller import LegacySkeletonAnimationController
 from vis_utils.animation.skeleton_visualization import SkeletonVisualization
 from anim_utils.animation_data import BVHWriter, MotionVector
-from anim_utils.utilities import write_to_json_file
+from anim_utils.utilities.io_helper_functions import write_to_json_file
 from anim_utils.animation_data.quaternion_frame import convert_quaternion_frames_to_euler_frames
+from anim_utils.utilities.log import set_log_mode, LOG_MODE_DEBUG
 from anim_utils.animation_data.skeleton_models import *
 from morphablegraphs.motion_model import MotionStateGraphLoader
 from morphablegraphs.motion_generator.graph_walk import GraphWalk
 from morphablegraphs import MotionGenerator, GraphWalkOptimizer, DEFAULT_ALGORITHM_CONFIG, AnnotatedMotionVector
-from morphablegraphs.utilities.log import set_log_mode, LOG_MODE_DEBUG
 from morphablegraphs import constraints as mg_constraints
 from morphablegraphs import motion_generator
 

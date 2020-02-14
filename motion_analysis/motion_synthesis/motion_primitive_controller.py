@@ -28,14 +28,14 @@ from vis_utils.animation.animation_controller import CONTROLLER_TYPE_MP
 from vis_utils.animation.skeleton_animation_controller import LegacySkeletonAnimationController
 from vis_utils.animation.skeleton_visualization import SkeletonVisualization, SKELETON_DRAW_MODE_LINES
 from anim_utils.animation_data import BVHWriter, MotionVector, SkeletonBuilder
-from anim_utils.utilities import load_json_file, write_to_json_file
+from anim_utils.utilities.io_helper_functions import load_json_file, write_to_json_file
+from anim_utils.utilities.log import set_log_mode, LOG_MODE_DEBUG
 from vis_utils.scene.utils import get_random_color
 from morphablegraphs.motion_model.motion_state_graph_node import MotionStateGraphNode
 from morphablegraphs.motion_generator.motion_primitive_generator import MotionPrimitiveGenerator
 from morphablegraphs.constraints.motion_primitive_constraints import MotionPrimitiveConstraints
 from morphablegraphs.constraints.action_constraints import ActionConstraints
 from morphablegraphs import MotionGenerator, GraphWalkOptimizer, AnnotatedMotionVector, DEFAULT_ALGORITHM_CONFIG
-from morphablegraphs.utilities.log import set_log_mode, LOG_MODE_DEBUG
 from morphablegraphs.constraints.spatial_constraints import GlobalTransformConstraint
 from morphablegraphs.motion_generator.optimization.optimizer_builder import OptimizerBuilder
 from morphablegraphs.space_partitioning import FeatureClusterTree
