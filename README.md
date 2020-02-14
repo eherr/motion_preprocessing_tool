@@ -30,7 +30,7 @@ To show the animation controls select the corresponding object in the scene obje
 The integrated database browser gives the option to download animations from a [motion database](https://github.com/eherr/motion_database_server) as hosted on motion.dfki.de. New motions can be uploaded by selecting scene objects and opening the Upload Dialog "Database>Upload Selected Motions". 
 ![Screenshot](images/screenshot.png)
 <p align="center">
-<em>Screenshot ofmain window and the database browser.</em>
+<em>Screenshot of the main window and the database browser.</em>
 </p>
 Skeleton animations can be edited by opening an editor window via the animation controls. The editor offers functions to change joint parameters directly or applying inverse kinematics. Furthermore, it is possible to create semantic annotations in a separate editor. The annotation can be used to cut the motions which results in new copies in the scene.
 
