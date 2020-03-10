@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'skeleton_editor_dialog.ui',
-# licensing of 'skeleton_editor_dialog.ui' applies.
+# Form implementation generated from reading ui file 'motion_analysis\gui\layout\skeleton_editor_dialog.ui',
+# licensing of 'motion_analysis\gui\layout\skeleton_editor_dialog.ui' applies.
 #
-# Created: Mon Feb 10 17:26:19 2020
+# Created: Tue Mar 10 14:24:05 2020
 #      by: pyside2-uic  running on PySide2 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -113,6 +113,9 @@ class Ui_Dialog(object):
         self.alignToUpAxisButton = QtWidgets.QPushButton(Dialog)
         self.alignToUpAxisButton.setObjectName("alignToUpAxisButton")
         self.horizontalLayout_3.addWidget(self.alignToUpAxisButton)
+        self.alignToForwardAxisButton = QtWidgets.QPushButton(Dialog)
+        self.alignToForwardAxisButton.setObjectName("alignToForwardAxisButton")
+        self.horizontalLayout_3.addWidget(self.alignToForwardAxisButton)
         self.flipZAxisButton = QtWidgets.QPushButton(Dialog)
         self.flipZAxisButton.setObjectName("flipZAxisButton")
         self.horizontalLayout_3.addWidget(self.flipZAxisButton)
@@ -184,7 +187,8 @@ class Ui_Dialog(object):
         self.setOrthogonalSwingButton.setText(QtWidgets.QApplication.translate("Dialog", "Set orthogonal", None, -1))
         self.flipSwingButton.setText(QtWidgets.QApplication.translate("Dialog", "Flip 180", None, -1))
         self.setGuessButton.setText(QtWidgets.QApplication.translate("Dialog", "Guess Coordinate System", None, -1))
-        self.alignToUpAxisButton.setText(QtWidgets.QApplication.translate("Dialog", "Align to Up Axis", None, -1))
+        self.alignToUpAxisButton.setText(QtWidgets.QApplication.translate("Dialog", "Align To Y Axis", None, -1))
+        self.alignToForwardAxisButton.setText(QtWidgets.QApplication.translate("Dialog", "Align To Z Axis", None, -1))
         self.flipZAxisButton.setText(QtWidgets.QApplication.translate("Dialog", "Flip Z Axis", None, -1))
         self.label_3.setText(QtWidgets.QApplication.translate("Dialog", "Scale", None, -1))
         self.scaleLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "1", None, -1))

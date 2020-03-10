@@ -88,75 +88,6 @@ def find_key(joint_map,value):
             return key
     return None
 
-def axes_to_matrix_old(g_twist, g_swing, flip=False):
-    q = [1, 0, 0, 0] 
-    q_y = quaternion_from_vector_to_vector(Y, g_twist)
-    q_y = normalize(q_y)
-    q = quaternion_multiply(q_y, q)
-    X_prime = rotate_vector(q_y, X)
-    X_prime = normalize(X_prime)
-    q_x = quaternion_from_vector_to_vector(X, g_swing)
-    q_x = normalize(q_x)
-    q = quaternion_multiply(q_x, q)
-    q = normalize(q)
-    if False:
-        Y_prime = rotate_vector(q, Y)
-        Y_prime = normalize(Y_prime)
-        q_y2 = quaternion_from_vector_to_vector(Y_prime, g_twist)
-        q_y2 = normalize(q_y2)
-        q = quaternion_multiply(q_y2, q)
-        q = normalize(q)
-    if flip:
-        q180 = quaternion_about_axis(np.deg2rad(180), g_twist)
-        q180 = normalize(q180)
-        q = quaternion_multiply(q180, q)
-        q = normalize(q)
-
-    m = quaternion_matrix(q)
-    return m
-
-def align_axis(a,b):
-    q = quaternion_from_vector_to_vector(a, b)
-    q = normalize(q)
-    return q
-
-def axes_to_matrix2(g_twist, g_swing, flip=False):
-    # handle special case for the root joint
-    # apply only the y axis rotation of the Hip to the Game_engine node
-    not_aligned = True
-    q = [1, 0, 0, 0]
-    max_iter_count = 10
-    iter_count = 0
-    X_prime = np.array([1,0,0])
-    Y_prime = np.array([0,1,0])
-    while not_aligned:
-        qx = align_axis(Y_prime, g_twist)  # first find rotation to align x axis
-        
-        q = quaternion_multiply(qx, q)
-        q = normalize(q)
-
-        X_prime = rotate_vector(q, X_prime)
-        X_prime = normalize(X_prime)
-        Y_prime = rotate_vector(q, Y_prime)
-        Y_prime = normalize(Y_prime)
-
-        qy  = align_axis(X_prime, g_swing)  # then add a rotation to let the y axis point up
-        
-        q = quaternion_multiply(qy, q)
-        q = normalize(q)
-
-        X_prime = rotate_vector(q, Y_prime)
-        X_prime = normalize(Y_prime)
-        Y_prime = rotate_vector(q, Y_prime)
-        Y_prime = normalize(Y_prime)
-
-        a_y = math.acos(np.dot(Y_prime, g_twist))
-        a_x = math.acos(np.dot(X_prime, g_swing))
-        iter_count += 1
-        not_aligned = a_y > 0.1 or a_x > 0.1 and iter_count < max_iter_count
-    m = quaternion_matrix(q)
-    return m
-
 def axes_to_q(g_twist, g_swing, flip=False):
     q = [1, 0, 0, 0] 
     q_y = quaternion_from_vector_to_vector(Y, g_twist)
@@ -177,17 +108,21 @@ def axes_to_q(g_twist, g_swing, flip=False):
         q180 = normalize(q180)
         q = quaternion_multiply(q180, q)
         q = normalize(q)
+    elif abs(dot) > 0.1:
+        q_y = quaternion_from_vector_to_vector(Y_prime, g_twist)
+        q = quaternion_multiply(q_y, q)
+        q = normalize(q)
     return q
 
 
-def get_spine_correction(skeleton, joint_name, up_vector):
+OPENGL_UP_AXIS = [0,1,0]
+OPENGL_FORWARD_AXIS = [0,0,1]
+def get_axis_correction(skeleton, joint_name, up_vector, target_vector=OPENGL_UP_AXIS):
     node = skeleton.nodes[joint_name]
     t_pose_global_m = node.get_global_matrix(skeleton.reference_frame)
     global_original = np.dot(t_pose_global_m[:3, :3], up_vector)
     global_original = normalize(global_original)
-
-    direction_to_neck = OPENGL_UP_AXIS
-    qoffset = find_rotation_between_vectors(global_original, direction_to_neck)
+    qoffset = find_rotation_between_vectors(global_original, target_vector)
     return qoffset
 
 
@@ -257,6 +192,7 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
 
         self.flipZAxisButton.clicked.connect(self.slot_flip_z_axis)
         self.alignToUpAxisButton.clicked.connect(self.slot_align_to_up_axis)
+        self.alignToForwardAxisButton.clicked.connect(self.slot_align_to_forward_axis)
 
         self.setGuessButton.clicked.connect(self.slot_guess_cos_map)
         self.loadDefaultPoseButton.clicked.connect(self.slot_load_default_pose)
@@ -324,8 +260,9 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
             self.set_twist_text(twist)
             m = self.skeleton.nodes[joint_name].get_global_matrix(self.reference_frame)[:3,:3]
             g_swing = np.dot(m, swing)
+            g_swing = normalize(g_swing)
             g_twist = np.dot(m, twist)
-            
+            g_twist = normalize(g_twist)
             q = axes_to_q(g_twist, g_swing)
             m = quaternion_matrix(q)
             self.scene.scene_edit_widget.rotation = m[:3,:3].T
@@ -529,17 +466,6 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
         joint_name = joint_knob.joint_name
         twist = np.array(self.skeleton_model["cos_map"][joint_name]["y"])
         swing = np.array(self.skeleton_model["cos_map"][joint_name]["x"])
-        if False:
-            z_axis = np.cross(twist, swing)
-            z_axis *= -1
-            z_axis /= np.linalg.norm(z_axis)
-            new_swing = np.cross(z_axis,twist)
-        if False:
-            angle = np.radians(180)
-            q = quaternion_about_axis(angle, twist)
-            m = quaternion_matrix(q)
-            swing = np.concatenate([swing,[1]])
-            new_swing = np.dot(m, swing)[:3]
         new_swing = twist
         new_twist = swing
         #print("new swing", new_swing, swing)
@@ -603,7 +529,37 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
         joint_name = joint_knob.joint_name
         if joint_name in self.skeleton_model["cos_map"]:
             up_vector = self.skeleton_model["cos_map"][joint_name]["y"]
-            q_offset = get_spine_correction(self.skeleton, joint_name, up_vector)
+            x_vector = self.skeleton_model["cos_map"][joint_name]["x"]
+            q_offset = get_axis_correction(self.skeleton, joint_name, up_vector, OPENGL_UP_AXIS)
             up_vector = rotate_vector(q_offset, up_vector)
+            x_vector = rotate_vector(q_offset, x_vector)
+            self.skeleton_model["cos_map"][joint_name]["x"] = normalize(x_vector)
             self.skeleton_model["cos_map"][joint_name]["y"] = normalize(up_vector)
             self.update_joint_info(joint_knob)
+
+    def slot_align_to_forward_axis(self):
+        joint_knob = self.get_selected_joint()
+        if joint_knob is None:
+            return
+        joint_name = joint_knob.joint_name
+        if joint_name in self.skeleton_model["cos_map"]:
+            up_vector = self.skeleton_model["cos_map"][joint_name]["y"]
+     
+            m = self.skeleton.nodes[joint_name].get_global_matrix(self.skeleton.reference_frame)[:3,:3]
+            m_inv = np.linalg.inv(m)
+            target_vector = np.dot(m, up_vector)
+            target_vector[1] = 0
+            target_vector = normalize(target_vector)
+            local_up = np.dot(m_inv, target_vector)
+            local_up = normalize(local_up)
+            self.skeleton_model["cos_map"][joint_name]["y"] = local_up
+
+            x_vector = self.skeleton_model["cos_map"][joint_name]["x"]
+            q = quaternion_from_vector_to_vector(up_vector, local_up)
+            x_vector = rotate_vector(q, x_vector)
+            
+            x_vector -= x_vector.dot(local_up) * local_up      # make it orthogonal to twist
+            x_vector /= np.linalg.norm(x_vector)  # normalize it
+            self.skeleton_model["cos_map"][joint_name]["x"] = normalize(x_vector)
+            self.update_joint_info(joint_knob)
+

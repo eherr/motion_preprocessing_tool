@@ -267,7 +267,14 @@
        <item>
         <widget class="QPushButton" name="alignToUpAxisButton">
          <property name="text">
-          <string>Align to Up Axis</string>
+          <string>Align To Y Axis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="alignToForwardAxisButton">
+         <property name="text">
+          <string>Align To Z Axis</string>
          </property>
         </widget>
        </item>
