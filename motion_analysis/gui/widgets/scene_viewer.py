@@ -106,6 +106,7 @@ class SceneViewerWidget(QtOpenGL.QGLWidget):
         if not self.enable_mouse_interaction:
             return
         rayStart, rayDir = self.getRayFromClick(x, y)
+        self.makeCurrent()
         p = self.graphics_context.get_position_from_click(x, y)
         object_id = -1
         if self.use_frame_buffer:
