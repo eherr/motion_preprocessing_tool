@@ -21,6 +21,7 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 import threading
+from copy import copy
 from PySide2.QtWidgets import QDialog, QTreeWidgetItem, QFileDialog, QListWidgetItem
 from PySide2.QtCore import Qt
 from motion_analysis.gui.layout.graph_definition_dialog_ui import Ui_Dialog
@@ -67,6 +68,7 @@ class GraphDefinitionDialog(QDialog, Ui_Dialog):
 
 
         self.addModelButton.clicked.connect(self.slot_add_primitive)
+        self.replaceModelButton.clicked.connect(self.slot_replace_primitive)
         self.addActionButton.clicked.connect(self.slot_add_action)
         self.removeGraphItemButton.clicked.connect(self.slot_remove_graph_item)
         self.setToStartNodeButton.clicked.connect(self.slot_set_to_start_node)
@@ -105,17 +107,64 @@ class GraphDefinitionDialog(QDialog, Ui_Dialog):
             if type_str == "action":
                 mp_id = int(selected_primitive.data(Qt.UserRole))
                 mp_name = str(selected_primitive.text())
-                if mp_name not in self.data["nodes"][action_name]:
+                mp_key = str(mp_id)
+                if mp_key not in self.data["nodes"][action_name]:
                     mpItem = QTreeWidgetItem(selected_action, [mp_name, "primitive"])
                     mpItem.setData(0, Qt.UserRole, mp_id)
                     mp_dict = dict()
                     mp_dict["transitions"] = dict()
                     mp_dict["type"] = "standard"
                     mp_dict["name"] = mp_name
-                    self.data["nodes"][action_name][str(mp_id)] = mp_dict
+                    self.data["nodes"][action_name][mp_key] = mp_dict
                 else:
                     print(mp_name, "already part of action", action_name)
-        return
+        
+    def slot_replace_primitive(self):
+        selected_graph_node = self.graphTreeWidget.currentItem()
+        selected_primitive = self.modelListWidget.currentItem()
+        if selected_graph_node is not None and selected_primitive is not None:
+            type_str = str(selected_graph_node.text(1))
+            if type_str == "primitive":
+                action_node = selected_graph_node.parent()
+                action_name = str(action_node.text(0))
+                if action_name in self.data["nodes"]:
+                    old_mp_id = int(selected_graph_node.data(0, Qt.UserRole))
+                    old_mp_name = str(selected_graph_node.text(0))
+                    old_key = str(old_mp_id)
+
+                    new_mp_id = int(selected_primitive.data(Qt.UserRole))
+                    new_mp_name = str(selected_primitive.text())
+                    new_key = str(new_mp_id)
+                    if old_key in self.data["nodes"][action_name]:
+                        old_transitions = self.data["nodes"][action_name][old_key]["transitions"]
+                        old_type = self.data["nodes"][action_name][old_key]["type"]
+                        del self.data["nodes"][action_name][old_key]
+                        selected_graph_node.setText(0, new_mp_name)
+                        selected_graph_node.setData(0, Qt.UserRole, new_mp_id)
+
+                        mp_dict = dict()
+                        mp_dict["transitions"] = old_transitions
+                        mp_dict["type"] = old_type
+                        mp_dict["name"] = new_mp_name
+                        self.data["nodes"][action_name][new_key] = mp_dict
+                        self.replace_transitions(action_name, old_mp_name, old_mp_id, new_mp_name, new_mp_id)
+                        self.update_model_info()
+                        print("replaced", old_mp_id, "with", new_mp_id)
+                else:
+                    print(old_mp_name, "not part of action", action_name)
+
+    def replace_transitions(self, action_name, old_model_name, old_model_id, new_model_name, new_model_id):
+        old_key = action_name+":"+old_model_name
+        new_key = action_name+":"+new_model_name
+        new_entry = dict()
+        new_entry["model_name"] = new_model_name
+        new_entry["model_id"] = new_model_id
+        for a in self.data["nodes"]:
+            for mp in self.data["nodes"][a]:
+                if old_key in self.data["nodes"][a][mp]["transitions"]:
+                    del self.data["nodes"][a][mp]["transitions"][old_key]
+                    self.data["nodes"][a][mp]["transitions"][new_key] = copy(new_entry)
+
 
     def slot_remove_graph_item(self):
         item = self.graphTreeWidget.currentItem()

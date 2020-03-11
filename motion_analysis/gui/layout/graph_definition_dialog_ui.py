@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'graph_definition_dialog.ui',
 # licensing of 'graph_definition_dialog.ui' applies.
 #
-# Created: Wed Jan 22 17:54:31 2020
+# Created: Wed Mar 11 11:00:26 2020
 #      by: pyside2-uic  running on PySide2 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -113,6 +113,9 @@ class Ui_Dialog(object):
         self.addModelButton = QtWidgets.QPushButton(Dialog)
         self.addModelButton.setObjectName("addModelButton")
         self.horizontalLayout_6.addWidget(self.addModelButton)
+        self.replaceModelButton = QtWidgets.QPushButton(Dialog)
+        self.replaceModelButton.setObjectName("replaceModelButton")
+        self.horizontalLayout_6.addWidget(self.replaceModelButton)
         self.gridLayout.addLayout(self.horizontalLayout_6, 5, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -156,6 +159,7 @@ class Ui_Dialog(object):
         self.label_4.setText(QtWidgets.QApplication.translate("Dialog", "Selected Model: ", None, -1))
         self.selectedModelLabel.setText(QtWidgets.QApplication.translate("Dialog", "None", None, -1))
         self.addModelButton.setText(QtWidgets.QApplication.translate("Dialog", "Add Model To Action", None, -1))
+        self.replaceModelButton.setText(QtWidgets.QApplication.translate("Dialog", "Replace Model", None, -1))
         self.collectionTreeWidget.headerItem().setText(0, QtWidgets.QApplication.translate("Dialog", "Name", None, -1))
         self.collectionTreeWidget.headerItem().setText(1, QtWidgets.QApplication.translate("Dialog", "Type", None, -1))
         self.selectButton.setText(QtWidgets.QApplication.translate("Dialog", "Ok", None, -1))
