@@ -9,7 +9,7 @@ The [morphablegraphs](https://github.com/eherr/morphablegraphs.git) module is ne
 
 ## Setup Instructions
 
-1. Install Python 3.5 in a virtual environment.
+1. Create a virtual environment for Python 3.6.
 
 2. Clone the repository with all submodules. The morphablegraphs submodule is optional for creating and loading statistical motion models. The mgrd submodule is a faster implementation that can be ignored.
 ```bat
