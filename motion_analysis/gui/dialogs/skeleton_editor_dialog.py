@@ -109,7 +109,7 @@ def axes_to_q(g_twist, g_swing, flip=False):
         q180 = normalize(q180)
         q = quaternion_multiply(q180, q)
         q = normalize(q)
-    elif abs(dot) > 0.1:
+    elif abs(dot) != 1.0:
         q_y = quaternion_from_vector_to_vector(Y_prime, g_twist)
         q = quaternion_multiply(q_y, q)
         q = normalize(q)
