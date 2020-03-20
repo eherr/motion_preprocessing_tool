@@ -74,7 +74,7 @@ STANDARD_JOINTS += ["left_thumb_base","left_thumb_mid", "left_thumb_tip","left_t
                     "left_index_finger_root","left_index_finger_base","left_index_finger_mid", "left_index_finger_tip","left_index_finger_end",
                     "left_middle_finger_root","left_middle_finger_base","left_middle_finger_mid","left_middle_finger_tip","left_middle_finger_end",
                     "left_ring_finger_root","left_ring_finger_base","left_ring_finger_mid","left_ring_finger_tip", "left_ring_finger_end",
-                    "left_pinky_finger_root","left_pinky_finger_base","left_pinky_finger_mid","left_pinky_finger_tip", "left_pinky_finger_end"
+                    "left_pinky_finger_root","left_pinky_finger_base","left_pinky_finger_mid","left_pinky_finger_tip", "left_pinky_finger_end",
                    
                     "right_thumb_base","right_thumb_mid","right_thumb_tip","right_thumb_end",
                     "right_index_finger_root","right_index_finger_base","right_index_finger_mid","right_index_finger_tip","right_index_finger_end",
@@ -491,10 +491,17 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
 
     
     def slot_update_joint_map(self):
-        if not self.is_updating_joint_info and "joints" in self.skeleton_model:
+        if not self.is_updating_joint_info and  "joints" in self.skeleton_model:
             joint_knob = self.get_selected_joint()
-            key = str(self.jointMapComboBox.currentText())
-            self.skeleton_model["joints"][key] = joint_knob.joint_name
+            if joint_knob is not None:
+                new_joint_key = str(self.jointMapComboBox.currentText())
+                old_joint_key = find_key(self.skeleton_model["joints"], joint_knob.joint_name)
+                if old_joint_key in self.skeleton_model["joints"]:
+                    self.skeleton_model["joints"][old_joint_key] = None
+                self.skeleton_model["joints"][new_joint_key] = joint_knob.joint_name
+                print("update joint mapping", joint_knob.joint_name, new_joint_key)
+            else:
+                print("is updating joint info")
 
     def slot_update_aligning_root_joint(self):
         if not self.is_updating_joint_info and "joints" in self.skeleton_model:
