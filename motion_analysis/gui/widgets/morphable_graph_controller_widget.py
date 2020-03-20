@@ -28,7 +28,11 @@ from transformations import euler_from_quaternion, quaternion_multiply
 from PySide2.QtWidgets import  QWidget, QFileDialog, QListWidgetItem, QAction
 from PySide2.QtCore import Qt
 from motion_analysis.gui.layout.mg_player_widget_ui import Ui_Form
-from ..dialogs import ActionSequenceDialog, SelectSceneObjectsDialog, get_splines, SetConfigDialog, ConstraintDefinition
+from motion_analysis.gui.dialogs.action_sequence_dialog import ActionSequenceDialog
+from motion_analysis.gui.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
+from motion_analysis.gui.dialogs.utils import get_splines
+from motion_analysis.gui.dialogs.set_config_dialog import SetConfigDialog
+from motion_analysis.gui.dialogs.add_constraint_dialog import ConstraintDefinition
 from .animation_player_widget import AnimationPlayerBaseWidget
 from vis_utils.scene.legacy import SplineObject, PositionConstraintObject
 

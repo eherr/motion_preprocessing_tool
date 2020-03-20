@@ -30,7 +30,18 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import  QWidget, QAction, QFileDialog
 from PySide2.QtGui import QColor
 from motion_analysis.gui.layout.animation_player_widget_ui import Ui_Form
-from motion_analysis.gui.dialogs import SelectSceneObjectsDialog, CopyMotionDialog, SelectJointsDialog, RetargetDialog, UploadMotionDialog, CopyFromSourceDialog, AnimationEditorDialog, SkeletonEditorDialog, SetAnnotationDialog
+from motion_analysis.gui.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
+from motion_analysis.gui.dialogs.copy_motion_dialog import CopyMotionDialog
+from motion_analysis.gui.dialogs.select_joints_dialog import SelectJointsDialog
+from motion_analysis.gui.dialogs.retarget_dialog import RetargetDialog
+from motion_analysis.gui.dialogs.upload_motion_dialog import UploadMotionDialog
+from motion_analysis.gui.dialogs.copy_from_source_dialog import CopyFromSourceDialog
+from motion_analysis.gui.dialogs.animation_editor_dialog import AnimationEditorDialog
+try:
+    from motion_analysis.gui.dialogs.skeleton_editor_dialog import SkeletonEditorDialog
+except:
+    pass
+from motion_analysis.gui.dialogs.set_annotation_dialog import SetAnnotationDialog
 from motion_analysis.gui.dialogs.utils import load_local_skeleton, load_local_skeleton_model, save_local_skeleton, create_sections_from_annotation
 from motion_analysis import constants
 from anim_utils.utilities.db_interface import replace_motion_in_db

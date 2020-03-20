@@ -24,7 +24,10 @@ import json
 from copy import deepcopy
 from PySide2.QtWidgets import QWidget, QFileDialog, QAction
 from motion_analysis.gui.layout.mp_player_widget_ui import Ui_Form
-from motion_analysis.gui.dialogs import CopyMotionDialog, SetConfigDialog
+try:
+    from motion_analysis.gui.dialogs import CopyMotionDialog, SetConfigDialog
+except:
+    pass
 from .animation_player_widget import AnimationPlayerBaseWidget
 
 

@@ -34,7 +34,11 @@ from motion_analysis.gui.widgets import ObjectPropertiesWidget, AnimationEditorW
                                         CharacterWidget, FigureControllerWidget, GroupAnimationPlayerWidget, MGStateMachineWidget, \
                                          MorphableGraphControllerWidget, MotionPrimitiveControllerWidget, NavAgentWidget, \
                                          BlendAnimationControllerWidget,AnimatedMeshWidget
-from motion_analysis.gui.dialogs import MotionDBBrowserDialog, GraphTableViewDialog, UploadMotionDialog, LoginDialog, SynchronizeSkeletonsWithDBDialog
+from motion_analysis.gui.dialogs.motion_db_browser_dialog import MotionDBBrowserDialog
+from motion_analysis.gui.dialogs.graph_table_view_dialog import GraphTableViewDialog
+from motion_analysis.gui.dialogs.upload_motion_dialog import UploadMotionDialog
+from motion_analysis.gui.dialogs.login_dialog import LoginDialog
+from motion_analysis.gui.dialogs.synchronize_skeletons_with_db_dialog import SynchronizeSkeletonsWithDBDialog
 from motion_analysis.gui.application_manager import ApplicationManager
 from motion_analysis.session_manager import SessionManager
 

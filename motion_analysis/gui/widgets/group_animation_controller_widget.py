@@ -22,8 +22,8 @@
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 from PySide2.QtWidgets import QWidget, QListWidgetItem, QAction
 from motion_analysis.gui.layout.group_animation_player_widget_ui import Ui_Form
-from motion_analysis.gui.dialogs import SelectSceneObjectsDialog, get_animation_controllers
-
+from motion_analysis.gui.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
+from motion_analysis.gui.dialogs.utils import get_animation_controllers
 
 class GroupAnimationPlayerBaseWidget(QWidget):
     def __init__(self, parent=None):

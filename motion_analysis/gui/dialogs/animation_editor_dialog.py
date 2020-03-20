@@ -25,7 +25,7 @@ from PySide2.QtCore import QTimer, Qt
 from PySide2.QtWidgets import QDialog, QListWidgetItem, QTableWidgetItem, QTableWidget, QFileDialog
 from PySide2.QtGui import QColor
 from motion_analysis.gui.layout.animation_editor_dialog_ui import Ui_Dialog
-from motion_analysis.gui.dialogs import SelectSceneObjectsDialog
+from motion_analysis.gui.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
 from .utils import get_animation_controllers
 from motion_analysis.gui.widgets.scene_viewer import SceneViewerWidget
 from vis_utils.scene.editor_scene import EditorScene

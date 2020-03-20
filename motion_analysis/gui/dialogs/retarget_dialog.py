@@ -30,7 +30,10 @@ from motion_analysis.gui.layout.retarget_dialog_ui import Ui_Dialog
 from vis_utils.io import load_json_file, save_json_file
 from .utils import get_animation_controllers, load_local_skeleton, load_local_skeleton_model, save_local_skeleton, get_local_skeletons
 from motion_analysis import constants
-from .skeleton_editor_dialog import SkeletonEditorDialog
+try:
+    from motion_analysis.gui.dialogs.skeleton_editor_dialog import SkeletonEditorDialog
+except:
+    pass
 from motion_analysis.gui.application_manager import ApplicationManager
 
 
