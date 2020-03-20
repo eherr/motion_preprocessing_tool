@@ -476,7 +476,9 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
         self.update_joint_info(joint_knob)
 
     def slot_guess_cos_map(self):
-        cos_map = create_local_cos_map_from_skeleton_axes_with_map(self.skeleton)
+        temp_skeleton = copy(self.skeleton)
+        temp_skeleton.skeleton_model = self.skeleton_model
+        cos_map = create_local_cos_map_from_skeleton_axes_with_map(temp_skeleton)
         cos_map_copy = copy(cos_map)
         if "cos_map" in self.skeleton_model:
             cos_map.update(self.skeleton_model["cos_map"])
