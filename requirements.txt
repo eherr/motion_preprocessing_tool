@@ -19,3 +19,4 @@ boto3==1.9.217
 tornado
 transformations
 bson
+pygltflib
