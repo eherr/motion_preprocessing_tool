@@ -27,7 +27,7 @@ python run_motion_preprocessing_tool.py
 BVH/ASF files can be loaded via drag and drop on the 3D visualization window. When a file is loaded a scene object is automatically created and an entry inserted into the scene object list.  
 To show the animation controls select the corresponding object in the scene object list by pressing on the left most bar in the table. If the scene object was created from an ASF file, additional motions can be loaded from AMC files via the animation controls. 
 
-Characters meshes can also be imported from the [GLTF](https://github.com/KhronosGroup/glTF) format.  
+Character meshes with skeletons can also be imported from the [GLTF](https://github.com/KhronosGroup/glTF) format.  
 
 The integrated database browser gives the option to download animations from a [motion database](https://github.com/eherr/motion_database_server) as hosted on motion.dfki.de. New motions can be uploaded by selecting scene objects and opening the Upload Dialog "Database>Upload Selected Motions". 
 ![Screenshot](images/screenshot.png)
