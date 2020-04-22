@@ -58,23 +58,21 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.timer.setInterval(1000.0/self.fps)
         self.scene = scene
         self.original_controller = controller
-        self.left_controller = None
+        self.controller = None
         self.skeleton = None
         self.leftView.makeCurrent()
         self.left_scene = EditorScene(True)
         self.left_scene.enable_scene_edit_widget = False
         self._animation_editor = None
         if controller is not None:
-            self.left_controller = self.copy_controller(controller, self.left_scene)
-            fps = int(1.0 / self.left_controller._motion.mv.frame_time)
+            self.controller = self.copy_controller(controller, self.left_scene)
+            fps = int(1.0 / self.controller._motion.mv.frame_time)
             self.fpsLineEdit.setText(str(fps))
-            self.skeleton = self.left_controller.get_skeleton()
-            n_frames = self.left_controller.getNumberOfFrames()
-            self.init_joints(self.left_controller)
+            self.skeleton = self.controller.get_skeleton()
+            n_frames = self.controller.getNumberOfFrames()
+            self.init_joints(self.controller)
         else:
             n_frames = 0
-        
-        self.controllers = dict()
         
         self.selectButton.clicked.connect(self.slot_accept)
         self.cancelButton.clicked.connect(self.slot_reject)
@@ -119,13 +117,16 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.set_frame_range()
         self.initialized = False
         self.collect_constraints = True
-        self.original_frames = np.array(self.left_controller.get_frames())
+        self.original_frames = np.array(self.controller.get_frames())
         self.ground_annotation = None
         self.color_map = None
         self.contactLabelView.setTimeLineParameters(100000, 10)
         self.contactLabelView.initScene()
         self.contactLabelView.show()
         self.init_label_time_line()
+        if not self._animation_editor.motion_grounding.initialized:
+            self.detectFootContactsButton.setEnabled(False)
+            self.groundFeetButton.setEnabled(False)
 
     def closeEvent(self, e):
         self.timer.stop()
@@ -196,8 +197,8 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
 
 
     def left_display_changed(self, frame_idx):
-        if self.left_controller is not None:
-            self.left_controller.setCurrentFrameNumber(frame_idx)
+        if self.controller is not None:
+            self.controller.setCurrentFrameNumber(frame_idx)
             self.leftDisplayFrameSpinBox.setValue(frame_idx)
             self.contactLabelView.setFrame(frame_idx)
 
@@ -286,7 +287,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.show_change()
 
     def show_change(self):
-        frames = np.array(self.left_controller.get_frames())
+        frames = np.array(self.controller.get_frames())
         self.original_controller.replace_frames(frames)
         self.original_controller.updateTransformation()
 
@@ -308,9 +309,9 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
             o = self.scene.getObject(select_animation_dialog.selected_node_id)
             options = select_animation_dialog.properties
             animation_controller = o._components["animation_controller"]
-            self.left_controller._motion.mv.skeleton = self.left_controller.get_skeleton()
+            self.controller._motion.mv.skeleton = self.controller.get_skeleton()
             self._animation_editor.concatenate(animation_controller, options["activate_smoothing"], options["window"])
-            self.n_frames = self.left_controller.getNumberOfFrames()
+            self.n_frames = self.controller.getNumberOfFrames()
             self.set_frame_range()
             self.show_change()
 
@@ -336,8 +337,8 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         edit_start = self.leftStartFrameSlider.value()
         edit_end = self.leftEndFrameSlider.value()+1
         joint_knob.edit_mode = True
-        frame = self.left_controller.get_current_frame()
-        p = self.left_controller.get_joint_position(joint_name, frame)
+        frame = self.controller.get_current_frame()
+        p = self.controller.get_joint_position(joint_name, frame)
         p = p.tolist()
         if edit_start < edit_end:
             frame_range = edit_start, edit_end
@@ -364,7 +365,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         if resample_factor >= 0:
             print("resample frames using a factor of", resample_factor)
             self._animation_editor.resample_motion(resample_factor)
-            self.n_frames = self.left_controller.getNumberOfFrames()
+            self.n_frames = self.controller.getNumberOfFrames()
             self.set_frame_range()
             self.show_change()
         else:
@@ -374,7 +375,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         fps = float(self.fpsLineEdit.text())       
         if fps >= 0:
             print("set fps to", fps)
-            self.left_controller._motion.mv.frame_time =  1.0/fps
+            self.controller._motion.mv.frame_time =  1.0/fps
             self.show_change()
         else:
             print("Error: window size must be > 0", fps)
@@ -397,7 +398,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         ground_contacts = self._animation_editor.detect_ground_contacts(source_ground_height)
         self.ground_annotation = dict()
         self.color_map = dict()
-        n_frames = self.left_controller.getNumberOfFrames()
+        n_frames = self.controller.getNumberOfFrames()
         for idx in range(n_frames):
             for label in ground_contacts[idx]:
                 if label not in self.ground_annotation:
@@ -408,7 +409,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
 
     def ground_feet(self):
         target_ground_height = float(self.sourceGroundHeightLineEdit.text())
-        n_frames = self.left_controller.getNumberOfFrames()
+        n_frames = self.controller.getNumberOfFrames()
         ground_contacts = [[] for f in range(n_frames)]
         for label in self.ground_annotation:
             if label not in self.skeleton.nodes:
@@ -420,7 +421,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.show_change()
 
     def init_label_time_line(self):
-        n_frames = self.left_controller.getNumberOfFrames()
+        n_frames = self.controller.getNumberOfFrames()
         self.contactLabelView.clearScene()
         self.contactLabelView.create_frame_indicator()
         self.contactLabelView.setTimeLineParameters(n_frames, 10)

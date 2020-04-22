@@ -335,14 +335,14 @@ class AnimationPlayerBaseWidget(QWidget):
         animation_editor = AnimationEditorDialog(self._controller, self._controller.scene_object.scene, graphics_widget, graphics_widget.parent)
         animation_editor.exec_()
         if animation_editor.success:
-            new_frames = animation_editor.left_controller.get_frames()
+            new_frames = animation_editor.controller.get_frames()
             n_frames = len(new_frames)
             print("overwrite frames", n_frames)
-            self._controller._motion.mv.frame_time = animation_editor.left_controller._motion.mv.frame_time
+            self._controller._motion.mv.frame_time = animation_editor.controller._motion.mv.frame_time
             fps = str(np.ceil(1.0/self._controller._motion.mv.frame_time))
             self.fpsLineEdit.setText(fps)
             
-            #skeleton = animation_editor.left_controller.get_skeleton()
+            #skeleton = animation_editor.controller.get_skeleton()
             #self._controller.set_skeleton(skeleton)
             self._controller.replace_frames(new_frames)
             self._controller.updateTransformation()
