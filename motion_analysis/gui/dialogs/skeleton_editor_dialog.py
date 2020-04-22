@@ -68,7 +68,7 @@ def rotate_vector(q, v):
 X = np.array([1,0,0])
 Y = np.array([0,1,0])
 
-STANDARD_JOINTS = ["","root","pelvis", "spine_1", "spine_2", "neck", "left_clavicle", "head", "left_shoulder", "left_elbow", "left_wrist", "right_clavicle", "right_shoulder",
+STANDARD_JOINTS = ["","root","pelvis", "spine", "spine_1", "spine_2", "neck", "left_clavicle", "head", "left_shoulder", "left_elbow", "left_wrist", "right_clavicle", "right_shoulder",
                     "left_hip", "left_knee", "left_ankle", "right_elbow", "right_wrist", "right_hip", "right_knee", "left_ankle", "right_ankle", "left_toe", "right_toe"]
 
 STANDARD_JOINTS += ["left_thumb_base","left_thumb_mid", "left_thumb_tip","left_thumb_end",
