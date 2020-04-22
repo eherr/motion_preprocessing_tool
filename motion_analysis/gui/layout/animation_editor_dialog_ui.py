@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'animation_editor_dialog.ui',
 # licensing of 'animation_editor_dialog.ui' applies.
 #
-# Created: Mon Feb 10 15:18:49 2020
+# Created: Wed Apr 22 12:25:57 2020
 #      by: pyside2-uic  running on PySide2 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(778, 520)
+        Dialog.resize(778, 641)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.leftViewerLayout = QtWidgets.QGridLayout()
@@ -207,9 +207,19 @@ class Ui_Dialog(object):
         self.targetGroundHeightLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
         self.targetGroundHeightLineEdit.setObjectName("targetGroundHeightLineEdit")
         self.horizontalLayout_8.addWidget(self.targetGroundHeightLineEdit)
+        self.detectFootContactsButton = QtWidgets.QPushButton(Dialog)
+        self.detectFootContactsButton.setObjectName("detectFootContactsButton")
+        self.horizontalLayout_8.addWidget(self.detectFootContactsButton)
+        self.groundFeetButton = QtWidgets.QPushButton(Dialog)
+        self.groundFeetButton.setObjectName("groundFeetButton")
+        self.horizontalLayout_8.addWidget(self.groundFeetButton)
         spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem7)
         self.verticalLayout.addLayout(self.horizontalLayout_8)
+        self.contactLabelView = TimeLineLabelView(Dialog)
+        self.contactLabelView.setMaximumSize(QtCore.QSize(16777215, 100))
+        self.contactLabelView.setObjectName("contactLabelView")
+        self.verticalLayout.addWidget(self.contactLabelView)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -274,9 +284,12 @@ class Ui_Dialog(object):
         self.sourceGroundHeightLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
         self.label_6.setText(QtWidgets.QApplication.translate("Dialog", "Target:", None, -1))
         self.targetGroundHeightLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
+        self.detectFootContactsButton.setText(QtWidgets.QApplication.translate("Dialog", "Detect Foot Contacts", None, -1))
+        self.groundFeetButton.setText(QtWidgets.QApplication.translate("Dialog", "Ground Feet", None, -1))
         self.flipBlenderCoordinateSystemButton.setText(QtWidgets.QApplication.translate("Dialog", "Flip Blender Coordinate Systems", None, -1))
         self.exportCommandsButton.setText(QtWidgets.QApplication.translate("Dialog", "Export Commands", None, -1))
         self.undoButton.setText(QtWidgets.QApplication.translate("Dialog", "Undo", None, -1))
         self.selectButton.setText(QtWidgets.QApplication.translate("Dialog", "Accept", None, -1))
         self.cancelButton.setText(QtWidgets.QApplication.translate("Dialog", "Cancel", None, -1))
 
+from motion_analysis.gui.widgets.time_line_label_view import TimeLineLabelView

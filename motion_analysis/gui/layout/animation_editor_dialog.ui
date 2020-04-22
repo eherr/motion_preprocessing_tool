@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>778</width>
-    <height>520</height>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -512,6 +512,20 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="detectFootContactsButton">
+         <property name="text">
+          <string>Detect Foot Contacts</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="groundFeetButton">
+         <property name="text">
+          <string>Ground Feet</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_9">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -525,6 +539,16 @@
         </spacer>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="TimeLineLabelView" name="contactLabelView">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>100</height>
+        </size>
+       </property>
+      </widget>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -582,6 +606,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TimeLineLabelView</class>
+   <extends>QGraphicsView</extends>
+   <header>motion_analysis/gui/widgets/time_line_label_view</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

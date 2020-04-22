@@ -24,6 +24,7 @@ import numpy as np
 from PySide2.QtCore import QTimer, Qt
 from PySide2.QtWidgets import QDialog, QListWidgetItem, QTableWidgetItem, QTableWidget, QFileDialog
 from PySide2.QtGui import QColor
+from OpenGL.GL import *
 from motion_analysis.gui.layout.animation_editor_dialog_ui import Ui_Dialog
 from motion_analysis.gui.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
 from .utils import get_animation_controllers
@@ -31,8 +32,7 @@ from motion_analysis.gui.widgets.scene_viewer import SceneViewerWidget
 from vis_utils.scene.editor_scene import EditorScene
 from vis_utils.animation.animation_editor import AnimationEditor
 from vis_utils.io import save_json_file
-from OpenGL.GL import *
-
+from vis_utils.scene.utils import get_random_color
 
 
 
@@ -109,6 +109,9 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.guessGroundHeightButton.clicked.connect(self.guess_ground_height)
         self.moveToGroundButton.clicked.connect(self.move_to_ground)
 
+        self.detectFootContactsButton.clicked.connect(self.detect_foot_contacts)
+        self.groundFeetButton.clicked.connect(self.ground_feet)
+
         self.success = False
         self.n_frames = n_frames
         self.start_frame = 0
@@ -117,6 +120,12 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.initialized = False
         self.collect_constraints = True
         self.original_frames = np.array(self.left_controller.get_frames())
+        self.ground_annotation = None
+        self.color_map = None
+        self.contactLabelView.setTimeLineParameters(100000, 10)
+        self.contactLabelView.initScene()
+        self.contactLabelView.show()
+        self.init_label_time_line()
 
     def closeEvent(self, e):
         self.timer.stop()
@@ -190,6 +199,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         if self.left_controller is not None:
             self.left_controller.setCurrentFrameNumber(frame_idx)
             self.leftDisplayFrameSpinBox.setValue(frame_idx)
+            self.contactLabelView.setFrame(frame_idx)
 
 
     def left_spinbox_frame_changed(self, frame):
@@ -380,3 +390,54 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         source_ground_height = float(self.sourceGroundHeightLineEdit.text())
         target_ground_height = float(self.targetGroundHeightLineEdit.text())
         self._animation_editor.move_to_ground(source_ground_height, target_ground_height)
+        self.show_change()
+
+    def detect_foot_contacts(self):
+        source_ground_height = float(self.sourceGroundHeightLineEdit.text())
+        ground_contacts = self._animation_editor.detect_ground_contacts(source_ground_height)
+        self.ground_annotation = dict()
+        self.color_map = dict()
+        n_frames = self.left_controller.getNumberOfFrames()
+        for idx in range(n_frames):
+            for label in ground_contacts[idx]:
+                if label not in self.ground_annotation:
+                    self.color_map[label] = get_random_color()
+                    self.ground_annotation[label] = []
+                self.ground_annotation[label].append(idx)
+        self.init_label_time_line()
+
+    def ground_feet(self):
+        target_ground_height = float(self.sourceGroundHeightLineEdit.text())
+        n_frames = self.left_controller.getNumberOfFrames()
+        ground_contacts = [[] for f in range(n_frames)]
+        for label in self.ground_annotation:
+            if label not in self.skeleton.nodes:
+                print("ignore",label)
+                continue
+            for idx in self.ground_annotation[label]:
+                ground_contacts[idx].append(label)
+        self._animation_editor.apply_foot_constraints(ground_contacts, target_ground_height)
+        self.show_change()
+
+    def init_label_time_line(self):
+        n_frames = self.left_controller.getNumberOfFrames()
+        self.contactLabelView.clearScene()
+        self.contactLabelView.create_frame_indicator()
+        self.contactLabelView.setTimeLineParameters(n_frames, 10)
+        self.contactLabelView.set_edit_start_frame(0)
+        if self.ground_annotation is not None and self.color_map is not None:
+            for label, indices in self.ground_annotation.items():
+                color = [0,0,1]
+                if label in self.color_map:
+                    color = self.color_map[label]
+                joint_indices = []
+                n_entries = len(indices) 
+                if n_entries > 0 and type(indices[0]) == list:
+                    for i in range(n_entries):
+                        joint_indices += indices[i]
+                else:
+                    joint_indices = indices
+       
+                self.contactLabelView.addLabel(label, joint_indices, color)
+        else:
+            self.contactLabelView.addLabel("empty", [], [0,0,0])
