@@ -69,7 +69,7 @@ X = np.array([1,0,0])
 Y = np.array([0,1,0])
 
 STANDARD_JOINTS = ["","root","pelvis", "spine", "spine_1", "spine_2", "neck", "left_clavicle", "head", "left_shoulder", "left_elbow", "left_wrist", "right_clavicle", "right_shoulder",
-                    "left_hip", "left_knee", "left_ankle", "right_elbow", "right_wrist", "right_hip", "right_knee", "left_ankle", "right_ankle", "left_toe", "right_toe"]
+                    "left_hip", "left_knee", "left_ankle", "left_toe", "right_elbow", "right_wrist", "right_hip", "right_knee", "right_ankle", "right_toe"]
 
 STANDARD_JOINTS += ["left_thumb_base","left_thumb_mid", "left_thumb_tip","left_thumb_end",
                     "left_index_finger_root","left_index_finger_base","left_index_finger_mid", "left_index_finger_tip","left_index_finger_end",
