@@ -202,7 +202,9 @@ class AnimationPlayerBaseWidget(QWidget):
         self.edit_skeleton_model_action.triggered.connect(self.edit_skeleton_model)
         self.add_new_skeleton_model_action = QAction("Add New Model", self)
         self.add_new_skeleton_model_action.triggered.connect(self.add_new_skeleton_model)
-
+        
+        self.clear_annotation_action = QAction("Clear Annotation", self)
+        self.clear_annotation_action.triggered.connect(self.clear_annotation)
 
     def initSignals(self):
         self.animationToggleButton.setDefaultAction(self.toggle_animation_action)
@@ -229,6 +231,8 @@ class AnimationPlayerBaseWidget(QWidget):
 
         self.addNewSkeletonModelButton.setDefaultAction(self.edit_skeleton_model_action)
         self.editSkeletonModelButton.setDefaultAction(self.add_new_skeleton_model_action)
+
+        self.clearAnnotationButton.setDefaultAction(self.clear_annotation_action)
 
     def initSlots(self):
         self.loopAnimationCheckBox.clicked.connect(self.toggle_animation_loop)
@@ -411,6 +415,12 @@ class AnimationPlayerBaseWidget(QWidget):
             self.fill_annotation_combobox()
             self.init_label_time_line()
 
+    def clear_annotation(self):
+        self._controller._motion._semantic_annotation = collections.OrderedDict()
+        self._controller._motion.label_color_map = collections.OrderedDict()
+        self.fill_annotation_combobox()
+        self.init_label_time_line()
+
     def split_motion(self):
         scene_object = self._controller.scene_object
         #filename = str(QFileDialog.getSaveFileName(self, 'Save To File', '.')[0])
@@ -419,13 +429,13 @@ class AnimationPlayerBaseWidget(QWidget):
                 for segment in segments:
                     start = segment[0]
                     end = segment[-1]
-                    self.create_motion__segment_copy(idx, start, end)
+                    self.create_motion_segment_copy(idx, start, end)
             else:
                 start = segments[0]
                 end = segments[-1]
-                self.create_motion__segment_copy(idx, start, end)
+                self.create_motion_segment_copy(idx, start, end)
 
-    def create_motion__segment_copy(self, idx, start, end):
+    def create_motion_segment_copy(self, idx, start, end):
         scene_object = self._controller.scene_object
         out_file_name = scene_object.name + str(idx) + "_" + str(start) + "-" + str(end) + ".bvh"
         #print("write section to " + out_file_name)
@@ -531,6 +541,9 @@ class AnimationPlayerBaseWidget(QWidget):
         name = str(self.skeletonModelComboBox.currentText())
         enable_line_edit = False
         data = load_local_skeleton(self.local_skeleton_dir, name)
+        if data is None:
+            print("Error could not load skeleton model")
+            return
         skeleton_model = data["model"]
         skeleton_editor = SkeletonEditorDialog(name, skeleton, graphics_widget, graphics_widget.parent, enable_line_edit, skeleton_model)
         skeleton_editor.exec_()
