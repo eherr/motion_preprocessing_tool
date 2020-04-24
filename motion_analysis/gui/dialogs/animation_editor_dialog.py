@@ -255,17 +255,20 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         z = float(self.translateZLineEdit.text())
         offset = [x,y,z]
         joint_name = joint_knob.joint_name
-        edit_start = self.leftStartFrameSlider.value()
-        edit_end = self.leftEndFrameSlider.value()+1 
-        if edit_start > edit_end:
-            print("frame range is wrong", edit_start, edit_end)
+        ik_frame_idx = self.leftDisplayFrameSlider.value()
+        copy_start = self.leftStartFrameSlider.value()
+        copy_end = self.leftEndFrameSlider.value()+1 
+        if copy_start > copy_end:
+            print("frame range is wrong", copy_start, copy_end)
             return
-        frame_range = edit_start, edit_end
+        frame_range = copy_start, copy_end
 
         joint_knob.edit_mode = True
         apply = self.collectConstraintsCheckBox.checkState() == Qt.Unchecked
         use_ccd = self.ccdCheckBox.checkState() == Qt.Checked
-        self._animation_editor.translate_joint(joint_name, offset, frame_range, use_ccd, plot, apply)
+        
+        blend_window_size = int(self.blendRangeLineEdit.text())
+        self._animation_editor.translate_joint(joint_name, offset, ik_frame_idx, frame_range, blend_window_size, use_ccd, plot, apply)
         joint_knob.edit_mode = False
         self.show_change()
 
