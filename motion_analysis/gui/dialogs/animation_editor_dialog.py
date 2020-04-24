@@ -300,6 +300,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         frames = np.array(self.controller.get_frames())
         self.original_controller.replace_frames(frames)
         self.original_controller.updateTransformation()
+        self.controller.updateTransformation()
 
     def slot_smooth_frames(self):
         window_size = int(self.smoothWindowSizeLineEdit.text())       
