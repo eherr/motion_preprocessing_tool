@@ -21,6 +21,7 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 import numpy as np
+import collections
 from PySide2.QtCore import QTimer, Qt
 from PySide2.QtWidgets import QDialog, QListWidgetItem, QTableWidgetItem, QTableWidget, QFileDialog
 from PySide2.QtGui import QColor
@@ -33,7 +34,7 @@ from vis_utils.scene.editor_scene import EditorScene
 from vis_utils.animation.animation_editor import AnimationEditor
 from vis_utils.io import save_json_file
 from vis_utils.scene.utils import get_random_color
-
+from motion_analysis.annotation_editor import AnnotationEditor
 
 
 class AnimationEditorDialog(QDialog, Ui_Dialog):
@@ -118,15 +119,21 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.initialized = False
         self.collect_constraints = True
         self.original_frames = np.array(self.controller.get_frames())
-        self.ground_annotation = None
-        self.color_map = None
+        self.annotation_editor = AnnotationEditor()
         self.contactLabelView.setTimeLineParameters(100000, 10)
         self.contactLabelView.initScene()
         self.contactLabelView.show()
-        self.init_label_time_line()
         if not self._animation_editor.motion_grounding.initialized:
             self.detectFootContactsButton.setEnabled(False)
             self.groundFeetButton.setEnabled(False)
+        else:
+            ground_annotation = collections.OrderedDict()
+            color_map = collections.OrderedDict()
+            for label in self._animation_editor.foot_constraint_generator.contact_joints:
+                color_map[label] = get_random_color()
+                ground_annotation[label] = []
+            self.annotation_editor.set_annotation(ground_annotation, color_map)
+        self.init_label_time_line()
 
     def closeEvent(self, e):
         self.timer.stop()
@@ -396,27 +403,30 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
     def detect_foot_contacts(self):
         source_ground_height = float(self.sourceGroundHeightLineEdit.text())
         ground_contacts = self._animation_editor.detect_ground_contacts(source_ground_height)
-        self.ground_annotation = dict()
-        self.color_map = dict()
+        ground_annotation = collections.OrderedDict()
+        color_map = collections.OrderedDict()
         n_frames = self.controller.getNumberOfFrames()
         for idx in range(n_frames):
             for label in ground_contacts[idx]:
-                if label not in self.ground_annotation:
-                    self.color_map[label] = get_random_color()
-                    self.ground_annotation[label] = []
-                self.ground_annotation[label].append(idx)
+                if label not in ground_annotation:
+                    color_map[label] = get_random_color()
+                    ground_annotation[label] = [[]]
+                ground_annotation[label][0].append(idx)
+        self.annotation_editor.set_annotation(ground_annotation, color_map)
         self.init_label_time_line()
 
     def ground_feet(self):
         target_ground_height = float(self.sourceGroundHeightLineEdit.text())
         n_frames = self.controller.getNumberOfFrames()
         ground_contacts = [[] for f in range(n_frames)]
-        for label in self.ground_annotation:
+        ground_annotation = self.annotation_editor._semantic_annotation
+        for label in ground_annotation:
             if label not in self.skeleton.nodes:
                 print("ignore",label)
                 continue
-            for idx in self.ground_annotation[label]:
-                ground_contacts[idx].append(label)
+            for entry in ground_annotation[label]:
+                for idx in entry:
+                    ground_contacts[idx].append(label)
         self._animation_editor.apply_foot_constraints(ground_contacts, target_ground_height)
         self.show_change()
 
@@ -426,11 +436,13 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.contactLabelView.create_frame_indicator()
         self.contactLabelView.setTimeLineParameters(n_frames, 10)
         self.contactLabelView.set_edit_start_frame(0)
-        if self.ground_annotation is not None and self.color_map is not None:
-            for label, indices in self.ground_annotation.items():
+        ground_annotation = self.annotation_editor._semantic_annotation
+        color_map = self.annotation_editor._label_color_map
+        if len(ground_annotation) > 0:
+            for label, indices in ground_annotation.items():
                 color = [0,0,1]
-                if label in self.color_map:
-                    color = self.color_map[label]
+                if label in color_map:
+                    color = color_map[label]
                 joint_indices = []
                 n_entries = len(indices) 
                 if n_entries > 0 and type(indices[0]) == list:
@@ -442,3 +454,35 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
                 self.contactLabelView.addLabel(label, joint_indices, color)
         else:
             self.contactLabelView.addLabel("empty", [], [0,0,0])
+
+        
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key_G:
+            self.create_annotation_section()
+        elif event.key() == Qt.Key_H:
+            self.remove_annotation_section()
+        elif event.key() == Qt.Key_K:
+            self.set_annotation_edit_start()
+  
+    def create_annotation_section(self):
+        frame_idx = self.controller._motion.frame_idx
+        start_idx = self.annotation_editor.prev_annotation_edit_frame_idx
+        for label in self._animation_editor.foot_constraint_generator.contact_joints:
+            print(label)
+            self.annotation_editor.create_annotation_section(frame_idx, label)
+            self.annotation_editor.set_annotation_edit_start(start_idx)
+        self.init_label_time_line()
+
+    def remove_annotation_section(self):
+        frame_idx = self.controller._motion.frame_idx
+        start_idx = self.annotation_editor.prev_annotation_edit_frame_idx
+        for label in self._animation_editor.foot_constraint_generator.contact_joints:
+            self.annotation_editor.remove_annotation_section(frame_idx, label)
+            self.annotation_editor.set_annotation_edit_start(start_idx)
+        self.init_label_time_line()
+
+    def set_annotation_edit_start(self):
+        frame_idx = self.controller._motion.frame_idx
+        self.annotation_editor.set_annotation_edit_start(frame_idx)
+        self.labelView.set_edit_start_frame(frame_idx)
+    
