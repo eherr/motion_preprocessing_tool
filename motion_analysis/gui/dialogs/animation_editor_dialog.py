@@ -47,6 +47,8 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.leftView.initializeGL()
         self.leftView.enable_mouse_interaction = True
         self.leftView.mouse_click.connect(self.on_mouse_click)
+        self.leftView.mouse_move.connect(self.on_mouse_move)
+        self.leftView.mouse_release.connect(self.on_mouse_release)
         self.leftViewerLayout.addWidget(self.leftView)
 
 
@@ -63,7 +65,8 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.skeleton = None
         self.leftView.makeCurrent()
         self.left_scene = EditorScene(True)
-        self.left_scene.enable_scene_edit_widget = False
+        self.left_scene.enable_scene_edit_widget = True
+        self.left_scene.scene_edit_widget.register_move_callback(self.on_move_widget)
         self._animation_editor = None
         if controller is not None:
             self.controller = self.copy_controller(controller, self.left_scene)
@@ -110,7 +113,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
 
         self.detectFootContactsButton.clicked.connect(self.detect_foot_contacts)
         self.groundFeetButton.clicked.connect(self.ground_feet)
-
+        self.edited_knob = None
         self.success = False
         self.n_frames = n_frames
         self.start_frame = 0
@@ -166,6 +169,32 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
                 label += "None"
             self.jointLabel.setText(label)
 
+    def on_mouse_release(self, event):
+        self.left_scene.deactivate_axis()
+        if self.edited_knob is None:
+            return
+        position = self.edited_knob.scene_object.getPosition()
+        offset = position - self.left_scene.scene_edit_widget.original_position
+        joint_name = self.edited_knob.joint_name
+        ik_frame_idx = self.leftDisplayFrameSlider.value()
+        copy_start = self.leftStartFrameSlider.value()
+        copy_end = self.leftEndFrameSlider.value()+1 
+        if copy_start > copy_end:
+            print("frame range is wrong", copy_start, copy_end)
+            return
+        frame_range = copy_start, copy_end
+
+        self.edited_knob.edit_mode = True
+        use_ccd = self.ccdCheckBox.checkState() == Qt.Checked
+        
+        blend_window_size = int(self.blendRangeLineEdit.text())
+        self._animation_editor.translate_joint(joint_name, offset, ik_frame_idx, frame_range, blend_window_size, use_ccd, plot=False, apply=True)
+        self.edited_knob.edit_mode = False
+        self.show_change()
+        self.edited_knob = None
+
+    def on_mouse_move(self, event, last_mouse_pos, cam_pos, cam_ray):
+        self.left_scene.handle_mouse_movement(cam_pos, cam_ray)
 
     def init_joints(self, controller):
         for joint_name in controller.get_animated_joints():
@@ -490,3 +519,11 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.annotation_editor.set_annotation_edit_start(frame_idx)
         self.labelView.set_edit_start_frame(frame_idx)
     
+    def on_move_widget(self, position):
+        joint_knob = self.get_selected_joint()
+        if joint_knob is None:
+            return
+   
+        joint_knob.edit_mode = True
+        joint_knob.scene_object.setPosition(position)
+        self.edited_knob = joint_knob
