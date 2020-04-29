@@ -56,6 +56,18 @@ def create_sections_from_annotation(annotations):
         motion_sections[section["start_idx"]] = section
     return list(collections.OrderedDict(sorted(motion_sections.items())).values())
 
+def create_section_dict_from_annotation(annotations):
+    motion_sections = dict()
+    for label, sections in annotations.items():
+        motion_sections[label] = []
+        for sub_section in sections:
+            sub_section.sort()
+            section_dict = dict()
+            section_dict["start_idx"] = sub_section[0]
+            section_dict["end_idx"] = sub_section[-1]
+            motion_sections[label].append(section_dict)
+    return motion_sections
+
 def read_annotation_file(annotation_filepath):
     meta_info_str = ""
     with open(annotation_filepath, "rt") as annotation_file:

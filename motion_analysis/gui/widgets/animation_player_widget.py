@@ -42,7 +42,7 @@ try:
 except:
     pass
 from motion_analysis.gui.dialogs.set_annotation_dialog import SetAnnotationDialog
-from motion_analysis.gui.dialogs.utils import load_local_skeleton, load_local_skeleton_model, save_local_skeleton, create_sections_from_annotation
+from motion_analysis.gui.dialogs.utils import load_local_skeleton, load_local_skeleton_model, save_local_skeleton, create_sections_from_annotation, create_section_dict_from_annotation
 from motion_analysis import constants
 from anim_utils.utilities.db_interface import replace_motion_in_db
 from motion_analysis.gui.application_manager import ApplicationManager
@@ -512,7 +512,7 @@ class AnimationPlayerBaseWidget(QWidget):
             print("replace motion clip with id",motion_id, "and name", bvh_name, collection,is_processed)
             meta_info = dict()
             if len(self._controller._motion._semantic_annotation) >0:
-                meta_info["sections"] = create_sections_from_annotation(self._controller._motion._semantic_annotation)
+                meta_info["sections"] = create_section_dict_from_annotation(self._controller._motion._semantic_annotation)
             if is_processed and self._controller._motion._time_function is not None:
                 meta_info["time_function"] = self._controller._motion._time_function
             else:
