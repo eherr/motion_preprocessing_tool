@@ -28,7 +28,7 @@ from motion_analysis.gui.layout.upload_motion_dialog_ui import Ui_Dialog
 from .enter_name_dialog import EnterNameDialog
 from .new_skeleton_dialog import NewSkeletonDialog
 from motion_analysis import constants
-from motion_analysis.gui.dialogs.utils import get_animation_controllers, create_sections_from_annotation
+from motion_analysis.gui.dialogs.utils import get_animation_controllers, create_section_dict_from_annotation
 from anim_utils.utilities.db_interface import upload_motion_to_db, get_skeletons_from_remote_db, \
                         create_new_skeleton_in_db, get_collections_by_parent_id_from_remote_db
 from vis_utils.io import load_json_file
@@ -107,7 +107,7 @@ class UploadMotionDialog(QDialog, Ui_Dialog):
                 semantic_annotation = c._motion._semantic_annotation
                 meta_info = dict()
                 if len(semantic_annotation) >0:
-                    meta_info["sections"] = create_sections_from_annotation(semantic_annotation)
+                    meta_info["sections"] = create_section_dict_from_annotation(semantic_annotation)
                 time_function = c._motion._time_function
                 if time_function is not None and is_processed:
                     meta_info["time_function"] = time_function
