@@ -160,7 +160,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
 
     def on_mouse_click(self, event, ray_start, ray_dir, pos, node_id):
         if event.button() == Qt.LeftButton:
-            self.left_scene.select_object(node_id)            
+            self.left_scene.select_object(node_id, (ray_start, ray_dir))            
             joint_knob = self.get_selected_joint()
             label = "Selected Joint: "
             if joint_knob is not None:
