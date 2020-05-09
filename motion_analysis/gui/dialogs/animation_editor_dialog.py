@@ -113,6 +113,11 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
 
         self.detectFootContactsButton.clicked.connect(self.detect_foot_contacts)
         self.groundFeetButton.clicked.connect(self.ground_feet)
+
+        self.setAnnotationStartButton.clicked.connect(self.set_annotation_edit_start)
+        self.createAnnotationButton.clicked.connect(self.create_annotation_section)
+        self.removeAnnotationButton.clicked.connect(self.remove_annotation_section)
+
         self.edited_knob = None
         self.success = False
         self.n_frames = n_frames
@@ -136,6 +141,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
                 color_map[label] = get_random_color()
                 ground_annotation[label] = []
             self.annotation_editor.set_annotation(ground_annotation, color_map)
+            self.fill_label_combobox()
         self.init_label_time_line()
 
     def closeEvent(self, e):
@@ -202,7 +208,6 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
                 child_node = self.skeleton.nodes[joint_name].children[0]
                 if np.linalg.norm(child_node.offset)> 0:
                     self.left_scene.object_builder.create_object("joint_control_knob", controller, joint_name, self.radius)
-         
 
     def copy_controller(self, controller, target_scene):
         skeleton = controller.get_skeleton_copy()
@@ -215,7 +220,6 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         #target_scene.object_builder.create_component("animation_editor", o)
         self._animation_editor = AnimationEditor(o) #o._components["animation_editor"]
         return o._components["animation_controller"]
-
 
     def draw(self):
         """ draw current scene on the given view
@@ -231,13 +235,11 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.leftView.graphics_context.render(self.left_scene)
         self.leftView.swapBuffers()
 
-
     def left_display_changed(self, frame_idx):
         if self.controller is not None:
             self.controller.setCurrentFrameNumber(frame_idx)
             self.leftDisplayFrameSpinBox.setValue(frame_idx)
             self.contactLabelView.setFrame(frame_idx)
-
 
     def left_spinbox_frame_changed(self, frame):
         self.leftStartFrameSlider.setValue(self.leftStartFrameSpinBox.value())
@@ -313,7 +315,6 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         y = float(self.rotateYLineEdit.text())
         z = float(self.rotateZLineEdit.text())
         
-
         edit_start = self.leftStartFrameSlider.value()
         edit_end = self.leftEndFrameSlider.value()+1
         if edit_start > edit_end:
@@ -488,7 +489,6 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         else:
             self.contactLabelView.addLabel("empty", [], [0,0,0])
 
-        
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_G:
             self.create_annotation_section()
@@ -498,26 +498,29 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
             self.set_annotation_edit_start()
   
     def create_annotation_section(self):
+        if self.labelComboBox.count() < 1:
+            return
         frame_idx = self.controller._motion.frame_idx
         start_idx = self.annotation_editor.prev_annotation_edit_frame_idx
-        for label in self._animation_editor.foot_constraint_generator.contact_joints:
-            print(label)
-            self.annotation_editor.create_annotation_section(frame_idx, label)
-            self.annotation_editor.set_annotation_edit_start(start_idx)
+        label = str(self.labelComboBox.currentText())
+        self.annotation_editor.create_annotation_section(frame_idx, label)
+        self.annotation_editor.set_annotation_edit_start(start_idx)
         self.init_label_time_line()
 
     def remove_annotation_section(self):
+        if self.labelComboBox.count() < 1:
+            return
         frame_idx = self.controller._motion.frame_idx
         start_idx = self.annotation_editor.prev_annotation_edit_frame_idx
-        for label in self._animation_editor.foot_constraint_generator.contact_joints:
-            self.annotation_editor.remove_annotation_section(frame_idx, label)
-            self.annotation_editor.set_annotation_edit_start(start_idx)
+        label = str(self.labelComboBox.currentText())
+        self.annotation_editor.remove_annotation_section(frame_idx, label)
+        self.annotation_editor.set_annotation_edit_start(start_idx)
         self.init_label_time_line()
 
     def set_annotation_edit_start(self):
         frame_idx = self.controller._motion.frame_idx
         self.annotation_editor.set_annotation_edit_start(frame_idx)
-        self.labelView.set_edit_start_frame(frame_idx)
+        self.contactLabelView.set_edit_start_frame(frame_idx)
     
     def on_move_widget(self, position):
         joint_knob = self.get_selected_joint()
@@ -527,3 +530,9 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         joint_knob.edit_mode = True
         joint_knob.scene_object.setPosition(position)
         self.edited_knob = joint_knob
+
+    def fill_label_combobox(self):
+        self.labelComboBox.clear()
+        for idx, label in enumerate(self.annotation_editor._semantic_annotation):
+            self.labelComboBox.addItem(label, idx)
+    

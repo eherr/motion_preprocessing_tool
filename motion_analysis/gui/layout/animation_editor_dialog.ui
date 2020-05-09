@@ -519,13 +519,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="groundFeetButton">
-         <property name="text">
-          <string>Ground Feet</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <spacer name="horizontalSpacer_9">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -541,7 +534,62 @@
       </layout>
      </item>
      <item>
-      <widget class="TimeLineLabelView" name="contactLabelView">
+      <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Foot Contacts</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="labelComboBox"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="setAnnotationStartButton">
+         <property name="text">
+          <string>Set Start Frame</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="createAnnotationButton">
+         <property name="text">
+          <string>Create Annotation</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="removeAnnotationButton">
+         <property name="text">
+          <string>Remove Annotation</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="groundFeetButton">
+         <property name="text">
+          <string>Apply Foot Grounding</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_10">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="TimeLineLabelView" name="contacLabelView">
        <property name="maximumSize">
         <size>
          <width>16777215</width>
