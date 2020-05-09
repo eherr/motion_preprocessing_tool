@@ -449,7 +449,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.init_label_time_line()
 
     def ground_feet(self):
-        target_ground_height = float(self.sourceGroundHeightLineEdit.text())
+        target_ground_height = float(self.targetGroundHeightLineEdit.text())
         n_frames = self.controller.getNumberOfFrames()
         ground_contacts = [[] for f in range(n_frames)]
         ground_annotation = self.annotation_editor._semantic_annotation
