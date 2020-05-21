@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>470</width>
+    <width>574</width>
     <height>503</height>
    </rect>
   </property>
@@ -360,18 +360,49 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <layout class="QHBoxLayout" name="horizontalLayout_10">
        <item>
-        <widget class="QPushButton" name="setGuessButton">
+        <widget class="QPushButton" name="guessSelectedButton">
          <property name="text">
-          <string>Guess Coordinate Systems</string>
+          <string>Guess Selected Coordinate System</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="resetCosButton">
+        <widget class="QPushButton" name="resetSelectedCosButton">
          <property name="text">
-          <string>Reset Coordinate Systems</string>
+          <string>Reset Selected Coordinate System</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_12">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <item>
+        <widget class="QPushButton" name="guessAllCosButton">
+         <property name="text">
+          <string>Guess All Coordinate Systems</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="resetAllCosButton">
+         <property name="text">
+          <string>Reset All Coordinate Systems</string>
          </property>
         </widget>
        </item>

@@ -40,7 +40,7 @@ from anim_utils.animation_data import BVHReader, BVHWriter, MotionVector, Skelet
 from anim_utils.retargeting.analytical import create_local_cos_map_from_skeleton_axes_with_map, find_rotation_between_vectors, OPENGL_UP_AXIS
 from anim_utils.animation_data.skeleton_models import STANDARD_MIRROR_MAP, STANDARD_MIRROR_MAP_LEFT, STANDARD_MIRROR_MAP_RIGHT, JOINT_CONSTRAINTS
 
-
+DEFAULT_TARGET_CS_UP = [1,0,0]
 
 def normalize(v):
     return v / np.linalg.norm(v)
@@ -222,6 +222,7 @@ def mirror_join_map(skeleton, skeleton_model, partial_mirror_map):
         skeleton_model = mirror_sequence(skeleton, sequence, skeleton_model)
     return skeleton_model
     
+
 class SkeletonEditorDialog(QDialog, Ui_Dialog):
     def __init__(self, name, skeleton, share_widget, parent=None, enable_line_edit=False, skeleton_model=None):
         self.initialized = False
@@ -293,8 +294,10 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
         self.alignToUpAxisButton.clicked.connect(self.slot_align_to_up_axis)
         self.alignToForwardAxisButton.clicked.connect(self.slot_align_to_forward_axis)
 
-        self.setGuessButton.clicked.connect(self.slot_guess_cos_map)
-        self.resetCosButton.clicked.connect(self.slot_reset_cos_map)
+        self.guessSelectedButton.clicked.connect(self.slot_guess_selected_cos_map)
+        self.resetSelectedCosButton.clicked.connect(self.slot_reset_selected_cos_map)
+        self.guessAllCosButton.clicked.connect(self.slot_guess_cos_map)
+        self.resetAllCosButton.clicked.connect(self.slot_reset_cos_map)
         self.loadDefaultPoseButton.clicked.connect(self.slot_load_default_pose)
         self.applyScaleButton.clicked.connect(self.slot_apply_scale)
         self.jointMapComboBox.currentIndexChanged.connect(self.slot_update_joint_map)
@@ -334,6 +337,7 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
             joint_knob = self.get_selected_joint()
             self.update_joint_info(joint_knob)
             
+
     def update_joint_info(self, joint_knob):
         self.is_updating_joint_info = True
         self.scene.scene_edit_widget.reset_rotation()
@@ -356,8 +360,16 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
                     self.jointMapComboBox.setCurrentIndex(index)
 
         if "cos_map" in self.skeleton_model and joint_name in self.skeleton_model["cos_map"]:
-            swing = np.round(self.skeleton_model["cos_map"][joint_name]["x"],self.precision)
-            twist = np.round(self.skeleton_model["cos_map"][joint_name]["y"],self.precision)
+            x_vector = self.skeleton_model["cos_map"][joint_name]["x"]
+            if x_vector is None:
+                x_vector = [1,0,0]
+                self.skeleton_model["cos_map"][joint_name]["x"] = x_vector
+            y_vector = self.skeleton_model["cos_map"][joint_name]["y"]
+            if y_vector is None:
+                y_vector = [0,1,0]
+                self.skeleton_model["cos_map"][joint_name]["y"] = y_vector
+            swing = np.round(x_vector, self.precision)
+            twist = np.round(y_vector, self.precision)
             self.set_swing_text(swing)
             self.set_twist_text(twist)
             m = self.skeleton.nodes[joint_name].get_global_matrix(self.reference_frame)[:3,:3]
@@ -400,7 +412,7 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
     def init_joints(self, controller):
         for joint_name in controller.get_animated_joints():
             if len(self.skeleton.nodes[joint_name].children) > 0: # filter out end site joints
-                child_node = self.skeleton.nodes[joint_name].children[0]
+                child_node = self.skeleton.nodes[joint_name]#.children[0]
                 if np.linalg.norm(child_node.offset)> 0:
                     self.scene.object_builder.create_object("joint_control_knob", controller, joint_name, self.radius)
 
@@ -617,46 +629,57 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
         self.update_joint_info(joint_knob)
 
     def slot_guess_cos_map(self):
+        """ creates a guess for the coordinate system for all joints"""
         temp_skeleton = copy(self.skeleton)
         temp_skeleton.skeleton_model = self.skeleton_model
         cos_map = create_local_cos_map_from_skeleton_axes_with_map(temp_skeleton)
-        cos_map_copy = copy(cos_map)
-        if "cos_map" in self.skeleton_model:
-            cos_map.update(self.skeleton_model["cos_map"])
-        
-        joint_knob = self.get_selected_joint()
-        joint_knob.joint_name
-        cos_map[joint_knob.joint_name] = cos_map_copy[joint_knob.joint_name]
         self.skeleton_model["cos_map"] = cos_map
-        self.update_joint_info(joint_knob)
+        joint_knob = self.get_selected_joint()
+        if joint_knob is not None:
+            self.update_joint_info(joint_knob)
 
     def slot_reset_cos_map(self):
+        """ resets the coordinate systems for all joints"""
+        for joint_name in self.skeleton_model["cos_map"]:
+            up_vector = self.skeleton_model["cos_map"][joint_name]["y"]
+            x_vector = self.skeleton_model["cos_map"][joint_name]["x"]
+            if up_vector is not None and x_vector is not None:
+                new_up_vector, new_x_vector = self.reset_joint_cos(joint_name, up_vector, x_vector)
+                self.skeleton_model["cos_map"][joint_name]["y"] = new_up_vector
+                self.skeleton_model["cos_map"][joint_name]["x"] = new_x_vector
+        joint_knob = self.get_selected_joint()
+        if joint_knob is not None:
+            self.update_joint_info(joint_knob)
+
+    def slot_guess_selected_cos_map(self):
+        """ creates a guess for the for the selected joint"""
+        joint_knob = self.get_selected_joint()
+        if joint_knob is None:
+            return
+        joint_name = joint_knob.joint_name
+        temp_skeleton = copy(self.skeleton)
+        temp_skeleton.skeleton_model = self.skeleton_model
+        cos_map = create_local_cos_map_from_skeleton_axes_with_map(temp_skeleton)
+        self.skeleton_model["cos_map"][joint_name] = cos_map[joint_name]
+        self.update_joint_info(joint_knob)
+        
+    def slot_reset_selected_cos_map(self):
+        """ creates resetrs the coordinate system for the selected joint"""
         joint_knob = self.get_selected_joint()
         if joint_knob is None:
             return
         joint_name = joint_knob.joint_name
         if joint_name in self.skeleton_model["cos_map"]:
             up_vector = self.skeleton_model["cos_map"][joint_name]["y"]
-            target_vector = [1,0,0]
-            m = self.skeleton.nodes[joint_name].get_global_matrix(self.skeleton.reference_frame)[:3,:3]
-            m_inv = np.linalg.inv(m)
-            target_vector = normalize(target_vector)
-            local_target = np.dot(m_inv, target_vector)
-            local_target = normalize(local_target)
-            self.skeleton_model["cos_map"][joint_name]["y"] = local_target
-
             x_vector = self.skeleton_model["cos_map"][joint_name]["x"]
-            q = quaternion_from_vector_to_vector(up_vector, local_target)
-            x_vector = rotate_vector(q, x_vector)
-            
-            x_vector -= x_vector.dot(local_target) * local_target      # make it orthogonal to twist
-            x_vector /= np.linalg.norm(x_vector)  # normalize it
-            self.skeleton_model["cos_map"][joint_name]["x"] = normalize(x_vector)
+            new_up_vector, new_x_vector = self.reset_joint_cos(joint_name, up_vector, x_vector)
+            self.skeleton_model["cos_map"][joint_name]["y"] = new_up_vector
+            self.skeleton_model["cos_map"][joint_name]["x"] = new_x_vector
             self.update_joint_info(joint_knob)
 
     
     def slot_update_joint_map(self):
-        if not self.is_updating_joint_info and  "joints" in self.skeleton_model:
+        if not self.is_updating_joint_info and "joints" in self.skeleton_model:
             joint_knob = self.get_selected_joint()
             if joint_knob is not None:
                 new_joint_key = str(self.jointMapComboBox.currentText())
@@ -667,6 +690,21 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
                 print("update joint mapping", joint_knob.joint_name, new_joint_key)
             else:
                 print("is updating joint info")
+
+    def reset_joint_cos(self, joint_name, up_vector, x_vector, target_up_vector=DEFAULT_TARGET_CS_UP):
+        """ rotates the up_vector to look towards target_up_vector and rotates the x_vector with the same rotation """
+        m = self.skeleton.nodes[joint_name].get_global_matrix(self.skeleton.reference_frame)[:3,:3]
+        m_inv = np.linalg.inv(m)
+        target_up_vector = normalize(target_up_vector)
+        local_target = np.dot(m_inv, target_up_vector)
+        local_target = normalize(local_target)
+        q = quaternion_from_vector_to_vector(up_vector, local_target)
+        x_vector = rotate_vector(q, x_vector)
+        
+        x_vector -= x_vector.dot(local_target) * local_target      # make it orthogonal to twist
+        x_vector /= np.linalg.norm(x_vector)  # normalize it
+        x_vector = normalize(x_vector)
+        return local_target, x_vector
 
     def slot_update_aligning_root_joint(self):
         if not self.is_updating_joint_info and "joints" in self.skeleton_model:
