@@ -26,7 +26,7 @@ import collections
 import os
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtCore import Qt, QFile
-from PySide2.QtWidgets import QMainWindow, QMessageBox, qApp, QAction, QFileDialog, QColorDialog
+from PySide2.QtWidgets import QMainWindow, QMessageBox, QAction, QFileDialog, QColorDialog
 from motion_analysis import constants
 from motion_analysis.gui.layout.mainwindow_ui import Ui_MainWindow
 from motion_analysis import motion_synthesis
@@ -191,9 +191,6 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
         self.sceneManager.update_scene_object.connect(self.updateAnimationGUI)
         self.sceneObjectTableWidget.itemClicked.connect(self.slotSetCurrentObjectBasedOnItem)
         self.sceneObjectTableWidget.verticalHeader().sectionClicked.connect(self.slotSetCurrentObjectBasedOnRow)
-
-    def close(self):
-        qApp.quit()
 
     def handleDroppedFiles(self,links):
         """ handles drags of files or directories onto the animationViewer widget
