@@ -48,7 +48,7 @@ class RetargetDBDialog(QDialog, Ui_Dialog):
 
     def fill_combo_box_with_skeletons(self):
         skeleton_list = get_skeletons_from_remote_db(self.db_url)
-        for idx, skel in skeleton_list:
+        for idx, skel, owner in skeleton_list:
             self.sourceModelComboBox.addItem(skel, idx)
             self.targetModelComboBox.addItem(skel, idx)
 

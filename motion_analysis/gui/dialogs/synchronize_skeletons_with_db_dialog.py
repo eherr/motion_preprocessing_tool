@@ -89,7 +89,7 @@ class SynchronizeSkeletonsWithDBDialog(QDialog, Ui_Dialog):
         self.db_skeletons = []
         self.skeletonDBTableWidget.clear()
         skeleton_list = get_skeletons_from_remote_db(self.db_url)
-        for idx, s in skeleton_list:
+        for idx, s, owner in skeleton_list:
             insertRow = self.skeletonDBTableWidget.rowCount()
             self.skeletonDBTableWidget.insertRow(insertRow)
             indexItem = QTableWidgetItem("")
