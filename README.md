@@ -17,7 +17,13 @@ git clone --recursive  git@github.com:eherr/motion_preprocessing_tool.git
 ```
 3. Install the requirements. To run the tool on Windows, please download PyOpenGL from here: https://www.lfd.uci.edu/~gohlke/pythonlibs/.
 ```bat
+
+pip install git+https://github.com/eherr/anim_utils/
+
+pip install git+https://github.com/eherr/vis_utils
+
 pip install -r requirements.txt
+
 ```
 4. Start the tool.
 ```bat
