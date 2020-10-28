@@ -2,7 +2,7 @@
 # Motion Preprocessing Tool
 
 
-Visualization and editing tool for skeleton animations and statistical models It uses the OpenGL renderer of the [vis_utils](https://github.com/eherr/vis_utils.git) and provides functionality to retarget and edit animations based on the [anim_utils](https://github.com/eherr/anim_utils.git).  
+Visualization and editing tool for skeleton animations and statistical models It uses the OpenGL renderer of the [vis_utils](https://github.com/eherr/vis_utils) and provides functionality to retarget and edit animations based on the [anim_utils](https://github.com/eherr/anim_utils).  
 Using an integrated database browser, motions can be downloaded from [https://motion.dfki.de](https://motion.dfki.de/index.php/motion-capture-data/). The code for the database is available in a separate [repository](https://github.com/eherr/motion_database_server), so a custom database can also be set up.
 
 The [morphablegraphs](https://github.com/eherr/morphablegraphs.git) module is necessary to create and load statistical motion models.
@@ -16,7 +16,7 @@ The [morphablegraphs](https://github.com/eherr/morphablegraphs.git) module is ne
 git clone --recursive  git@github.com:eherr/motion_preprocessing_tool.git
 ```
 
-3. Install the base packages for animation data editing and visualization.
+3. Install the base packages for [animation data editing](https://github.com/eherr/anim_utils) and [visualization](https://github.com/eherr/vis_utils).
 ```bat
 
 pip install git+https://github.com/eherr/anim_utils/
