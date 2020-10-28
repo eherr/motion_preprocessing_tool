@@ -15,17 +15,23 @@ The [morphablegraphs](https://github.com/eherr/morphablegraphs.git) module is ne
 ```bat
 git clone --recursive  git@github.com:eherr/motion_preprocessing_tool.git
 ```
-3. Install the requirements. To run the tool on Windows, please download PyOpenGL from here: https://www.lfd.uci.edu/~gohlke/pythonlibs/.
+
+3. Install the base packages for animation data editing and visualization.
 ```bat
 
 pip install git+https://github.com/eherr/anim_utils/
 
 pip install git+https://github.com/eherr/vis_utils
 
+```
+
+4. Install other requirements. To run the tool on Windows, please download PyOpenGL from here: https://www.lfd.uci.edu/~gohlke/pythonlibs/.
+```bat
+
 pip install -r requirements.txt
 
 ```
-4. Start the tool.
+5. Start the tool.
 ```bat
 python run_motion_preprocessing_tool.py
 ```
