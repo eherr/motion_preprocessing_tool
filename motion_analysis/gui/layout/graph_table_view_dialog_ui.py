@@ -1,78 +1,132 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'graph_table_view_dialog.ui',
-# licensing of 'graph_table_view_dialog.ui' applies.
-#
-# Created: Tue Feb 11 15:24:02 2020
-#      by: pyside2-uic  running on PySide2 5.13.1
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'graph_table_view_dialog.ui'
+##
+## Created by: Qt User Interface Compiler version 5.15.2
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(469, 355)
-        self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.label_2 = QtWidgets.QLabel(Dialog)
-        self.label_2.setObjectName("label_2")
+        if not Dialog.objectName():
+            Dialog.setObjectName(u"Dialog")
+        Dialog.resize(621, 355)
+        self.verticalLayout = QVBoxLayout(Dialog)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.label_2 = QLabel(Dialog)
+        self.label_2.setObjectName(u"label_2")
+
         self.horizontalLayout_4.addWidget(self.label_2)
-        self.skeletonListComboBox = QtWidgets.QComboBox(Dialog)
-        self.skeletonListComboBox.setObjectName("skeletonListComboBox")
+
+        self.skeletonListComboBox = QComboBox(Dialog)
+        self.skeletonListComboBox.setObjectName(u"skeletonListComboBox")
+
         self.horizontalLayout_4.addWidget(self.skeletonListComboBox)
-        spacerItem = QtWidgets.QSpacerItem(128, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem)
+
+        self.horizontalSpacer_4 = QSpacerItem(128, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_4.addItem(self.horizontalSpacer_4)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_4)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label = QtWidgets.QLabel(Dialog)
-        self.label.setObjectName("label")
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.label = QLabel(Dialog)
+        self.label.setObjectName(u"label")
+
         self.horizontalLayout.addWidget(self.label)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
+
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer_3)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.graphListWidget = QtWidgets.QListWidget(Dialog)
-        self.graphListWidget.setObjectName("graphListWidget")
+
+        self.graphListWidget = QListWidget(Dialog)
+        self.graphListWidget.setObjectName(u"graphListWidget")
+
         self.verticalLayout.addWidget(self.graphListWidget)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.addButton = QtWidgets.QPushButton(Dialog)
-        self.addButton.setObjectName("addButton")
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.addButton = QPushButton(Dialog)
+        self.addButton.setObjectName(u"addButton")
+
         self.horizontalLayout_3.addWidget(self.addButton)
-        self.copyButton = QtWidgets.QPushButton(Dialog)
-        self.copyButton.setObjectName("copyButton")
+
+        self.copyButton = QPushButton(Dialog)
+        self.copyButton.setObjectName(u"copyButton")
+
         self.horizontalLayout_3.addWidget(self.copyButton)
-        self.editButton = QtWidgets.QPushButton(Dialog)
-        self.editButton.setObjectName("editButton")
+
+        self.editButton = QPushButton(Dialog)
+        self.editButton.setObjectName(u"editButton")
+
         self.horizontalLayout_3.addWidget(self.editButton)
-        self.removeButton = QtWidgets.QPushButton(Dialog)
-        self.removeButton.setObjectName("removeButton")
+
+        self.removeButton = QPushButton(Dialog)
+        self.removeButton.setObjectName(u"removeButton")
+
         self.horizontalLayout_3.addWidget(self.removeButton)
-        self.loadButton = QtWidgets.QPushButton(Dialog)
-        self.loadButton.setObjectName("loadButton")
-        self.horizontalLayout_3.addWidget(self.loadButton)
-        self.exportButton = QtWidgets.QPushButton(Dialog)
-        self.exportButton.setObjectName("exportButton")
+
+        self.exportButton = QPushButton(Dialog)
+        self.exportButton.setObjectName(u"exportButton")
+
         self.horizontalLayout_3.addWidget(self.exportButton)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem2)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_3)
 
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.loadStateMachineButton = QPushButton(Dialog)
+        self.loadStateMachineButton.setObjectName(u"loadStateMachineButton")
+
+        self.horizontalLayout_2.addWidget(self.loadStateMachineButton)
+
+        self.loadGeneratorButton = QPushButton(Dialog)
+        self.loadGeneratorButton.setObjectName(u"loadGeneratorButton")
+
+        self.horizontalLayout_2.addWidget(self.loadGeneratorButton)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+
+
         self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+        QMetaObject.connectSlotsByName(Dialog)
+    # setupUi
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtWidgets.QApplication.translate("Dialog", "Graph Table View", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("Dialog", "Skeleton", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("Dialog", "Graph List", None, -1))
-        self.addButton.setText(QtWidgets.QApplication.translate("Dialog", "Add", None, -1))
-        self.copyButton.setText(QtWidgets.QApplication.translate("Dialog", "Copy", None, -1))
-        self.editButton.setText(QtWidgets.QApplication.translate("Dialog", "Edit", None, -1))
-        self.removeButton.setText(QtWidgets.QApplication.translate("Dialog", "Remove", None, -1))
-        self.loadButton.setText(QtWidgets.QApplication.translate("Dialog", "Load", None, -1))
-        self.exportButton.setText(QtWidgets.QApplication.translate("Dialog", "Export", None, -1))
+        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Graph Table View", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog", u"Skeleton", None))
+        self.label.setText(QCoreApplication.translate("Dialog", u"Graph List", None))
+        self.addButton.setText(QCoreApplication.translate("Dialog", u"Create", None))
+        self.copyButton.setText(QCoreApplication.translate("Dialog", u"Copy", None))
+        self.editButton.setText(QCoreApplication.translate("Dialog", u"Edit", None))
+        self.removeButton.setText(QCoreApplication.translate("Dialog", u"Remove", None))
+        self.exportButton.setText(QCoreApplication.translate("Dialog", u"Export", None))
+        self.loadStateMachineButton.setText(QCoreApplication.translate("Dialog", u"Load as State Machine", None))
+        self.loadGeneratorButton.setText(QCoreApplication.translate("Dialog", u"Load as Generator", None))
+    # retranslateUi
 

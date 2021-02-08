@@ -65,7 +65,12 @@ def load_blend_controller(self, filename):
 
 def load_morphable_graphs_file(builder, filename):
     scene_object = SceneObject()
-    animation_controller = MorphableGraphsController(scene_object, filename, color=get_random_color())
+    loader = MotionStateGraphLoader()
+    loader.set_data_source(filename[:-4])
+    loader.use_all_joints = False  # = set animated joints to all
+    name = filename.split("/")[-1]
+    graph = loader.build()
+    animation_controller = MorphableGraphsController(scene_object, name, graph, color=get_random_color())
     scene_object.add_component("morphablegraphs_controller", animation_controller)
     scene_object.add_component("skeleton_vis", animation_controller._visualization)
     scene_object.name = animation_controller.name
@@ -111,60 +116,44 @@ SceneObjectBuilder.register_object("joint_control_knob", create_joint_control_kn
 SceneObjectBuilder.register_object("file_blend_controller", load_blend_controller)
 SceneObjectBuilder.register_object("blend_controller", create_blend_controller)
 
-SceneObjectBuilder.register_file_handler("zip", load_morphable_graphs_file)
 SceneObjectBuilder.register_file_handler("motion_graph", load_motion_graph_controller)
 
-try:
-    from .morphable_graph_state_machine import MorphableGraphStateMachine, DEFAULT_CONFIG, MotionStateGraphLoader
-    from .morphable_graphs_controller import MorphableGraphsController
-    from .motion_graph_controller import MotionGraphController
-    from .motion_primitive_controller import MotionPrimitiveController
 
-    def load_morphable_graph_state_machine(builder, path, use_all_joints=True):
-        scene_object = SceneObject()
-        scene_object.scene = builder._scene
-        builder.create_component("morphablegraph_state_machine", scene_object, path, use_all_joints)
-        builder._scene.addObject(scene_object)
-        return scene_object
+from .morphable_graph_state_machine import MorphableGraphStateMachine, DEFAULT_CONFIG, MotionStateGraphLoader
+from .morphable_graphs_controller import MorphableGraphsController, DEFAULT_ALGORITHM_CONFIG
+from .motion_graph_controller import MotionGraphController
+from .motion_primitive_controller import MotionPrimitiveController
 
-    def load_morphable_graph_state_machine_from_db(builder, db_path, skeleton_name, graph_id, use_all_joints=False, config=DEFAULT_CONFIG):
-        scene_object = SceneObject()
-        scene_object.scene = builder._scene
-        builder.create_component("morphablegraph_state_machine_from_db", scene_object,  db_path, skeleton_name, graph_id, use_all_joints, config)
-        builder._scene.addObject(scene_object)
-        return scene_object
+def load_morphable_graph_state_machine(builder, path, use_all_joints=True):
+    scene_object = SceneObject()
+    scene_object.scene = builder._scene
+    builder.create_component("morphablegraph_state_machine", scene_object, path, use_all_joints)
+    builder._scene.addObject(scene_object)
+    return scene_object
 
-    def attach_mg_state_machine(builder, scene_object,file_path, use_all_joints=True, config=DEFAULT_CONFIG):
-        color=get_random_color()  
-        loader = MotionStateGraphLoader()
-        loader.use_all_joints = use_all_joints# = set animated joints to all
-        if os.path.isfile(file_path):
-            loader.set_data_source(file_path[:-4])
-            graph = loader.build()
-            name = file_path.split("/")[-1]
-            start_node = None
-            animation_controller = MorphableGraphStateMachine(scene_object, graph, start_node, use_all_joints=use_all_joints, config=config, pfnn_data=loader.pfnn_data)
-            scene_object.add_component("morphablegraph_state_machine", animation_controller)
-            scene_object.name = name
-            if builder._scene.visualize:
-                vis = builder.create_component("skeleton_vis", scene_object, animation_controller.get_skeleton(), color)
-                animation_controller.set_visualization(vis)
-                #scene_object._components["morphablegraph_state_machine"].update_scene_object.connect(builder._scene.slotUpdateSceneObjectRelay)
+def load_morphable_graph_state_machine_from_db(builder, db_path, skeleton_name, graph_id, use_all_joints=False, config=DEFAULT_CONFIG):
+    scene_object = SceneObject()
+    scene_object.scene = builder._scene
+    builder.create_component("morphablegraph_state_machine_from_db", scene_object,  db_path, skeleton_name, graph_id, use_all_joints, config)
+    builder._scene.addObject(scene_object)
+    return scene_object
 
-            agent = SimpleNavigationAgent(scene_object)
-            scene_object.add_component("nav_agent", agent)
-            return animation_controller
+def load_morphable_graphs_generator_from_db(builder, db_path, skeleton_name, graph_id, use_all_joints=False, config=DEFAULT_ALGORITHM_CONFIG):
+    scene_object = SceneObject()
+    scene_object.scene = builder._scene
+    builder.create_component("morphablegraph_generator_from_db", scene_object,  db_path, skeleton_name, graph_id, use_all_joints, config)
+    builder._scene.addObject(scene_object)
+    return scene_object
 
-        
-    def attach_mg_state_machine_from_db(builder, scene_object, db_url, skeleton_name, graph_id, use_all_joints=False, config=DEFAULT_CONFIG):
-        color=get_random_color()
-        loader = MotionStateGraphLoader()
-        # set animated joints to all necessary for combination of models with different joints
-        loader.use_all_joints = use_all_joints
-        frame_time = 1.0/72
-        graph = loader.build_from_database(db_url, skeleton_name, graph_id, frame_time)
+def attach_mg_state_machine(builder, scene_object,file_path, use_all_joints=True, config=DEFAULT_CONFIG):
+    color=get_random_color()  
+    loader = MotionStateGraphLoader()
+    loader.use_all_joints = use_all_joints# = set animated joints to all
+    if os.path.isfile(file_path):
+        loader.set_data_source(file_path[:-4])
+        graph = loader.build()
+        name = file_path.split("/")[-1]
         start_node = None
-        name = skeleton_name
         animation_controller = MorphableGraphStateMachine(scene_object, graph, start_node, use_all_joints=use_all_joints, config=config, pfnn_data=loader.pfnn_data)
         scene_object.add_component("morphablegraph_state_machine", animation_controller)
         scene_object.name = name
@@ -177,37 +166,77 @@ try:
         scene_object.add_component("nav_agent", agent)
         return animation_controller
 
-    def load_motion_primitive(builder, file_path):
-        scene_object = SceneObject()
-        with open(file_path, "r") as in_file:
-            data = json.load(in_file)
-        name = file_path.split("/")[-1]
-        animation_controller = MotionPrimitiveController(scene_object, name, data, color=get_random_color())
-        scene_object.add_component("motion_primitive_controller", animation_controller)
-        scene_object.name = animation_controller.name
-        animation_controller.init_visualization()
-        builder._scene.addAnimationController(scene_object, "motion_primitive_controller")
-        return scene_object
-        
-    def create_motion_primitive(builder, name, data_str, cluster_tree_data_str=None):
-        scene_object = SceneObject()
-        data = json.loads(data_str)
-        animation_controller = MotionPrimitiveController(scene_object, name, data, color=get_random_color())
-        if cluster_tree_data_str is not None and cluster_tree_data_str !="":
-            cluster_tree_data = json.loads(cluster_tree_data_str)
-            animation_controller.load_cluster_tree_from_json(cluster_tree_data)
-        scene_object.add_component("motion_primitive_controller", animation_controller)
-        scene_object.name = animation_controller.name
-        animation_controller.init_visualization()
-        builder._scene.addAnimationController(scene_object, "motion_primitive_controller")
-        return scene_object
-    SceneObjectBuilder.register_object("motion_primitive", create_motion_primitive)
-    SceneObjectBuilder.register_component("morphablegraph_state_machine", attach_mg_state_machine)
-    SceneObjectBuilder.register_component("morphablegraph_state_machine_from_db", attach_mg_state_machine_from_db)
-    SceneObjectBuilder.register_file_handler("mg.zip", load_morphable_graph_state_machine)
-    SceneObjectBuilder.register_object("mg_from_db", load_morphable_graph_state_machine_from_db)
-    SceneObjectBuilder.register_file_handler("mm.json", load_motion_primitive)
+    
+def attach_mg_state_machine_from_db(builder, scene_object, db_url, skeleton_name, graph_id, use_all_joints=False, config=DEFAULT_CONFIG):
+    color=get_random_color()
+    loader = MotionStateGraphLoader()
+    # set animated joints to all necessary for combination of models with different joints
+    loader.use_all_joints = use_all_joints
+    frame_time = 1.0/72
+    graph = loader.build_from_database(db_url, skeleton_name, graph_id, frame_time)
+    start_node = None
+    name = skeleton_name
+    animation_controller = MorphableGraphStateMachine(scene_object, graph, start_node, use_all_joints=use_all_joints, config=config, pfnn_data=loader.pfnn_data)
+    scene_object.add_component("morphablegraph_state_machine", animation_controller)
+    scene_object.name = name
+    if builder._scene.visualize:
+        vis = builder.create_component("skeleton_vis", scene_object, animation_controller.get_skeleton(), color)
+        animation_controller.set_visualization(vis)
+        #scene_object._components["morphablegraph_state_machine"].update_scene_object.connect(builder._scene.slotUpdateSceneObjectRelay)
 
-except:
-    print("Error: Could not import morphablegraphs")
-    pass
+    agent = SimpleNavigationAgent(scene_object)
+    scene_object.add_component("nav_agent", agent)
+    return animation_controller
+
+def attach_mg_generator_from_db(builder, scene_object, db_url, skeleton_name, graph_id, use_all_joints=False, config=DEFAULT_CONFIG):
+    color=get_random_color()
+    loader = MotionStateGraphLoader()
+    # set animated joints to all necessary for combination of models with different joints
+    loader.use_all_joints = use_all_joints
+    frame_time = 1.0/72
+    graph = loader.build_from_database(db_url, skeleton_name, graph_id, frame_time)
+    start_node = None
+    name = skeleton_name
+    animation_controller = MorphableGraphsController(scene_object, name, graph, start_node=start_node, config=DEFAULT_ALGORITHM_CONFIG, color=get_random_color()) #start_node, use_all_joints=use_all_joints, config=config, pfnn_data=loader.pfnn_data)
+   
+    #scene_object.add_component("skeleton_vis", animation_controller._visualization)
+    scene_object.add_component("morphablegraphs_controller", animation_controller)
+    scene_object.name = name
+    if builder._scene.visualize:
+        vis = builder.create_component("skeleton_vis", scene_object, animation_controller.get_skeleton(), color)
+        animation_controller.set_visualization(vis)
+        #scene_object._components["morphablegraph_state_machine"].update_scene_object.connect(builder._scene.slotUpdateSceneObjectRelay)
+    return animation_controller
+
+def load_motion_primitive(builder, file_path):
+    scene_object = SceneObject()
+    with open(file_path, "r") as in_file:
+        data = json.load(in_file)
+    name = file_path.split("/")[-1]
+    animation_controller = MotionPrimitiveController(scene_object, name, data, color=get_random_color())
+    scene_object.add_component("motion_primitive_controller", animation_controller)
+    scene_object.name = animation_controller.name
+    animation_controller.init_visualization()
+    builder._scene.addAnimationController(scene_object, "motion_primitive_controller")
+    return scene_object
+    
+def create_motion_primitive(builder, name, data, cluster_tree_data=None):
+    scene_object = SceneObject()
+    #data = json.loads(data_str)
+    animation_controller = MotionPrimitiveController(scene_object, name, data, color=get_random_color())
+    if cluster_tree_data is not None:
+        animation_controller.load_cluster_tree_from_json(cluster_tree_data)
+    scene_object.add_component("motion_primitive_controller", animation_controller)
+    scene_object.name = animation_controller.name
+    animation_controller.init_visualization()
+    builder._scene.addAnimationController(scene_object, "motion_primitive_controller")
+    return scene_object
+SceneObjectBuilder.register_object("motion_primitive", create_motion_primitive)
+SceneObjectBuilder.register_component("morphablegraph_state_machine", attach_mg_state_machine)
+SceneObjectBuilder.register_component("morphablegraph_state_machine_from_db", attach_mg_state_machine_from_db)
+SceneObjectBuilder.register_component("morphablegraph_generator_from_db", attach_mg_generator_from_db)
+SceneObjectBuilder.register_file_handler("mg.zip", load_morphable_graph_state_machine)
+SceneObjectBuilder.register_object("mg_state_machine_from_db", load_morphable_graph_state_machine_from_db)
+SceneObjectBuilder.register_object("mg_generator_from_db", load_morphable_graphs_generator_from_db)
+SceneObjectBuilder.register_file_handler("mm.json", load_motion_primitive)
+SceneObjectBuilder.register_file_handler("zip", load_morphable_graphs_file)

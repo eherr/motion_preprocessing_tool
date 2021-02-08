@@ -23,13 +23,14 @@
 import json
 from copy import deepcopy
 from vis_utils.animation.animation_controller import AnimationController, CONTROLLER_TYPE_MG
-from vis_utils.animation.skeleton_animation_controller import LegacySkeletonAnimationController
+from vis_utils.animation.skeleton_animation_controller import LegacySkeletonAnimationController, SkeletonAnimationController
 from vis_utils.animation.skeleton_visualization import SkeletonVisualization
 from anim_utils.animation_data import BVHWriter, MotionVector
 from anim_utils.utilities.io_helper_functions import write_to_json_file
 from anim_utils.animation_data.quaternion_frame import convert_quaternion_frames_to_euler_frames
 from anim_utils.utilities.log import set_log_mode, LOG_MODE_DEBUG
 from anim_utils.animation_data.skeleton_models import *
+from anim_utils.animation_data.motion_state import MotionState
 from morphablegraphs.motion_model import MotionStateGraphLoader
 from morphablegraphs.motion_generator.graph_walk import GraphWalk
 from morphablegraphs import MotionGenerator, GraphWalkOptimizer, DEFAULT_ALGORITHM_CONFIG, AnnotatedMotionVector
@@ -58,19 +59,16 @@ SERVICE_CONFIG = {
 }
 
 
-class MorphableGraphsController(LegacySkeletonAnimationController):
+class MorphableGraphsController(SkeletonAnimationController):#LegacySkeletonAnimationController
     """ The MorphableGraphsController class displays a motion genenrated by a graph of statistical motion models
         The class emits a Qt signals when the animation state changes.
         The scene containing a controller connects to those signals and relays them to the GUI.
     """
-    def __init__(self, scene_object, file_path, color=(0, 0, 1)):
-        LegacySkeletonAnimationController.__init__(self, scene_object)
-        loader = MotionStateGraphLoader()
-        loader.set_data_source(file_path[:-4])
-        loader.use_all_joints = False  # = set animated joints to all
-        self.name = file_path.split("/")[-1]
-        self._graph = loader.build()
-        self.algorithm_config = DEFAULT_ALGORITHM_CONFIG
+    def __init__(self, scene_object, name, graph, start_node=None, config=DEFAULT_ALGORITHM_CONFIG, color=(0, 0, 1)):
+        SkeletonAnimationController.__init__(self, scene_object)
+        self.name = name# file_path.split("/")[-1]
+        self._graph = graph #loader.build()
+        self.algorithm_config = config
         self._service_config = SERVICE_CONFIG
         self._graph_walk = None
         self._motion = None
@@ -78,16 +76,27 @@ class MorphableGraphsController(LegacySkeletonAnimationController):
         self.frameTime = self._graph.skeleton.frame_time
         print(self._graph.skeleton.animated_joints)
         print("set frame time to", self.frameTime)
-        self._visualization = SkeletonVisualization(scene_object, color)
-        self._visualization.set_skeleton(self._graph.skeleton)
+        #self._visualization = SkeletonVisualization(scene_object, color)
+        #self._visualization.set_skeleton(self._graph.skeleton)
         self.type = CONTROLLER_TYPE_MG
         set_log_mode(LOG_MODE_DEBUG)
-        self.start_node = self._graph.get_random_start_node()
+        if start_node is None:
+            print("generate random start")
+            start_node = self._graph.get_random_start_node()
+        self.start_node = start_node
         print("start node", self.start_node)
         self.start_pose = {"position": [0, 0, 0], "orientation": [0, 0, 0]}
 
-    def init_visualization(self):
+    def set_visualization(self, visualization):
+        self._visualization = visualization
         self.synthesize_random_sample(self.start_node)
+        self.updateTransformation()
+
+    #def init_visualization(self):
+    #    self.synthesize_random_sample(self.start_node)
+
+    def get_skeleton(self):
+        return self._graph.skeleton
 
     def clear_graph_walk(self):
         self._graph_walk = None
@@ -99,41 +108,43 @@ class MorphableGraphsController(LegacySkeletonAnimationController):
         generator = motion_generator.MotionGenerator(self._graph, self._service_config, self.algorithm_config)
         generator.scene_interface.set_scene(self.scene_object.scene)
 
+        motion = None
         print("start synthesis")
         if not self._regenerate:
-            self._motion = generator.generate_motion(constraints, activate_joint_map=False,
+            motion = generator.generate_motion(constraints, activate_joint_map=False,
                                                                   activate_coordinate_transform=False,
                                                                   complete_motion_vector=False,
                                                                   prev_graph_walk=self._graph_walk)
             self._graph_walk = generator.graph_walk
         else:
-            self._motion = generator.generate_motion(constraints, activate_joint_map=False,
+            motion = generator.generate_motion(constraints, activate_joint_map=False,
                                                                   activate_coordinate_transform=False,
                                                                   complete_motion_vector=False)
 
             self._graph_walk = generator.graph_walk
 
-        if self._motion.ground_contacts is not None:
+        if motion.ground_contacts is not None:
             from anim_utils.motion_editing.utils import convert_ground_contacts_to_annotation
 
-            annotation_data = convert_ground_contacts_to_annotation(self._motion.ground_contacts,
+            annotation_data = convert_ground_contacts_to_annotation(motion.ground_contacts,
                                                          self._graph.skeleton.skeleton_model[
                                                              "foot_joints"],
-                                                         self._motion.n_frames)
+                                                         motion.n_frames)
 
             self._semantic_annotation = annotation_data["semantic_annotation"]
             self.label_color_map = annotation_data["color_map"]
         self._regenerate = False
-
-        self.updated_frame()
+        if motion is not None:
+            self._motion = MotionState(motion)
+        self.updateTransformation()
         #self._create_constraint_visualization()
         #self.dump_motion_data()
 
     def _create_constraint_visualization(self):
-        if self._motion.grounding_constraints is None:
+        if self._motion.mv.grounding_constraints is None:
             return
         positions = dict()
-        for frame_idx, constraints in list(self._motion.grounding_constraints.items()):
+        for frame_idx, constraints in list(self._motion.mv.grounding_constraints.items()):
             for c in constraints:
                 pos = tuple(c.position)
                 if pos not in positions:
@@ -143,24 +154,26 @@ class MorphableGraphsController(LegacySkeletonAnimationController):
 
     def dump_motion_data(self, filename="temp_result.json"):
         dump_data = dict()
-        dump_data["animation"] = [pose.tolist() for pose in convert_quaternion_frames_to_euler_frames(self._motion.frames)]
+        dump_data["animation"] = [pose.tolist() for pose in convert_quaternion_frames_to_euler_frames(self._motion.mv.frames)]
         dump_data["jointOrder"] = self._graph.skeleton.animated_joints
         write_to_json_file(filename, dump_data)
 
     def synthesize_random_walk(self, start_node, n_mp_steps, use_time=False):
-        self._motion = AnnotatedMotionVector(self._graph.skeleton, self.algorithm_config)
+        motion = AnnotatedMotionVector(self._graph.skeleton, self.algorithm_config)
         graph_walk = self._graph.node_groups[start_node[0]].generate_random_walk(start_node, n_mp_steps)
         for step in graph_walk:
             frames = self._graph.nodes[step["node_key"]].back_project(step["parameters"], use_time).get_motion_vector()
-            self._motion.append_frames(frames)
-        self.updated_frame()
+            motion.append_frames(frames)
+        self._motion = MotionState(motion)
+        self.updateTransformation()
 
     def synthesize_random_sample(self, start_node):
-        self._motion = AnnotatedMotionVector(skeleton=self._graph.skeleton)
+        motion = AnnotatedMotionVector(skeleton=self._graph.skeleton)
         spline = self._graph.nodes[start_node].sample()
         frames = spline.get_motion_vector()
-        self._motion.append_frames(frames)
-        self.updated_frame()
+        motion.append_frames(frames)
+        self._motion = MotionState(motion)
+        self.updateTransformation()
 
     def updated_frame(self):
         prevPlayAnimation = self.playAnimation
@@ -170,7 +183,7 @@ class MorphableGraphsController(LegacySkeletonAnimationController):
 
     def getNumberOfFrames(self):
         if self._motion is not None:
-            return self._motion.n_frames
+            return self._motion.mv.n_frames
         else:
             return 0
 
@@ -191,7 +204,7 @@ class MorphableGraphsController(LegacySkeletonAnimationController):
         if self._motion is not None:
             frame_time = self.frameTime
             skeleton = self._graph.skeleton
-            frames = skeleton.add_fixed_joint_parameters_to_motion(self._motion.frames)
+            frames = skeleton.add_fixed_joint_parameters_to_motion(self._motion.mv.frames)
             bvh_writer = BVHWriter(None, skeleton, frames, frame_time, True)
             bvh_writer.write(filename)
 
@@ -203,8 +216,9 @@ class MorphableGraphsController(LegacySkeletonAnimationController):
         with open(filename) as in_file:
             data = json.load(in_file)
             self._graph_walk = GraphWalk.from_json(self._graph, data)
-            self._motion = self._graph_walk.convert_to_annotated_motion()
-            self.updated_frame()
+            motion = self._graph_walk.convert_to_annotated_motion()
+            self._motion = MotionState(motion)
+            self.updateTransformation()
 
     def getJoints(self):
         return list(self._graph.skeleton.nodes.keys())
@@ -236,7 +250,7 @@ class MorphableGraphsController(LegacySkeletonAnimationController):
 
     def get_motion_vector_copy(self, start_frame, end_frame):
         mv_copy = MotionVector()
-        mv_copy.frames = deepcopy(self._motion.frames[start_frame:end_frame])
+        mv_copy.frames = deepcopy(self._motion.mv.frames[start_frame:end_frame])
         skeleton = self._graph.skeleton
         mv_copy.frames = skeleton.add_fixed_joint_parameters_to_motion(mv_copy.frames)
         mv_copy.n_frames = len(mv_copy.frames)
