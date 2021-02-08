@@ -62,16 +62,13 @@ from vis_utils.animation.animation_editor import AnimationEditorBase
 from motion_analysis.gui.application_manager import ApplicationManager
 from motion_analysis.gui.layout.motion_db_browser_dialog_ui import Ui_Dialog
 from motion_analysis.session_manager import SessionManager
-try:
-    from morphablegraphs.utilities import convert_to_mgrd_skeleton
-    from morphablegraphs.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
-    from morphablegraphs.utilities.db_interface import get_model_list_from_remote_db,upload_motion_model_to_remote_db, download_motion_model_from_remote_db, \
-                                            delete_model_by_id_from_remote_db, upload_cluster_tree_to_remote_db, \
-                                            download_cluster_tree_from_remote_db, create_cluster_tree_from_model, \
-                                            load_cluster_tree_from_json, get_standard_config, convert_motion_to_static_motion_primitive, \
-                                            create_motion_primitive_model, align_motion_data, align_motions_in_db, create_motion_model_in_db
-except:
-    pass
+from morphablegraphs.utilities import convert_to_mgrd_skeleton
+from morphablegraphs.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
+from morphablegraphs.utilities.db_interface import get_model_list_from_remote_db,upload_motion_model_to_remote_db, download_motion_model_from_remote_db, \
+                                        delete_model_by_id_from_remote_db, upload_cluster_tree_to_remote_db, \
+                                        download_cluster_tree_from_remote_db, create_cluster_tree_from_model, \
+                                        load_cluster_tree_from_json, get_standard_config, convert_motion_to_static_motion_primitive, \
+                                        create_motion_primitive_model, align_motion_data, align_motions_in_db, create_motion_model_in_db
 
 
 def normalize(v):
@@ -677,27 +674,25 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
         model_name = str(item.text())
-        model_data_str = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
-        cluster_tree_data_str = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
-        if model_data_str is not None:
-            self.scene.object_builder.create_object("motion_primitive", model_name, model_data_str, cluster_tree_data_str)
+        model_data = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
+        cluster_tree_data = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
+        if model_data is not None:
+            self.scene.object_builder.create_object("motion_primitive", model_name, model_data, cluster_tree_data)
 
     def slot_export_motion_model(self):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
         model_name = str(item.text())
-        model_data_str = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
-        if model_data_str is not None:
+        model_data = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
+        if model_data is not None:
             filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
             with open(filename, "w") as out_file:
-                out_file.write(model_data_str)
+                out_file.write(json.dumps(model_data))
 
     def slot_create_cluster_tree(self):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
-        model_data_str = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
-        model = json.loads(model_data_str)
-
+        model = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
         tree = create_cluster_tree_from_model(model, self.n_samples, self.n_subdivisions_per_level)
         tree_data = dict()
         tree_data["data"] = tree.data.tolist()
@@ -721,9 +716,8 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
         model_name = str(item.text())
-        cluster_tree_data_str = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
-        if cluster_tree_data_str is not None:
-            cluster_tree_data = json.loads(cluster_tree_data_str)
+        cluster_tree_data = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
+        if cluster_tree_data is not None:
             cluster_tree = load_cluster_tree_from_json(cluster_tree_data)
             filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
             cluster_tree.save_to_file_pickle(filename)
@@ -775,13 +769,13 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         if len(model_list) > 0 and not os.path.isdir(out_dir):
             os.makedirs(out_dir)
         for model_id, name in model_list:
-            model_data_str = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
+            model_data = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
             with open(out_dir+ os.sep + name + "_quaternion_mm.json", "w+") as out_file:
-                out_file.write(model_data_str)
-            cluster_tree_data_str = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
-            if cluster_tree_data_str is not None and len(cluster_tree_data_str) > 0:
+                out_file.write(json.dumps(model_data))
+            cluster_tree_data = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
+            if cluster_tree_data is not None:
                 with open(out_dir+ os.sep + name + "_cluster_tree.json", "w+") as out_file:
-                    out_file.write(cluster_tree_data_str)
+                    out_file.write(json.dumps(cluster_tree_data))
 
     def slot_retarget_motions(self, is_aligned=0):
         dialog = RetargetDBDialog(self.db_url)
@@ -1031,15 +1025,14 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 if len(model_list) <1:
                     continue
                 model_id, name = model_list[-1]
-                model_data_str = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
+                model_data = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
                 with open(action_dir+ os.sep +  a+"_"+mp_name + "_quaternion_mm.json", "w+") as out_file:
-                    out_file.write(model_data_str)
-                cluster_tree_data_str = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
-                if cluster_tree_data_str is not None and len(cluster_tree_data_str) > 0:
+                    out_file.write(json.dumps(model_data))
+                cluster_tree_data = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
+                if cluster_tree_data is not None:
                     with open(action_dir+ os.sep +  a+"_"+mp_name + "_quaternion_cluster_tree.json", "w+") as out_file:
-                        out_file.write(cluster_tree_data_str)
+                        out_file.write(json.dumps(cluster_tree_data))
 
-                model_data = json.loads(model_data_str)
                 model = MotionPrimitiveModelWrapper()
                 model._initialize_from_json(mgrd_skeleton, model_data)
                 n_standard_transitions = 1
