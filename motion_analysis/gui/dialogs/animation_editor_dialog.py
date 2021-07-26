@@ -52,7 +52,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.leftViewerLayout.addWidget(self.leftView)
 
 
-        self.radius = 1.5
+        self.radius = 1.0
         self.fps = 60
         self.dt = 1/60
         self.timer = QTimer()
@@ -74,6 +74,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
             self.fpsLineEdit.setText(str(fps))
             self.skeleton = self.controller.get_skeleton()
             n_frames = self.controller.getNumberOfFrames()
+            self.skeleton_vis = self.controller.scene_object._components["skeleton_vis"]
             self.init_joints(self.controller)
         else:
             n_frames = 0
@@ -207,7 +208,7 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
             if len(self.skeleton.nodes[joint_name].children) > 0: # filter out end site joints
                 child_node = self.skeleton.nodes[joint_name].children[0]
                 if np.linalg.norm(child_node.offset)> 0:
-                    self.left_scene.object_builder.create_object("joint_control_knob", controller, joint_name, self.radius)
+                    self.left_scene.object_builder.create_object("joint_control_knob", controller, joint_name, self.radius * self.skeleton_vis.box_scale)
 
     def copy_controller(self, controller, target_scene):
         skeleton = controller.get_skeleton_copy()

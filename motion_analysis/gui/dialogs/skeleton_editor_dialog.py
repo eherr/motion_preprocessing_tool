@@ -240,7 +240,7 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
         self.viewerLayout.addWidget(self.view)
 
 
-        self.radius = 1.5
+        self.radius = 1.0
         self.fps = 60
         self.dt = 1/60
         self.timer = QTimer()
@@ -274,6 +274,7 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
         o = self.scene.object_builder.create_object("animation_controller", "skeleton", skeleton, motion_vector, skeleton.frame_time)
         self.controller = o._components["animation_controller"]
         self.skeleton = self.controller.get_skeleton()
+        self.skeleton_vis = o._components["skeleton_vis"]
         self.init_joints(self.controller)
         self.fill_joint_map()
 
@@ -412,9 +413,9 @@ class SkeletonEditorDialog(QDialog, Ui_Dialog):
     def init_joints(self, controller):
         for joint_name in controller.get_animated_joints():
             if len(self.skeleton.nodes[joint_name].children) > 0: # filter out end site joints
-                child_node = self.skeleton.nodes[joint_name]#.children[0]
-                if np.linalg.norm(child_node.offset)> 0:
-                    self.scene.object_builder.create_object("joint_control_knob", controller, joint_name, self.radius)
+                node = self.skeleton.nodes[joint_name]
+                if joint_name == self.skeleton.root or np.linalg.norm(node.offset)> 0:
+                    self.scene.object_builder.create_object("joint_control_knob", controller, joint_name, self.radius * self.skeleton_vis.box_scale)
 
     def draw(self):
         """ draw current scene on the given view
