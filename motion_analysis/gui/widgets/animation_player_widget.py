@@ -47,6 +47,7 @@ from motion_analysis import constants
 from anim_utils.utilities.db_interface import replace_motion_in_db
 from motion_analysis.gui.application_manager import ApplicationManager
 from motion_analysis.session_manager import SessionManager
+from vis_utils.animation.skeleton_animation_controller import SkeletonAnimationController
 
 
 def convert_annotation_to_phase(annotations):
@@ -86,6 +87,8 @@ class AnimationPlayerBaseWidget(QWidget):
             self.enable_upload()
 
     def fill_combo_box_with_models(self):
+        if not isinstance(self._controller, SkeletonAnimationController):
+            return
         if hasattr(self, "skeletonModelComboBox"):
             self.skeletonModelComboBox.clear()
             model_list = [""] + list(constants.LOCAL_SKELETON_MODELS.keys())

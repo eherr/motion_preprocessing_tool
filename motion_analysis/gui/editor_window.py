@@ -33,7 +33,7 @@ from motion_analysis import motion_synthesis
 from motion_analysis.gui.widgets import ObjectPropertiesWidget, AnimationEditorWidget, AnimationPlayerWidget, \
                                         CharacterWidget, FigureControllerWidget, GroupAnimationPlayerWidget, MGStateMachineWidget, \
                                          MorphableGraphControllerWidget, MotionPrimitiveControllerWidget, NavAgentWidget, \
-                                         BlendAnimationControllerWidget,AnimatedMeshWidget
+                                         BlendAnimationControllerWidget,AnimatedMeshWidget, AnimationDirectoryWidget
 from motion_analysis.gui.dialogs.motion_db_browser_dialog import MotionDBBrowserDialog
 from motion_analysis.gui.dialogs.graph_table_view_dialog import GraphTableViewDialog
 from motion_analysis.gui.dialogs.upload_motion_dialog import UploadMotionDialog
@@ -51,6 +51,7 @@ FIGURE_CONTROLLER_COMPONENT = "figure_controller"
 ANIMATION_EDITOR_COMPONENT = "animation_editor"
 MG_STATE_MACHINE_COMPONENT = "morphablegraph_state_machine"
 NAV_AGENT_COMPONENT = "nav_agent"
+ANIMATION_FOLDER_COMPONENT = "animation_directory_explorer"
 SCENE_OBJECT_WIDGETS = collections.OrderedDict()
 SCENE_OBJECT_WIDGETS["object"] =dict(constructor=ObjectPropertiesWidget, animated=False)
 SCENE_OBJECT_WIDGETS["animation_player"] = dict(constructor=AnimationPlayerWidget, animated=True)
@@ -63,6 +64,7 @@ SCENE_OBJECT_WIDGETS["animated_mesh"] = dict(constructor=AnimatedMeshWidget, ani
 SCENE_OBJECT_WIDGETS["figure_controller"] = dict(constructor=FigureControllerWidget, animated=False)
 SCENE_OBJECT_WIDGETS["morphablegraph_state_machine"] = dict(constructor=MGStateMachineWidget, animated=False)
 SCENE_OBJECT_WIDGETS["nav_agent"] = dict(constructor=NavAgentWidget, animated=False)
+SCENE_OBJECT_WIDGETS["animation_directory_explorer"] = dict(constructor=AnimationDirectoryWidget, animated=True)
 
 
 class EditorWindow(QMainWindow, Ui_MainWindow):
@@ -200,12 +202,7 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
             if os.path.isfile(path):
                 self.sceneManager.loadFile(path)
             elif os.path.isdir(path):
-                filePaths = []
-                for root, dirs, files in os.walk(path):
-                    for name in files:
-                        if name.endswith(".bvh"):
-                            filePath = os.path.join(root,name)
-                            self.sceneManager.scene.object_builder.create_object_from_file("bvh", filePath)
+                self.sceneManager.scene.object_builder.create_object("animation_directory_explorer", path, "bvh")
 
     def _add_qt_action(self, function, text, short_cut=None, status_tip=None):
         action_name = function.__name__ + 'Action'
@@ -264,6 +261,9 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
             if scene_object.has_component("nav_agent"):
                 self.show_widget("nav_agent", scene_object)
 
+            if scene_object.has_component("animation_directory_explorer"):
+                self.show_widget("animation_directory_explorer", scene_object)
+
             self.show_widget("object", scene_object)
 
     def show_widget(self, name, scene_object):
@@ -283,11 +283,9 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
 
     def loadBVHFilesFromDirectory(self):
         directory = QFileDialog.getExistingDirectory(self, "Select Directory")
-        for root, dirs, files in os.walk(str(directory)):
-            for name in files:
-                if name.endswith(".bvh"):
-                    filePath = os.path.join(root,name)
-                    self.sceneManager.scene.object_builder.create_object_from_file("bvh", filePath)
+        directory = str(directory)
+        if os.path.isdir(directory):
+            self.sceneManager.scene.object_builder.create_object("animation_directory_explorer", directory, "bvh")
 
  
     def slotAddItemToObjectList(self, sceneId, name):

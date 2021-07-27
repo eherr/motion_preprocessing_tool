@@ -10,7 +10,7 @@ from vis_utils.scene.components import GeometryDataComponent
 from vis_utils.scene.scene_object_builder import SceneObjectBuilder, SceneObject
 from vis_utils.scene.utils import get_random_color
 import vis_utils.constants as constants
-
+from .animation_directory_explorer import AnimationDirectoryExplorer
 
 def create_blend_controller(self, name, skeleton, motions, joint_name=None, constrained_frame=-1):
     joint_name = "hand_l"
@@ -231,6 +231,18 @@ def create_motion_primitive(builder, name, data, cluster_tree_data=None):
     animation_controller.init_visualization()
     builder._scene.addAnimationController(scene_object, "motion_primitive_controller")
     return scene_object
+
+
+def create_animation_directory_explorer(builder, directory, filetype):
+    scene_object = SceneObject()
+    animation_controller = AnimationDirectoryExplorer(scene_object, directory, filetype, color=get_random_color())
+    scene_object.add_component("animation_directory_explorer", animation_controller)
+    scene_object.name = animation_controller.name
+    builder._scene.addAnimationController(scene_object, "animation_directory_explorer")
+    return scene_object
+
+
+SceneObjectBuilder.register_object("animation_directory_explorer", create_animation_directory_explorer)
 SceneObjectBuilder.register_object("motion_primitive", create_motion_primitive)
 SceneObjectBuilder.register_component("morphablegraph_state_machine", attach_mg_state_machine)
 SceneObjectBuilder.register_component("morphablegraph_state_machine_from_db", attach_mg_state_machine_from_db)

@@ -29,7 +29,6 @@ from PySide2.QtCore import QTimer, Qt
 from PySide2.QtGui import QColor
 from OpenGL.GL import *
 from motion_analysis.gui.layout.skeleton_editor_dialog_ui import Ui_Dialog
-from .utils import get_animation_controllers
 from transformations import quaternion_matrix, quaternion_multiply, quaternion_about_axis
 from motion_analysis.gui.widgets.scene_viewer import SceneViewerWidget
 from vis_utils.animation import load_motion_from_bvh

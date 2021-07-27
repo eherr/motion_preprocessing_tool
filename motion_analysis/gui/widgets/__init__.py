@@ -11,3 +11,4 @@ from .motion_primitive_controller_widget import MotionPrimitiveControllerWidget
 from .nav_agent_widget import NavAgentWidget
 from .object_properties_widget import ObjectPropertiesWidget
 from .animated_mesh_widget import AnimatedMeshWidget
+from .animation_directory_widget import AnimationDirectoryWidget
