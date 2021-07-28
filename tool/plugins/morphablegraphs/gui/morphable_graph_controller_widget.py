@@ -158,7 +158,7 @@ class MorphableGraphControllerWidget(AnimationPlayerBaseWidget, Ui_Form):
             self.motionPrimitiveComboBox.addItem(mp, idx)
 
     def set_constraints_splines(self):
-        scene = self._parent.sceneManager.getDisplayedScene()
+        scene = self._parent.app_manager.getDisplayedScene()
         set_constraints_dialog = SelectSceneObjectsDialog(scene, get_splines, self)
         set_constraints_dialog.exec_()
         if set_constraints_dialog.success:
@@ -166,7 +166,7 @@ class MorphableGraphControllerWidget(AnimationPlayerBaseWidget, Ui_Form):
             self._create_mg_constraints_dict_from_single_spline(splineObject)
 
     def set_constraints(self):
-        scene = self._parent.sceneManager.getDisplayedScene()
+        scene = self._parent.app_manager.getDisplayedScene()
         ea_constraints_dialog = ActionSequenceDialog(scene, self._controller, self)
         ea_constraints_dialog.exec_()
         self._action_sequence = ea_constraints_dialog.get_constrained_actions()
@@ -224,7 +224,7 @@ class MorphableGraphControllerWidget(AnimationPlayerBaseWidget, Ui_Form):
             return
         self._action_sequence = []
         print("create objects from constraints")
-        scene = self._parent.sceneManager.getDisplayedScene()
+        scene = self._parent.app_manager.getDisplayedScene()
         action_list = []
         if "tasks" in self._constraints_dict.keys():
             for task in self._constraints_dict["tasks"]:
@@ -292,7 +292,7 @@ class MorphableGraphControllerWidget(AnimationPlayerBaseWidget, Ui_Form):
         self._controller.start_pose = start_pose
         self._action_sequence = []
         print("create objects from constraints")
-        scene = self._parent.sceneManager.getDisplayedScene()
+        scene = self._parent.app_manager.getDisplayedScene()
         a = [None, []]
         a[0] = self._constraints_dict["name"]
         a[1] = []

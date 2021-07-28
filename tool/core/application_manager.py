@@ -63,7 +63,6 @@ class ApplicationManager(QObject):
             self.last_time = time.perf_counter()
             self.last_fps_update_time = self.last_time
             self.views = list()
-            self.drawDebugVisualization = True
             self.statusBar = None
             self.scene = None
             self.graphics_widget = graphics_widget
@@ -88,7 +87,6 @@ class ApplicationManager(QObject):
             sim_settings = dict()
             sim_settings["auto_disable"] = False
             sim_settings["engine"] = "ode"
-            #sim_settings["engine"] = "bullet"
             sim_settings["add_ground"] = True
             sim = SimWorld(**sim_settings)
         
@@ -97,7 +95,6 @@ class ApplicationManager(QObject):
         self.scene.reached_end_of_animation.connect(self.relayEndOfAnimation)
         self.scene.deleted_scene_object.connect(self.relayDeletedSceneObject)
         self.scene.update_scene_object.connect(self.relayUpdateSceneObject)
-        #self.connect(self.scene, QtCore.SIGNAL('displayError(QString)'),self.relayShowErrorMessage)
         self.scene.updated_animation_frame.connect(self.relayUpdateAnimationFrame)
         self.interaction.set_scene(self.scene)
         for view in self.views:
