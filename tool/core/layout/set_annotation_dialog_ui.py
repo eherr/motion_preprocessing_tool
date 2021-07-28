@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Research\physics\workspace\mosi_app_mgtools\motion_analysis\GUI\layout\.\set_annotation_dialog.ui',
-# licensing of 'D:\Research\physics\workspace\mosi_app_mgtools\motion_analysis\GUI\layout\.\set_annotation_dialog.ui' applies.
+# Form implementation generated from reading ui file 'D:\Research\physics\workspace\mosi_app_mgtools\tool\GUI\layout\.\set_annotation_dialog.ui',
+# licensing of 'D:\Research\physics\workspace\mosi_app_mgtools\tool\GUI\layout\.\set_annotation_dialog.ui' applies.
 #
 # Created: Wed Jan 15 17:42:11 2020
 #      by: pyside2-uic  running on PySide2 5.13.1
@@ -131,4 +131,4 @@ class Ui_Dialog(object):
         self.okButton.setText(QtWidgets.QApplication.translate("Dialog", "Ok", None, -1))
         self.cancelButton.setText(QtWidgets.QApplication.translate("Dialog", "Cancel", None, -1))
 
-from motion_analysis.gui.widgets.time_line_label_view import TimeLineLabelView
+from tool.core.widgets.time_line_label_view import TimeLineLabelView

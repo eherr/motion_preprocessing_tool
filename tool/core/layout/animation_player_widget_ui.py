@@ -199,4 +199,4 @@ class Ui_Form(object):
         self.replaceAnimationButton.setText(QtWidgets.QApplication.translate("Form", "Replace Animation From BVH/ACM File", None, -1))
         self.plotJointsButton.setText(QtWidgets.QApplication.translate("Form", "Plot Joint Trajectories", None, -1))
 
-from motion_analysis.gui.widgets.time_line_label_view import TimeLineLabelView
+from tool.core.widgets.time_line_label_view import TimeLineLabelView

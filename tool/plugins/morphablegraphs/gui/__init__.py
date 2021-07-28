@@ -1,0 +1,5 @@
+from .morphable_graph_controller_widget import MorphableGraphControllerWidget
+from .motion_primitive_controller_widget import MotionPrimitiveControllerWidget
+from .mg_state_machine_widget import MGStateMachineWidget
+from .blend_animation_controller_widget import BlendAnimationControllerWidget
+from .nav_agent_widget import NavAgentWidget

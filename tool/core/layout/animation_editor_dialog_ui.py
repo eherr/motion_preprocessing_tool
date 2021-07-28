@@ -316,4 +316,4 @@ class Ui_Dialog(object):
         self.selectButton.setText(QtWidgets.QApplication.translate("Dialog", "Accept", None, -1))
         self.cancelButton.setText(QtWidgets.QApplication.translate("Dialog", "Cancel", None, -1))
 
-from motion_analysis.gui.widgets.time_line_label_view import TimeLineLabelView
+from tool.core.widgets.time_line_label_view import TimeLineLabelView
