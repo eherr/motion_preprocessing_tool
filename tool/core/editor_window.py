@@ -31,36 +31,10 @@ from tool import core
 from tool import constants
 from tool.core.layout.mainwindow_ui import Ui_MainWindow
 from tool import plugins
-from tool.core.widgets import ObjectPropertiesWidget, AnimationEditorWidget, AnimationPlayerWidget, \
-                             CharacterWidget, FigureControllerWidget, GroupAnimationPlayerWidget, AnimatedMeshWidget, AnimationDirectoryWidget
-from tool.plugins.morphablegraphs.gui import MGStateMachineWidget, MorphableGraphControllerWidget, MotionPrimitiveControllerWidget, NavAgentWidget, BlendAnimationControllerWidget
+from tool.core.widget_manager import WidgetManager
 from tool.plugins.database.gui import MotionDBBrowserDialog, GraphTableViewDialog, UploadMotionDialog, LoginDialog, SynchronizeSkeletonsWithDBDialog
 from tool.core.application_manager import ApplicationManager
 from tool.plugins.database.session_manager import SessionManager
-
-MG_COMPONENT = "morphablegraphs_controller"
-ANIMATION_COMPONENT = "animation_controller"
-MP_COMPONENT = "motion_primitive_controller"
-BLEND_COMPONENT = "blend_controller"
-ANIMATED_MESH_COMPONENT = "animated_mesh"
-FIGURE_CONTROLLER_COMPONENT = "figure_controller"
-ANIMATION_EDITOR_COMPONENT = "animation_editor"
-MG_STATE_MACHINE_COMPONENT = "morphablegraph_state_machine"
-NAV_AGENT_COMPONENT = "nav_agent"
-ANIMATION_FOLDER_COMPONENT = "animation_directory_explorer"
-SCENE_OBJECT_WIDGETS = collections.OrderedDict()
-SCENE_OBJECT_WIDGETS["object"] =dict(constructor=ObjectPropertiesWidget, animated=False)
-SCENE_OBJECT_WIDGETS["animation_player"] = dict(constructor=AnimationPlayerWidget, animated=True)
-SCENE_OBJECT_WIDGETS["mg_player"] =dict(constructor=MorphableGraphControllerWidget, animated=False)
-SCENE_OBJECT_WIDGETS["mp_player"] = dict(constructor=MotionPrimitiveControllerWidget, animated=True)
-SCENE_OBJECT_WIDGETS["character"] = dict(constructor=CharacterWidget, animated=False)
-SCENE_OBJECT_WIDGETS["group_player"] = dict(constructor=GroupAnimationPlayerWidget, animated=True)
-SCENE_OBJECT_WIDGETS["blend_controller"] = dict(constructor=BlendAnimationControllerWidget, animated=True)
-SCENE_OBJECT_WIDGETS["animated_mesh"] = dict(constructor=AnimatedMeshWidget, animated=False)
-SCENE_OBJECT_WIDGETS["figure_controller"] = dict(constructor=FigureControllerWidget, animated=False)
-SCENE_OBJECT_WIDGETS["morphablegraph_state_machine"] = dict(constructor=MGStateMachineWidget, animated=False)
-SCENE_OBJECT_WIDGETS["nav_agent"] = dict(constructor=NavAgentWidget, animated=False)
-SCENE_OBJECT_WIDGETS["animation_directory_explorer"] = dict(constructor=AnimationDirectoryWidget, animated=True)
 
 
 class EditorWindow(QMainWindow, Ui_MainWindow):
@@ -159,13 +133,12 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
             print("ignore the error and keep going")
 
     def addObjectWidgets(self):
-        widgets = SCENE_OBJECT_WIDGETS
         self.object_widgets = dict()
-        for key in widgets:
-            self.object_widgets[key] = widgets[key]["constructor"](self)
+        for key in WidgetManager.get_list():
+            self.object_widgets[key] = WidgetManager.create(key, self)
             self.object_widgets[key].hide()
             self.objectPropertiesLayout.addWidget(self.object_widgets[key])
-            if widgets[key]["animated"]:
+            if self.object_widgets[key].animated:
                 self.sceneManager.updated_animation_frame.connect(self.object_widgets[key].updateAnimationTimeInGUI)
 
     def initActions(self):
@@ -221,47 +194,14 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
 
         scene_object = self.sceneManager.getSelectedObject()
         if scene_object is not None:
-            if scene_object.has_component(MG_COMPONENT):
-                self.show_widget("mg_player", scene_object._components[MG_COMPONENT])
+            for key in self.object_widgets:
+                component_name = self.object_widgets[key].COMPONENT_NAME
+                if component_name is None:
+                    self.show_widget(key, scene_object)
+                elif scene_object.has_component(component_name):
+                    self.show_widget(component_name, scene_object)
 
-            if scene_object.has_component(MP_COMPONENT):
-                self.show_widget("mp_player", scene_object._components[MP_COMPONENT])
-
-            if scene_object.has_component(ANIMATION_COMPONENT):
-                self.show_widget("animation_player", scene_object._components[ANIMATION_COMPONENT])
-
-            if scene_object.has_component("character"):
-                self.show_widget("character", scene_object._components["character"])
-
-            if scene_object.has_component("character_animation_recorder"):
-                self.show_widget("character_animation_recorder", scene_object._components["character_animation_recorder"])
-
-            if scene_object.has_component("group_player"):
-                self.show_widget("group_player", scene_object._components["group_player"])
-
-            if scene_object.has_component("blend_controller"):
-                self.show_widget("blend_controller", scene_object._components["blend_controller"])
-
-            if scene_object.has_component("animated_mesh"):
-                self.show_widget("animated_mesh", scene_object._components["animated_mesh"])
-
-            if scene_object.has_component("figure_controller"):
-                self.show_widget("figure_controller", scene_object)
-
-            if scene_object.has_component("animation_editor"):
-                self.show_widget("animation_editor", scene_object)
-
-            if scene_object.has_component("morphablegraph_state_machine"):
-                self.show_widget("morphablegraph_state_machine", scene_object)
-
-            if scene_object.has_component("nav_agent"):
-                self.show_widget("nav_agent", scene_object)
-
-            if scene_object.has_component("animation_directory_explorer"):
-                self.show_widget("animation_directory_explorer", scene_object)
-
-            self.show_widget("object", scene_object)
-
+            
     def show_widget(self, name, scene_object):
         self.object_widgets[name].set_object(scene_object)
         self.object_widgets[name].setEnabled(True)

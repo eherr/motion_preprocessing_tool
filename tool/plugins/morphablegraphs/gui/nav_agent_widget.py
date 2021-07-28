@@ -24,11 +24,13 @@
 import numpy as np
 from PySide2.QtWidgets import QWidget
 from .layout.nav_agent_widget_ui import Ui_NavAgentWidget
+from tool.core.widget_manager import WidgetManager
 from tool.core.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
 from tool.core.dialogs.utils import get_constraints
 
 
 class NavAgentWidget(QWidget, Ui_NavAgentWidget):
+    COMPONENT_NAME = "nav_agent"
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         Ui_NavAgentWidget.setupUi(self, self)
@@ -86,5 +88,7 @@ class NavAgentWidget(QWidget, Ui_NavAgentWidget):
     def set_tolerance(self):
         self.nav_agent.tolerance = float(self.toleranceLineEdit.text())
 
+
+WidgetManager.register("nav_agent", NavAgentWidget)
 
 

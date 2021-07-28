@@ -20,14 +20,16 @@
 # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
+from functools import partial
 import numpy as np
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import  QWidget, QAction
 from tool.core.layout.object_properties_widget_ui import Ui_Form
-from functools import partial
+from tool.core.widget_manager import WidgetManager
 
 
 class ObjectPropertiesWidget(QWidget, Ui_Form):
+    COMPONENT_NAME = None
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         Ui_Form.setupUi(self, self)
@@ -72,3 +74,5 @@ class ObjectPropertiesWidget(QWidget, Ui_Form):
             scale = float(self.scaleLineEdit.text())
             self._scene_object.set_scale(scale)
 
+
+WidgetManager.register("object", ObjectPropertiesWidget)

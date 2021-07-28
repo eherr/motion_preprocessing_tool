@@ -22,9 +22,9 @@
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 from PySide2.QtWidgets import QWidget, QListWidgetItem, QAction
 from tool.core.layout.animation_directory_widget_ui import Ui_Form
+from tool.core.widget_manager import WidgetManager
 from tool.core.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
 from tool.core.dialogs.utils import get_animation_controllers
-
 
 
 class AnimationDirectoryWidget(QWidget, Ui_Form):
@@ -152,3 +152,5 @@ class AnimationDirectoryWidget(QWidget, Ui_Form):
     def load_selected(self):
         n_frames = self._controller.load_selected()
 
+
+WidgetManager.register("animation_directory_explorer", AnimationDirectoryWidget, True)

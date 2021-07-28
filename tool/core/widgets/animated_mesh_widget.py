@@ -20,13 +20,15 @@
 # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
+from functools import partial
 import numpy as np
 from PySide2.QtWidgets import  QWidget, QAction
 from tool.core.layout.animated_mesh_widget_ui import Ui_Form
-from functools import partial
+from tool.core.widget_manager import WidgetManager
 
 
 class AnimatedMeshWidget(QWidget, Ui_Form):
+    COMPONENT_NAME = "animated_mesh"
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         Ui_Form.setupUi(self, self)
@@ -36,7 +38,10 @@ class AnimatedMeshWidget(QWidget, Ui_Form):
         self._animated_mesh = None
         self.visibleCheckBox.stateChanged.connect(self.on_click_visible)
 
-    def set_object(self, animated_mesh):
+    def set_object(self, scene_object):
+        if scene_object is None or self.COMPONENT_NAME not in scene_object._components:
+            return
+        animated_mesh = scene_object._components[self.COMPONENT_NAME]
         if animated_mesh is not None:
             self.scaleLineEdit.setText("1")
             self._animated_mesh = animated_mesh
@@ -76,3 +81,6 @@ class AnimatedMeshWidget(QWidget, Ui_Form):
         self.renderModeComboBox.addItem("Normal Map", 2)
         self.renderModeComboBox.setCurrentIndex(1)
         self.renderModeComboBox.currentIndexChanged.connect(self.render_mode_selection_changed)
+
+
+WidgetManager.register("animated_mesh", AnimatedMeshWidget)

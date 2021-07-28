@@ -22,10 +22,12 @@
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 from PySide2.QtWidgets import  QWidget, QFileDialog
 from .layout.mg_state_machine_widget_ui import Ui_MGStateMachineWidget
+from tool.core.widget_manager import WidgetManager
 import numpy as np
 
 
 class MGStateMachineWidget(QWidget, Ui_MGStateMachineWidget):
+    COMPONENT_NAME = "morphablegraph_state_machine"
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         Ui_MGStateMachineWidget.setupUi(self, self)
@@ -87,6 +89,7 @@ class MGStateMachineWidget(QWidget, Ui_MGStateMachineWidget):
         self.mg_controller.planner.settings.direction_constraint_weight = float(self.dirWeightLineEdit.text())
 
 
+WidgetManager.register("morphablegraph_state_machine", MGStateMachineWidget)
 
 
 

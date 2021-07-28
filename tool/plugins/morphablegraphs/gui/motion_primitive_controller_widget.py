@@ -24,6 +24,7 @@ import json
 from copy import deepcopy
 from PySide2.QtWidgets import QWidget, QFileDialog, QAction
 from .layout.mp_player_widget_ui import Ui_Form
+from tool.core.widget_manager import WidgetManager
 try:
     from tool.core.dialogs import CopyMotionDialog, SetConfigDialog
 except:
@@ -32,6 +33,7 @@ from tool.core.widgets.animation_player_widget import AnimationPlayerBaseWidget
 
 
 class MotionPrimitiveControllerWidget(AnimationPlayerBaseWidget, Ui_Form):
+    COMPONENT_NAME = "motion_primitive_controller"
     def __init__(self, parent=None):
         self._parent = parent
         QWidget.__init__(self, parent)
@@ -181,3 +183,7 @@ class MotionPrimitiveControllerWidget(AnimationPlayerBaseWidget, Ui_Form):
             end_frame = copy_dialog.end_frame
             mv_copy = self._controller.get_motion_vector_copy(start_frame, end_frame)
             scene.object_builder.create_object("animation_controller", copy_dialog.name, skeleton_copy, mv_copy, mv_copy.frame_time)
+
+
+WidgetManager.register("mp_player", MotionPrimitiveControllerWidget, True)
+

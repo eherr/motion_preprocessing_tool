@@ -30,6 +30,7 @@ from tool.core.dialogs.utils import get_constraints, get_animation_controllers
 
 
 class AnimationEditorWidget(QWidget, Ui_Form):
+    COMPONENT_NAME = "animation_editor"
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         Ui_Form.setupUi(self, self)

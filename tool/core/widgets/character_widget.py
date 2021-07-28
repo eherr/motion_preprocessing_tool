@@ -22,9 +22,11 @@
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 from PySide2.QtWidgets import QWidget
 from tool.core.layout.character_widget_ui import Ui_Form
+from tool.core.widget_manager import WidgetManager
 
 
 class CharacterWidget(QWidget, Ui_Form):
+    COMPONENT_NAME = "character"
     def __init__(self, parent=None):
         self._parent = parent
         QWidget.__init__(self, parent)
@@ -35,7 +37,10 @@ class CharacterWidget(QWidget, Ui_Form):
         self.setAngularVelocityButton.clicked.connect(self.set_angular_velocity)
         self.joint_key_map = dict()
 
-    def set_object(self, character):
+    def set_object(self, scene_object):
+        if scene_object is None or self.COMPONENT_NAME not in scene_object._components:
+            return
+        character = scene_object._components[self.COMPONENT_NAME]
         if character is not None:
             self._character = character.articulated_figure
             self.joint_key_map = dict()
@@ -65,4 +70,5 @@ class CharacterWidget(QWidget, Ui_Form):
         self._character.set_angular_velocity(self.joint_key_map[joint_name], velocity)
 
 
+WidgetManager.register("character", CharacterWidget)
 

@@ -22,16 +22,21 @@
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 from PySide2.QtWidgets import QWidget, QListWidgetItem, QAction
 from tool.core.layout.group_animation_player_widget_ui import Ui_Form
+from tool.core.widget_manager import WidgetManager
 from tool.core.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
 from tool.core.dialogs.utils import get_animation_controllers
 
 class GroupAnimationPlayerBaseWidget(QWidget):
+    COMPONENT_NAME = "group_player"
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
 
 
-    def set_object(self, controller):
-        self._controller = controller
+    def set_object(self, scene_object):
+        if scene_object is None or self.COMPONENT_NAME not in scene_object._components:
+            return
+        self._controller = scene_object._components[self.COMPONENT_NAME]
+        
         if self._controller is not None:
             self.activatePlayerControls()
             n_frames = controller.getNumberOfFrames()
@@ -144,3 +149,4 @@ class GroupAnimationPlayerWidget(GroupAnimationPlayerBaseWidget, Ui_Form):
 
 
 
+WidgetManager.register("group_player", GroupAnimationPlayerWidget, True)

@@ -24,10 +24,12 @@ import numpy as np
 from PySide2.QtWidgets import QWidget,QAction, QTableWidgetItem, QHBoxLayout, QLabel, QDoubleSpinBox, QSlider, QFileDialog
 from PySide2.QtCore import Qt
 from .layout.blend_animation_player_widget_ui import Ui_Form
+from tool.core.widget_manager import WidgetManager
 from tool.core.widgets.group_animation_controller_widget import GroupAnimationPlayerBaseWidget
 
 
 class BlendAnimationControllerWidget(GroupAnimationPlayerBaseWidget, Ui_Form):
+    COMPONENT_NAME = "blend_controller"
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         Ui_Form.setupUi(self, self)
@@ -162,3 +164,4 @@ class BlendAnimationControllerWidget(GroupAnimationPlayerBaseWidget, Ui_Form):
         filename = str(QFileDialog.getSaveFileName(self, 'Save To File', '.'))[0]
         self._controller.export_to_bvh_file(filename)
 
+WidgetManager.register("blend_controller", BlendAnimationControllerWidget, True)

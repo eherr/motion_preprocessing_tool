@@ -27,6 +27,7 @@ import numpy as np
 from transformations import euler_from_quaternion, quaternion_multiply
 from PySide2.QtWidgets import  QWidget, QFileDialog, QListWidgetItem, QAction
 from PySide2.QtCore import Qt
+from tool.core.widget_manager import WidgetManager
 from .layout.mg_player_widget_ui import Ui_Form
 from .action_sequence_dialog import ActionSequenceDialog
 from tool.core.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
@@ -61,6 +62,7 @@ def coordinate_transform_inverse(p):
 
 
 class MorphableGraphControllerWidget(AnimationPlayerBaseWidget, Ui_Form):
+    COMPONENT_NAME = "morphablegraphs_controller"
     def __init__(self, parent=None):
         self._parent = parent
         QWidget.__init__(self, parent)
@@ -467,3 +469,4 @@ class MorphableGraphControllerWidget(AnimationPlayerBaseWidget, Ui_Form):
         self._controller.clear_graph_walk()
 
 
+WidgetManager.register("mg_player", MorphableGraphControllerWidget)

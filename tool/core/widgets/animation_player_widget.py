@@ -30,6 +30,7 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import  QWidget, QAction, QFileDialog
 from PySide2.QtGui import QColor
 from tool.core.layout.animation_player_widget_ui import Ui_Form
+from tool.core.widget_manager import WidgetManager
 from tool.core.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
 from tool.core.dialogs.copy_motion_dialog import CopyMotionDialog
 from tool.core.dialogs.select_joints_dialog import SelectJointsDialog
@@ -63,10 +64,14 @@ def convert_annotation_to_actions(annotations):
     return result_str
 
 class AnimationPlayerBaseWidget(QWidget):
+    COMPONENT_NAME = None
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
 
-    def set_object(self, controller):
+    def set_object(self, scene_object):
+        if scene_object is None or self.COMPONENT_NAME not in scene_object._components:
+            return
+        controller = scene_object._components[self.COMPONENT_NAME]
         self.session = SessionManager.session
         self._controller = controller
         if self._controller is not None:
@@ -572,6 +577,7 @@ class AnimationPlayerBaseWidget(QWidget):
             self.fill_combo_box_with_models()
 
 class AnimationPlayerWidget(AnimationPlayerBaseWidget, Ui_Form):
+    COMPONENT_NAME = "animation_controller"
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         Ui_Form.setupUi(self, self)
@@ -592,4 +598,6 @@ class AnimationPlayerWidget(AnimationPlayerBaseWidget, Ui_Form):
         self.labelView.initScene()
 
         self.labelView.show()
-        
+
+
+WidgetManager.register("animation_player", AnimationPlayerWidget, True)

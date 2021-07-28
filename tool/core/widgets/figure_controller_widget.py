@@ -22,9 +22,11 @@
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 from PySide2.QtWidgets import QWidget, QTableWidgetItem
 from tool.core.layout.figure_controller_widget_ui import Ui_FigureControllerWidget
+from tool.core.widget_manager import WidgetManager
 
 
 class FigureControllerWidget(QWidget, Ui_FigureControllerWidget):
+    COMPONENT_NAME = "figure_controller"
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         Ui_FigureControllerWidget.setupUi(self, self)
@@ -120,3 +122,4 @@ class FigureControllerWidget(QWidget, Ui_FigureControllerWidget):
         self._figure_controller.activate_balance = self.balanceCheckBox.isChecked()
 
 
+WidgetManager.register("figure_controller", FigureControllerWidget)
