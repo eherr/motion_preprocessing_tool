@@ -340,7 +340,7 @@
   <customwidget>
    <class>TimeLineLabelView</class>
    <extends>QGraphicsView</extends>
-   <header>tool/gui/widgets/time_line_label_view</header>
+   <header>tool/core/widgets/time_line_label_view</header>
   </customwidget>
  </customwidgets>
  <resources/>

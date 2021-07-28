@@ -104,12 +104,12 @@
   <customwidget>
    <class>SceneViewerWidget</class>
    <extends>QGraphicsView</extends>
-   <header>tool/gui/widgets/scene_viewer</header>
+   <header>tool/core/widgets/scene_viewer</header>
   </customwidget>
   <customwidget>
    <class>SceneObjectTableWidget</class>
    <extends>QTableWidget</extends>
-   <header>tool/gui/widgets/scene_object_table_widget</header>
+   <header>tool/core/widgets/scene_object_table_widget</header>
   </customwidget>
  </customwidgets>
  <resources/>
