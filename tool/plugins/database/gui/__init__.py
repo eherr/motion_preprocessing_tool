@@ -1,0 +1,6 @@
+
+from .motion_db_browser_dialog import MotionDBBrowserDialog
+from .graph_table_view_dialog import GraphTableViewDialog
+from .upload_motion_dialog import UploadMotionDialog
+from .login_dialog import LoginDialog
+from .synchronize_skeletons_with_db_dialog import SynchronizeSkeletonsWithDBDialog
