@@ -27,7 +27,7 @@ import os
 from functools import partial
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtCore import Qt, QFile
-from PySide2.QtWidgets import QMainWindow, QMessageBox, QAction, QFileDialog, QColorDialog
+from PySide2.QtWidgets import QMainWindow, QMessageBox, QAction, QFileDialog, QColorDialog, QToolButton
 from tool import constants
 from tool.core.layout.mainwindow_ui import Ui_MainWindow
 from tool.core.widget_manager import WidgetManager
@@ -86,7 +86,12 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
                 self.app_manager.updated_animation_frame.connect(self.object_widgets[key].updateAnimationTimeInGUI)
             if key in self.widget_buttons:
                 for (name, func) in self.widget_buttons[key]:
-                    self.object_widgets[key].add_button(name, func)
+                    new_button = QToolButton(self.object_widgets[key])
+                    new_button.setObjectName(name)
+                    action = QAction(name, self.object_widgets[key])
+                    action.triggered.connect(partial(func,self.object_widgets[key]))
+                    new_button.setDefaultAction(action)
+                    setattr(self.object_widgets[key], name, new_button)
 
     def init_menus(self):
         count = 0

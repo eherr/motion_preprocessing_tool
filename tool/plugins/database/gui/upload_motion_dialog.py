@@ -27,7 +27,6 @@ from PySide2.QtCore import Qt
 from .layout.upload_motion_dialog_ui import Ui_Dialog
 from tool.core.dialogs.enter_name_dialog import EnterNameDialog
 from tool.core.dialogs.new_skeleton_dialog import NewSkeletonDialog
-from tool import constants
 from tool.core.dialogs.utils import get_animation_controllers, create_section_dict_from_annotation
 from anim_utils.utilities.db_interface import upload_motion_to_db, get_skeletons_from_remote_db, \
                         create_new_skeleton_in_db, get_collections_by_parent_id_from_remote_db
@@ -35,6 +34,7 @@ from vis_utils.io import load_json_file
 from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
 from anim_utils.animation_data import BVHReader
 from tool.plugins.database.session_manager import SessionManager
+from tool.plugins.database import constants as db_constants
 
 
 class UploadMotionDialog(QDialog, Ui_Dialog):
@@ -44,7 +44,7 @@ class UploadMotionDialog(QDialog, Ui_Dialog):
         Ui_Dialog.setupUi(self, self)
         self.selectButton.clicked.connect(self.slot_accept)
         self.cancelButton.clicked.connect(self.slot_reject)
-        self.db_url = constants.DB_URL
+        self.db_url = db_constants.DB_URL
         self.session = SessionManager.session
         self.urlLineEdit.setText(self.db_url)
         self.motion_table = "motion_clips"

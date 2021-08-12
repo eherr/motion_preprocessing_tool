@@ -540,11 +540,6 @@ class AnimationPlayerBaseWidget(QWidget):
             constants.LOCAL_SKELETON_MODELS[name] = data
             self.fill_combo_box_with_models()
 
-    def add_button(self, name, function):
-        action = QAction(name, self)
-        action.triggered.connect(partial(function,self))
-        self.uploadToDBButton.setDefaultAction(action)
-
 class AnimationPlayerWidget(AnimationPlayerBaseWidget, Ui_Form):
     COMPONENT_NAME = "animation_controller"
     def __init__(self, parent=None):

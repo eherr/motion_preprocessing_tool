@@ -100,4 +100,4 @@ def upload_motion_to_db(widget):
         if dialog.success:
             print("success")
 
-EditorWindow.add_widget_button("animation_player", "Update Motion In DB", upload_motion_to_db)
+EditorWindow.add_widget_button("animation_player", "UpdateMotionInDB", upload_motion_to_db)
