@@ -23,7 +23,7 @@
 
 import os
 from vis_utils.io import save_json_file, load_json_file
-from tool.constants import DB_URL, SESSION_FILE
+from tool.plugins.database.constants import DB_URL, SESSION_FILE
 from anim_utils.utilities.db_interface import authenticate
 
 class SessionManager(object):

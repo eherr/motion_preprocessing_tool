@@ -24,7 +24,7 @@ import os
 from PySide2.QtWidgets import  QDialog, QListWidgetItem, QFileDialog, QAbstractItemView, QTreeWidgetItem
 from PySide2.QtCore import Qt
 from .layout.new_collection_dialog_ui import Ui_Dialog
-from tool.constants import DB_URL
+from tool.plugins.database.constants import DB_URL
 from anim_utils.utilities.db_interface import get_collections_from_remote_db, get_collections_by_parent_id_from_remote_db
 
 

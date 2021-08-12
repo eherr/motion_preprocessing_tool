@@ -33,9 +33,10 @@ from tool import constants
 from tool.core.layout.mainwindow_ui import Ui_MainWindow
 from tool import plugins
 from tool.core.widget_manager import WidgetManager
-from tool.plugins.database.gui import MotionDBBrowserDialog, GraphTableViewDialog, UploadMotionDialog, LoginDialog, SynchronizeSkeletonsWithDBDialog
 from tool.core.application_manager import ApplicationManager
+from tool.plugins.database.gui import MotionDBBrowserDialog, GraphTableViewDialog, UploadMotionDialog, LoginDialog, SynchronizeSkeletonsWithDBDialog
 from tool.plugins.database.session_manager import SessionManager
+from tool.plugins.database.constants import DB_URL
 
 
 class EditorWindow(QMainWindow, Ui_MainWindow):
@@ -115,7 +116,7 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
             self.selectedJointName = ""
             self.object_widgets = dict()
             self.init_widgets()
-            self.db_url = constants.DB_URL
+            self.db_url = DB_URL
             self.motion_db_browser_dialog = None
 
     def closeEvent(self, event):

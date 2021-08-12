@@ -24,9 +24,6 @@ import threading
 from PySide2.QtWidgets import QDialog, QTreeWidgetItem, QFileDialog
 from PySide2.QtCore import Qt
 from tool.core.layout.retarget_db_dialog_ui import Ui_Dialog
-from vis_utils.io import load_json_file
-from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
-from tool.constants import DB_URL
 from anim_utils.utilities.db_interface import get_collections_by_parent_id_from_remote_db, get_skeletons_from_remote_db
 
 class RetargetDBDialog(QDialog, Ui_Dialog):

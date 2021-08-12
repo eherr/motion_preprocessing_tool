@@ -45,6 +45,7 @@ except:
 from tool.core.dialogs.set_annotation_dialog import SetAnnotationDialog
 from tool.core.dialogs.utils import load_local_skeleton, load_local_skeleton_model, save_local_skeleton, create_sections_from_annotation, create_section_dict_from_annotation
 from tool import constants
+from tool.plugins.database.constants import DB_URL
 from anim_utils.utilities.db_interface import replace_motion_in_db
 from tool.core.application_manager import ApplicationManager
 from tool.plugins.database.session_manager import SessionManager
@@ -593,7 +594,7 @@ class AnimationPlayerWidget(AnimationPlayerBaseWidget, Ui_Form):
         self.fpsLineEdit.textChanged.connect(self.slot_fps_text_changed)
         self.init_combo_box()
         self.prev_annotation_edit_frame_idx = 0
-        self.db_url = constants.DB_URL
+        self.db_url = DB_URL
         self.labelView.setTimeLineParameters(100000, 10)
         self.labelView.initScene()
 

@@ -56,15 +56,15 @@ from anim_utils.utilities.db_interface import create_new_collection_in_remote_db
 from tool import constants
 from vis_utils.io import load_json_file, save_json_file
 from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
-from anim_utils.animation_data import BVHReader, BVHWriter, MotionVector, SkeletonBuilder
+from anim_utils.animation_data import MotionVector, SkeletonBuilder
 from anim_utils.retargeting.analytical import Retargeting, generate_joint_map
 from vis_utils.animation.animation_editor import AnimationEditorBase
 from tool.core.application_manager import ApplicationManager
 from .layout.motion_db_browser_dialog_ui import Ui_Dialog
 from tool.plugins.database.session_manager import SessionManager
-from morphablegraphs.utilities import convert_to_mgrd_skeleton
-from morphablegraphs.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
-from morphablegraphs.utilities.db_interface import get_model_list_from_remote_db,upload_motion_model_to_remote_db, download_motion_model_from_remote_db, \
+from tool.plugins.morphablegraphs.core.utilities import convert_to_mgrd_skeleton
+from tool.plugins.morphablegraphs.core.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
+from tool.plugins.morphablegraphs.core.utilities.db_interface import get_model_list_from_remote_db,upload_motion_model_to_remote_db, download_motion_model_from_remote_db, \
                                         delete_model_by_id_from_remote_db, upload_cluster_tree_to_remote_db, \
                                         download_cluster_tree_from_remote_db, create_cluster_tree_from_model, \
                                         load_cluster_tree_from_json, get_standard_config, convert_motion_to_static_motion_primitive, \
