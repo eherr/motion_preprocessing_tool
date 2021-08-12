@@ -36,7 +36,6 @@ from tool.core.widget_manager import WidgetManager
 from tool.core.application_manager import ApplicationManager
 from tool.plugins.database.gui import MotionDBBrowserDialog, GraphTableViewDialog, UploadMotionDialog, LoginDialog, SynchronizeSkeletonsWithDBDialog
 from tool.plugins.database.session_manager import SessionManager
-from tool.plugins.database.constants import DB_URL
 
 
 class EditorWindow(QMainWindow, Ui_MainWindow):
