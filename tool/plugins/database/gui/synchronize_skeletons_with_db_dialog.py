@@ -27,14 +27,9 @@ import json
 from PySide2.QtWidgets import  QDialog, QTableWidgetItem, QFileDialog
 from PySide2.QtCore import Qt
 from .layout.synchronize_skeletons_with_db_dialog_ui import Ui_Dialog
-from tool.core.dialogs.enter_name_dialog import EnterNameDialog
-from tool.core.dialogs.new_skeleton_dialog import NewSkeletonDialog
-from tool.core.dialogs.utils import get_animation_controllers
 from tool import constants
-from tool.core.dialogs.utils import create_sections_from_annotation
+from tool.plugins.database import constants as db_constants
 from anim_utils.utilities.db_interface import get_skeletons_from_remote_db, get_skeleton_from_remote_db, get_skeleton_model_from_remote_db, replace_skeleton_in_remote_db, create_new_skeleton_in_db
-from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
-from anim_utils.animation_data import BVHReader
 from tool.plugins.database.session_manager import SessionManager
 from vis_utils.io import load_json_file, save_json_file
 
@@ -52,7 +47,7 @@ class SynchronizeSkeletonsWithDBDialog(QDialog, Ui_Dialog):
         self.selectAllLocalButton.clicked.connect(self.slot_select_all_local_skeletons)
         self.clearLocalSelectionButton.clicked.connect(self.slot_clear_local_skeleton_selection)
 
-        self.db_url = constants.DB_URL
+        self.db_url = db_constants.DB_URL
         self.local_skeleton_dir = constants.DATA_DIR + os.sep + "skeletons"
         self.session = SessionManager.session
         self.urlLineEdit.setText(self.db_url)

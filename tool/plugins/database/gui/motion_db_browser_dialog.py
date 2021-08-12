@@ -53,7 +53,6 @@ from anim_utils.utilities.db_interface import create_new_collection_in_remote_db
                                         get_skeleton_from_remote_db, get_skeletons_from_remote_db,get_collections_from_remote_db, delete_collection_from_remote_db, \
                                         get_collections_by_parent_id_from_remote_db,replace_collection_in_remote_db, get_collection_by_id, \
                                         start_cluster_job, replace_skeleton_in_remote_db, get_skeleton_model_from_remote_db
-from tool import constants
 from vis_utils.io import load_json_file, save_json_file
 from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
 from anim_utils.animation_data import MotionVector, SkeletonBuilder
@@ -69,8 +68,7 @@ from tool.plugins.morphablegraphs.core.utilities.db_interface import get_model_l
                                         download_cluster_tree_from_remote_db, create_cluster_tree_from_model, \
                                         load_cluster_tree_from_json, get_standard_config, convert_motion_to_static_motion_primitive, \
                                         create_motion_primitive_model, align_motion_data, align_motions_in_db, create_motion_model_in_db
-
-
+from tool.plugins.database import constants as db_constants
 def normalize(v):
     return v/np.linalg.norm(v)
 
@@ -208,7 +206,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.editSkeletonButton.clicked.connect(self.slot_edit_skeleton)
         self.debugInfoButton.clicked.connect(self.slot_print_debug_info)
         self.rootItem = None
-        self.db_url = constants.DB_URL
+        self.db_url = db_constants.DB_URL
         self.session = SessionManager.session
         print("set session", self.session)
         if self.session is not None and "user" in self.session:
@@ -231,10 +229,10 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         t.start()
         self.n_samples = 10000
         self.n_subdivisions_per_level = 4
-        self.k8s_resources = constants.K8S_RESOURCES
-        self.k8s_imagename = constants.K8S_IMAGE_NAME
-        self.mg_repo_url =  constants.MG_REPO_URL
-        self.mg_exec_dir =  constants.MG_EXEC_DIR
+        self.k8s_resources = db_constants.K8S_RESOURCES
+        self.k8s_imagename = db_constants.K8S_IMAGE_NAME
+        self.mg_repo_url =  db_constants.MG_REPO_URL
+        self.mg_exec_dir =  db_constants.MG_EXEC_DIR
         self.model_filter = None
         self.show()
 

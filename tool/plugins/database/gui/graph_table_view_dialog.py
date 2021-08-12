@@ -34,6 +34,7 @@ from anim_utils.animation_data import SkeletonBuilder
 from anim_utils.utilities.db_interface import call_rest_interface, get_skeletons_from_remote_db, get_skeleton_from_remote_db, get_skeleton_model_from_remote_db
 from vis_utils.io import load_json_file, save_json_file
 from tool.plugins.database.session_manager import SessionManager
+from tool.plugins.database.constants import DB_URL
 try:
     from morphablegraphs.utilities import convert_to_mgrd_skeleton
     from morphablegraphs.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
@@ -127,7 +128,7 @@ def get_arc_length_from_points(points):
 
 
 class GraphTableViewDialog(QDialog, Ui_Dialog):
-    def __init__(self, scene, db_url, parent=None):
+    def __init__(self, scene, parent=None):
         QDialog.__init__(self, parent)
         Ui_Dialog.setupUi(self, self)
         self.scene = scene
@@ -138,7 +139,7 @@ class GraphTableViewDialog(QDialog, Ui_Dialog):
         self.removeButton.clicked.connect(self.slot_remove_graph)
         self.exportButton.clicked.connect(self.slot_export_graph)
         self.skeletonListComboBox.currentIndexChanged.connect(self.fill_graph_list)
-        self.db_url = db_url
+        self.db_url = DB_URL
         self.session = SessionManager.session
         print("set session", self.session)
         self.fill_combo_box_with_skeletons()

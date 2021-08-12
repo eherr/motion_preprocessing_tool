@@ -116,7 +116,6 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
             self.selectedJointName = ""
             self.object_widgets = dict()
             self.init_widgets()
-            self.db_url = DB_URL
             self.motion_db_browser_dialog = None
 
     def closeEvent(self, event):
@@ -271,7 +270,7 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
         synchronize_skeletons.exec_()
 
     def loadGraphFromDB(self):
-        dialog = GraphTableViewDialog(self.app_manager.scene, self.db_url)
+        dialog = GraphTableViewDialog(self.app_manager.scene)
         dialog.exec_()
        
     def uploadMotionsToDB(self):
