@@ -131,7 +131,7 @@ class GraphTableViewDialog(QDialog, Ui_Dialog):
         QDialog.__init__(self, parent)
         Ui_Dialog.setupUi(self, self)
         self.scene = scene
-        self.loadButton.clicked.connect(self.slot_load_graph)
+        self.loadStateMachineButton.clicked.connect(self.slot_load_graph)
         self.addButton.clicked.connect(self.slot_add_graph)
         self.copyButton.clicked.connect(self.slot_copy_graph)
         self.editButton.clicked.connect(self.slot_edit_graph)
@@ -181,7 +181,7 @@ class GraphTableViewDialog(QDialog, Ui_Dialog):
             name = str(item.text())
             graph_id = str(item.data(Qt.UserRole))
             use_all_joints = True
-            self.scene.object_builder.create_object("mg_from_db",self.db_url, skeleton, graph_id, use_all_joints=use_all_joints)
+            self.scene.object_builder.create_object("mg_state_machine_from_db",self.db_url, skeleton, graph_id, use_all_joints=use_all_joints)
 
     def slot_edit_graph(self):
         skeleton = str(self.skeletonListComboBox.currentText())
