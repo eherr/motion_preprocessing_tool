@@ -1,18 +1,15 @@
 import os
 import pickle
 import json
-from .morphablegraphs.morphable_graph_state_machine import MorphableGraphStateMachine, DEFAULT_CONFIG, MotionStateGraphLoader
+from .morphablegraphs.morphable_graph_state_machine import MorphableGraphStateMachine, DEFAULT_CONFIG
+from .morphablegraphs.core.motion_model.motion_state_graph_loader import MotionStateGraphLoader
 from .morphablegraphs.morphable_graphs_controller import MorphableGraphsController, DEFAULT_ALGORITHM_CONFIG
 from .morphablegraphs.motion_graph_controller import MotionGraphController
 from .morphablegraphs.motion_primitive_controller import MotionPrimitiveController
 from .morphablegraphs.blend_animation_controller import BlendAnimationController, AnimationBlendNode
 from .morphablegraphs.simple_navigation_agent import SimpleNavigationAgent
-from vis_utils.graphics import materials
-from vis_utils.graphics.geometry.mesh import Mesh
-from vis_utils.scene.components import GeometryDataComponent
 from vis_utils.scene.scene_object_builder import SceneObjectBuilder, SceneObject
 from vis_utils.scene.utils import get_random_color
-import vis_utils.constants as constants
 
 def create_blend_controller(self, name, skeleton, motions, joint_name=None, constrained_frame=-1):
     joint_name = "hand_l"

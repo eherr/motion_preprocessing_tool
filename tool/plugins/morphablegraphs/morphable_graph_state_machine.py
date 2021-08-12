@@ -23,16 +23,11 @@
 import copy
 import threading
 import numpy as np
-import collections
-import time
 from datetime import datetime
 import os
 import glob
-from PySignal import Signal
-from anim_utils.animation_data.motion_state import MotionState, MotionStateInterface
+from anim_utils.animation_data.motion_state import MotionState
 from vis_utils.animation.state_machine_controller import StateMachineController
-from vis_utils.animation.skeleton_visualization import SkeletonVisualization
-from vis_utils.graphics.renderer.lines import DebugLineRenderer
 from anim_utils.animation_data.motion_concatenation import align_joint
 from anim_utils.motion_editing import MotionGrounding
 from anim_utils.animation_data.bvh import BVHReader
@@ -41,13 +36,12 @@ from anim_utils.retargeting.analytical import Retargeting, generate_joint_map
 from anim_utils.utilities.log import set_log_mode, LOG_MODE_DEBUG
 from transformations import euler_matrix
 import vis_utils.constants as constants
-from vis_utils.scene.components import ComponentBase
-from morphablegraphs.motion_generator.algorithm_configuration import DEFAULT_ALGORITHM_CONFIG
-from morphablegraphs.motion_model import MotionStateGraphLoader, NODE_TYPE_STANDARD, NODE_TYPE_END, NODE_TYPE_START, NODE_TYPE_IDLE
-from morphablegraphs.motion_model.static_motion_primitive import StaticMotionPrimitive
-from morphablegraphs.motion_generator.mg_state_planner import MGStatePlanner, get_node_aligning_2d_transform, ANIMATED_JOINTS_CUSTOM
-from morphablegraphs.constraints.constraint_builder import UnityFrameConstraint
-from morphablegraphs.motion_generator.mg_state_queue import StateQueueEntry
+from tool.plugins.morphablegraphs.core.motion_generator.algorithm_configuration import DEFAULT_ALGORITHM_CONFIG
+from tool.plugins.morphablegraphs.core.motion_model import NODE_TYPE_STANDARD, NODE_TYPE_IDLE
+from tool.plugins.morphablegraphs.core.motion_model.static_motion_primitive import StaticMotionPrimitive
+from tool.plugins.morphablegraphs.core.motion_generator.mg_state_planner import MGStatePlanner, get_node_aligning_2d_transform, ANIMATED_JOINTS_CUSTOM
+from tool.plugins.morphablegraphs.core.constraints.constraint_builder import UnityFrameConstraint
+from tool.plugins.morphablegraphs.core.motion_generator.mg_state_queue import StateQueueEntry
 
 
 def rotate_vector_deg(vec, a):
