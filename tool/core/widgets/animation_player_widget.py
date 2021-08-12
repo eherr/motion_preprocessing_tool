@@ -31,11 +31,10 @@ from PySide2.QtWidgets import  QWidget, QAction, QFileDialog
 from PySide2.QtGui import QColor
 from tool.core.layout.animation_player_widget_ui import Ui_Form
 from tool.core.widget_manager import WidgetManager
-from tool.core.dialogs.select_scene_objects_dialog import SelectSceneObjectsDialog
 from tool.core.dialogs.copy_motion_dialog import CopyMotionDialog
 from tool.core.dialogs.select_joints_dialog import SelectJointsDialog
 from tool.core.dialogs.retarget_dialog import RetargetDialog
-from tool.plugins.database.gui.upload_motion_dialog import UploadMotionDialog
+#from tool.plugins.database.gui.upload_motion_dialog import UploadMotionDialog
 from tool.core.dialogs.copy_from_source_dialog import CopyFromSourceDialog
 from tool.core.dialogs.animation_editor_dialog import AnimationEditorDialog
 try:

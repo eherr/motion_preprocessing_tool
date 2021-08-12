@@ -1,6 +1,9 @@
 import os
 import pickle
 import json
+from functools import partial
+from tool.core.application_manager import ApplicationManager
+from tool.core.editor_window import EditorWindow, open_file_dialog
 from .morphable_graph_state_machine import MorphableGraphStateMachine, DEFAULT_CONFIG
 from .core.motion_model.motion_state_graph_loader import MotionStateGraphLoader
 from .morphable_graphs_controller import MorphableGraphsController, DEFAULT_ALGORITHM_CONFIG
@@ -223,3 +226,20 @@ SceneObjectBuilder.register_object("mg_state_machine_from_db", load_morphable_gr
 SceneObjectBuilder.register_object("mg_generator_from_db", load_morphable_graphs_generator_from_db)
 SceneObjectBuilder.register_file_handler("mm.json", load_motion_primitive)
 SceneObjectBuilder.register_file_handler("zip", load_morphable_graphs_file)
+
+mg_menu_actions = [{"text": "Load Morphable Graph", "function": partial(open_file_dialog, "zip")},
+        {"text": "Load Morphable Model", "function": partial(open_file_dialog, "mm.json")},
+        {"text": "Load MG State Machine", "function": partial(open_file_dialog, "mg.zip")}]
+EditorWindow.add_actions_to_menu("File", mg_menu_actions)
+       
+
+def create_blend_animation_controller():
+    node_ids = EditorWindow.instance.getSelectedSceneObjects()
+    anim_controllers = ApplicationManager.instance.scene.get_animation_controllers(node_ids)
+    motions = [c._motion for c in anim_controllers]
+    if len(motions) > 0:
+        name = "Blend Controller"
+        skeleton = anim_controllers[0].get_skeleton_copy()
+        ApplicationManager.instance.scene.object_builder.create_object("blend_controller",name, skeleton, motions)
+
+EditorWindow.add_actions_to_menu("Create", [{"text": "Blend Animation Controller", "function": create_blend_animation_controller}])

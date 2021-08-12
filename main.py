@@ -28,14 +28,14 @@ dirname = os.path.dirname(PySide2.__file__)
 plugin_path = os.path.join(dirname, 'plugins', 'platforms')
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
 from PySide2.QtWidgets import QApplication
-import tool.core.darkorange_icon_rc
+from tool.constants import CONFIG_FILE
 
-
-if __name__ == '__main__':
-    from tool.constants import CONFIG_FILE
+def main():
     if os.path.isfile(CONFIG_FILE):
         from tool.constants import set_constants_from_file
         set_constants_from_file(CONFIG_FILE)
+    from tool import core
+    from tool import plugins
 
     from tool.core.editor_window import EditorWindow
 
@@ -50,3 +50,6 @@ if __name__ == '__main__':
     win.show()
     app.setActiveWindow(win)
     app.exec_()
+
+if __name__ == '__main__':
+    main()
