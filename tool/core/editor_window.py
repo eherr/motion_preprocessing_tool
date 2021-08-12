@@ -65,11 +65,6 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
 
     def closeEvent(self, event):
         print("Close window")
-        if self.motion_db_browser_dialog is not None:
-            self.motion_db_browser_dialog.close()
-            print("close db browser")
-        else:
-            print("db browser is none")
         self.animationViewer.makeCurrent()
         self.app_manager.deinitialize()
         del self.app_manager

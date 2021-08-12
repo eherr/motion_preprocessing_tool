@@ -42,9 +42,7 @@ except:
 from tool.core.dialogs.set_annotation_dialog import SetAnnotationDialog
 from tool.core.dialogs.utils import load_local_skeleton, load_local_skeleton_model, save_local_skeleton
 from tool import constants
-from tool.plugins.database.constants import DB_URL
 from tool.core.application_manager import ApplicationManager
-from tool.plugins.database.session_manager import SessionManager
 from vis_utils.animation.skeleton_animation_controller import SkeletonAnimationController
 
 
@@ -69,7 +67,6 @@ class AnimationPlayerBaseWidget(QWidget):
         if scene_object is None or self.COMPONENT_NAME not in scene_object._components:
             return
         controller = scene_object._components[self.COMPONENT_NAME]
-        self.session = SessionManager.session
         self._controller = controller
         if self._controller is not None:
             self.activatePlayerControls()
@@ -542,10 +539,9 @@ class AnimationPlayerBaseWidget(QWidget):
 
 class AnimationPlayerWidget(AnimationPlayerBaseWidget, Ui_Form):
     COMPONENT_NAME = "animation_controller"
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         QWidget.__init__(self, parent)
         Ui_Form.setupUi(self, self)
-        self.session = SessionManager.session
         self.local_skeleton_dir = constants.DATA_DIR + os.sep + "skeletons"
         self.animationSpeedDoubleSpinBox.setRange(-4.0, 4.0)
         self.deactivate_player_controls()
