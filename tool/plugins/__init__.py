@@ -1,9 +1,7 @@
 import importlib
-from os.path import dirname, basename, join, isdir
-import glob
-modules = glob.glob(join(dirname(__file__), "*"))
-plugins = [ basename(f) for f in modules if isdir(f)and not f.endswith('__')]
+from pathlib import Path
 
-for plugin in plugins:
-    print("import plugin", plugin)
-    importlib.import_module("tool.plugins."+plugin)
+for plugin_dir in Path(__file__).parent.iterdir():
+    if plugin_dir.joinpath("__init__.py").is_file():
+        print("import plugin", plugin_dir.stem)
+        importlib.import_module("tool.plugins."+str(plugin_dir.stem))
