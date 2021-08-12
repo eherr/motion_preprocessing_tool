@@ -1,4 +1,6 @@
 import os
+import json
+from tool.plugins.database.constants import DB_URL
 from tool.core.editor_window import EditorWindow
 from tool.core.application_manager import ApplicationManager
 from tool.constants import CONFIG_FILE
@@ -6,9 +8,9 @@ if os.path.isfile(CONFIG_FILE):
     from tool.plugins.database.constants import set_constants_from_file
     set_constants_from_file(CONFIG_FILE)
 
-
 from tool.plugins.database.gui import MotionDBBrowserDialog, GraphTableViewDialog, UploadMotionDialog, LoginDialog, SynchronizeSkeletonsWithDBDialog
 from tool.plugins.database.session_manager import SessionManager
+from anim_utils.utilities.db_interface import replace_motion_in_db
 
 EditorWindow.add_plugin_object("session_manager", SessionManager)
 EditorWindow.add_plugin_object("motion_db_browser_dialog", None)
@@ -58,3 +60,44 @@ actions = [ {"text": "Login",  "function": login_to_server},
             {"text": "Synchronize Skeleton Definitions", "function": synchronize_skeletons_from_db}
         ]
 EditorWindow.add_menu("Database", actions)
+ 
+def create_section_dict_from_annotation(annotations):
+    motion_sections = dict()
+    for label, sections in annotations.items():
+        motion_sections[label] = []
+        for sub_section in sections:
+            sub_section.sort()
+            section_dict = dict()
+            section_dict["start_idx"] = sub_section[0]
+            section_dict["end_idx"] = sub_section[-1]
+            motion_sections[label].append(section_dict)
+    return motion_sections
+
+def upload_motion_to_db(widget):
+    node_id = widget._controller.scene_object.node_id
+    if "data_base_ids" in widget._controller.scene_object.scene.internal_vars and node_id in widget._controller.scene_object.scene.internal_vars["data_base_ids"]:
+        collection, motion_id, is_processed = widget._controller.scene_object.scene.internal_vars["data_base_ids"][node_id]
+        bvh_name = widget._controller.scene_object.name
+        motion_data = widget._controller.get_json_data()
+        skeleton_model_name = str(widget.skeletonModelComboBox.currentText())
+        print("replace motion clip with id",motion_id, "and name", bvh_name, collection,is_processed)
+        meta_info = dict()
+        if len(widget._controller._motion._semantic_annotation) >0:
+            meta_info["sections"] = create_section_dict_from_annotation(widget._controller._motion._semantic_annotation)
+        if is_processed and widget._controller._motion._time_function is not None:
+            meta_info["time_function"] = widget._controller._motion._time_function
+        else:
+            is_processed = False
+        if len(meta_info) > 0:
+            meta_info_str = json.dumps(meta_info)
+        else:
+            meta_info_str = ""
+        replace_motion_in_db(DB_URL, motion_id, bvh_name, motion_data, collection, skeleton_model_name, meta_info_str, is_processed, session=EditorWindow.instance.session)
+
+    else:
+        dialog = UploadMotionDialog([widget._controller])
+        dialog.exec_()
+        if dialog.success:
+            print("success")
+
+EditorWindow.add_widget_button("animation_player", "Update Motion In DB", upload_motion_to_db)

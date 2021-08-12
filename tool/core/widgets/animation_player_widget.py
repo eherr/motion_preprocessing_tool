@@ -24,7 +24,6 @@
 import os
 import collections
 import numpy as np
-import json
 from functools import partial
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import  QWidget, QAction, QFileDialog
@@ -34,7 +33,6 @@ from tool.core.widget_manager import WidgetManager
 from tool.core.dialogs.copy_motion_dialog import CopyMotionDialog
 from tool.core.dialogs.select_joints_dialog import SelectJointsDialog
 from tool.core.dialogs.retarget_dialog import RetargetDialog
-#from tool.plugins.database.gui.upload_motion_dialog import UploadMotionDialog
 from tool.core.dialogs.copy_from_source_dialog import CopyFromSourceDialog
 from tool.core.dialogs.animation_editor_dialog import AnimationEditorDialog
 try:
@@ -42,10 +40,9 @@ try:
 except:
     pass
 from tool.core.dialogs.set_annotation_dialog import SetAnnotationDialog
-from tool.core.dialogs.utils import load_local_skeleton, load_local_skeleton_model, save_local_skeleton, create_sections_from_annotation, create_section_dict_from_annotation
+from tool.core.dialogs.utils import load_local_skeleton, load_local_skeleton_model, save_local_skeleton
 from tool import constants
 from tool.plugins.database.constants import DB_URL
-from anim_utils.utilities.db_interface import replace_motion_in_db
 from tool.core.application_manager import ApplicationManager
 from tool.plugins.database.session_manager import SessionManager
 from vis_utils.animation.skeleton_animation_controller import SkeletonAnimationController
@@ -203,9 +200,6 @@ class AnimationPlayerBaseWidget(QWidget):
         self.set_reference_frame_action = QAction("Set Reference Frame", self)
         self.set_reference_frame_action.triggered.connect(self.set_reference_frame)
 
-        self.upload_motion_action = QAction("Update Motion In DB", self)
-        self.upload_motion_action.triggered.connect(self.upload_motion_to_db)
-
         self.edit_skeleton_model_action = QAction("Edit Model", self)
         self.edit_skeleton_model_action.triggered.connect(self.edit_skeleton_model)
         self.add_new_skeleton_model_action = QAction("Add New Model", self)
@@ -235,7 +229,6 @@ class AnimationPlayerBaseWidget(QWidget):
         self.skeletonModelComboBox.currentIndexChanged.connect(self.set_skeleton_model)
         self.setReferenceFrameButton.setDefaultAction(self.set_reference_frame_action)
         self.splitMotionButton.setDefaultAction(self.split_motion_action)
-        self.uploadToDBButton.setDefaultAction(self.upload_motion_action)
 
         self.addNewSkeletonModelButton.setDefaultAction(self.edit_skeleton_model_action)
         self.editSkeletonModelButton.setDefaultAction(self.add_new_skeleton_model_action)
@@ -430,8 +423,6 @@ class AnimationPlayerBaseWidget(QWidget):
         self.init_label_time_line()
 
     def split_motion(self):
-        scene_object = self._controller.scene_object
-        #filename = str(QFileDialog.getSaveFileName(self, 'Save To File', '.')[0])
         for idx, (key, segments) in enumerate(self._controller._motion._semantic_annotation.items()):
             if type(segments[0]) ==list:
                 for segment in segments:
@@ -509,34 +500,7 @@ class AnimationPlayerBaseWidget(QWidget):
             enable = True
         if hasattr(self, "uploadToDBButton"):
             self.uploadToDBButton.setEnabled(enable)
-    
-    def upload_motion_to_db(self):
-        node_id = self._controller.scene_object.node_id
-        if "data_base_ids" in self._controller.scene_object.scene.internal_vars and node_id in self._controller.scene_object.scene.internal_vars["data_base_ids"]:
-            collection, motion_id, is_processed = self._controller.scene_object.scene.internal_vars["data_base_ids"][node_id]
-            bvh_name = self._controller.scene_object.name
-            motion_data = self._controller.get_json_data()
-            skeleton_model_name = str(self.skeletonModelComboBox.currentText())
-            print("replace motion clip with id",motion_id, "and name", bvh_name, collection,is_processed)
-            meta_info = dict()
-            if len(self._controller._motion._semantic_annotation) >0:
-                meta_info["sections"] = create_section_dict_from_annotation(self._controller._motion._semantic_annotation)
-            if is_processed and self._controller._motion._time_function is not None:
-                meta_info["time_function"] = self._controller._motion._time_function
-            else:
-                is_processed = False
-            if len(meta_info) > 0:
-                meta_info_str = json.dumps(meta_info)
-            else:
-                meta_info_str = ""
-            replace_motion_in_db(self.db_url, motion_id, bvh_name, motion_data, collection, skeleton_model_name, meta_info_str, is_processed, session=self.session)
-
-        else:
-            dialog = UploadMotionDialog([self._controller])
-            dialog.exec_()
-            if dialog.success:
-                print("success")
-                
+   
     def slot_fps_text_changed(self, value):
         fps = float(value)
         if fps > 0:
@@ -576,6 +540,11 @@ class AnimationPlayerBaseWidget(QWidget):
             constants.LOCAL_SKELETON_MODELS[name] = data
             self.fill_combo_box_with_models()
 
+    def add_button(self, name, function):
+        action = QAction(name, self)
+        action.triggered.connect(partial(function,self))
+        self.uploadToDBButton.setDefaultAction(action)
+
 class AnimationPlayerWidget(AnimationPlayerBaseWidget, Ui_Form):
     COMPONENT_NAME = "animation_controller"
     def __init__(self, parent=None):
@@ -593,7 +562,6 @@ class AnimationPlayerWidget(AnimationPlayerBaseWidget, Ui_Form):
         self.fpsLineEdit.textChanged.connect(self.slot_fps_text_changed)
         self.init_combo_box()
         self.prev_annotation_edit_frame_idx = 0
-        self.db_url = DB_URL
         self.labelView.setTimeLineParameters(100000, 10)
         self.labelView.initScene()
 

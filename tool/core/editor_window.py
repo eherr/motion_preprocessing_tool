@@ -38,6 +38,7 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
     instance = None
     menu_actions = collections.OrderedDict()
     plugin_object_constructors = collections.OrderedDict()
+    widget_buttons = collections.OrderedDict()
     def __init__(self):
         if EditorWindow.instance is None:
             EditorWindow.instance = self
@@ -83,6 +84,9 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
             self.objectPropertiesLayout.addWidget(self.object_widgets[key])
             if self.object_widgets[key].animated:
                 self.app_manager.updated_animation_frame.connect(self.object_widgets[key].updateAnimationTimeInGUI)
+            if key in self.widget_buttons:
+                for (name, func) in self.widget_buttons[key]:
+                    self.object_widgets[key].add_button(name, func)
 
     def init_menus(self):
         count = 0
@@ -252,6 +256,12 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
     @classmethod
     def add_plugin_object(cls, name, constructor):
         cls.plugin_object_constructors[name] = constructor
+
+    @classmethod
+    def add_widget_button(cls, widget_name, name, function):
+        if widget_name not in cls.widget_buttons:
+            cls.widget_buttons[widget_name] = []
+        cls.widget_buttons[widget_name] += [(name, function)]
 
     def toggle_full_screen(self):
         print("toggle full screen", self._full_screen)
