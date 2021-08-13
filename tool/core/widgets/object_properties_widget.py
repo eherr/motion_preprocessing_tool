@@ -22,7 +22,6 @@
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 from functools import partial
 import numpy as np
-from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import  QWidget, QAction
 from tool.core.layout.object_properties_widget_ui import Ui_Form
 from tool.core.widget_manager import WidgetManager

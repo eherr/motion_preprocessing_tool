@@ -25,7 +25,6 @@ import sys
 import collections
 import os
 from functools import partial
-from PySide2.QtUiTools import QUiLoader
 from PySide2.QtCore import Qt, QFile
 from PySide2.QtWidgets import QMainWindow, QMessageBox, QAction, QFileDialog, QColorDialog, QToolButton
 from tool import constants
