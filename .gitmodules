@@ -1,3 +1,3 @@
-[submodule "morphablegraphs"]
-	path = morphablegraphs
+[submodule "tool/plugins/morphablegraphs/core"]
+	path = tool/plugins/morphablegraphs/core
 	url = git@github.com:eherr/morphablegraphs.git

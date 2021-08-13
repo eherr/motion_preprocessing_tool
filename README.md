@@ -33,7 +33,7 @@ pip install -r requirements.txt
 ```
 5. Start the tool.
 ```bat
-python run_motion_preprocessing_tool.py
+python main.py
 ```
 ## Functionality
 BVH/ASF files can be loaded via drag and drop on the 3D visualization window. When a file is loaded a scene object is automatically created and an entry inserted into the scene object list.  
