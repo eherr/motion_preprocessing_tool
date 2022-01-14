@@ -39,7 +39,7 @@ class GroupAnimationPlayerBaseWidget(QWidget):
         
         if self._controller is not None:
             self.activatePlayerControls()
-            n_frames = controller.getNumberOfFrames()
+            n_frames = self._controller.getNumberOfFrames()
             self.setFrameRange(0, n_frames - 1)
             self.update_animation_controller_list()
 
