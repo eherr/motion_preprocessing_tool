@@ -10,9 +10,9 @@ Using an integrated database browser, motions can be downloaded from [https://mo
 
 1. Create a virtual environment for Python 3.6.
 
-2. Clone the repository with all submodules. The morphablegraphs submodule is optional for creating and loading statistical motion models. The mgrd submodule is a faster implementation that can be ignored.
+2. Clone the repository. 
 ```bat
-git clone --recursive  git@github.com:eherr/motion_preprocessing_tool.git
+git clone it@github.com:eherr/motion_preprocessing_tool.git
 ```
 
 3. Install the base packages for [animation data editing](https://github.com/eherr/anim_utils) and [visualization](https://github.com/eherr/vis_utils). 
@@ -24,13 +24,14 @@ pip install git+https://github.com/eherr/vis_utils
 
 ```
 
-4. The [morphablegraphs](https://github.com/eherr/morphablegraphs.git) module is necessary to create and load statistical motion models. Due to a restricted submodule it needs to be checked out manually.
 
-   ```bat
-   git clone git@github.com:dfki-asr/morphablegraphs.git
-   cd morphablegraphs
-   python setup.py install
-   ```
+4. The [morphablegraphs](https://github.com/eherr/morphablegraphs.git) module is optional to create and load statistical motion models. It needs to be checked out manually, due to the restricted mgrd submodule, which is a faster implementation that can be ignored.
+
+```bat
+git clone git@github.com:dfki-asr/morphablegraphs.git
+cd morphablegraphs
+python setup.py install
+```
 
 5. Install other requirements. To run the tool on Windows, please download PyOpenGL from here: https://www.lfd.uci.edu/~gohlke/pythonlibs/.
 
