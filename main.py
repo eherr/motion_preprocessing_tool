@@ -29,6 +29,8 @@ plugin_path = os.path.join(dirname, 'plugins', 'platforms')
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
 from PySide2.QtWidgets import QApplication
 from tool.constants import CONFIG_FILE
+import pygame
+pygame.init()
 
 def main():
     if os.path.isfile(CONFIG_FILE):
