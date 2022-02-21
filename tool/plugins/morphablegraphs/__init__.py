@@ -5,7 +5,7 @@ from functools import partial
 from tool.core.application_manager import ApplicationManager
 from tool.core.editor_window import EditorWindow, open_file_dialog
 from .morphable_graph_state_machine import MorphableGraphStateMachine, DEFAULT_CONFIG
-from .core.motion_model.motion_state_graph_loader import MotionStateGraphLoader
+from morphablegraphs.motion_model.motion_state_graph_loader import MotionStateGraphLoader
 from .morphable_graphs_controller import MorphableGraphsController, DEFAULT_ALGORITHM_CONFIG
 from .motion_graph_controller import MotionGraphController
 from .motion_primitive_controller import MotionPrimitiveController
