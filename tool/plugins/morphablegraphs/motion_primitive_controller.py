@@ -31,15 +31,15 @@ from anim_utils.animation_data import BVHWriter, MotionVector, SkeletonBuilder
 from anim_utils.utilities.io_helper_functions import load_json_file, write_to_json_file
 from anim_utils.utilities.log import set_log_mode, LOG_MODE_DEBUG
 from vis_utils.scene.utils import get_random_color
-from tool.plugins.morphablegraphs.core.motion_model.motion_state_graph_node import MotionStateGraphNode
-from tool.plugins.morphablegraphs.core.motion_generator.motion_primitive_generator import MotionPrimitiveGenerator
-from tool.plugins.morphablegraphs.core.constraints.motion_primitive_constraints import MotionPrimitiveConstraints
-from tool.plugins.morphablegraphs.core.constraints.action_constraints import ActionConstraints
-from tool.plugins.morphablegraphs.core import MotionGenerator, GraphWalkOptimizer, AnnotatedMotionVector, DEFAULT_ALGORITHM_CONFIG
-from tool.plugins.morphablegraphs.core.constraints.spatial_constraints import GlobalTransformConstraint
-from tool.plugins.morphablegraphs.core.motion_generator.optimization.optimizer_builder import OptimizerBuilder
-from tool.plugins.morphablegraphs.core.space_partitioning import FeatureClusterTree
-from tool.plugins.morphablegraphs.core.utilities import convert_to_mgrd_skeleton
+from morphablegraphs.motion_model.motion_state_graph_node import MotionStateGraphNode
+from morphablegraphs.motion_generator.motion_primitive_generator import MotionPrimitiveGenerator
+from morphablegraphs.constraints.motion_primitive_constraints import MotionPrimitiveConstraints
+from morphablegraphs.constraints.action_constraints import ActionConstraints
+from morphablegraphs import MotionGenerator, GraphWalkOptimizer, AnnotatedMotionVector, DEFAULT_ALGORITHM_CONFIG
+from morphablegraphs.constraints.spatial_constraints import GlobalTransformConstraint
+from morphablegraphs.motion_generator.optimization.optimizer_builder import OptimizerBuilder
+from morphablegraphs.space_partitioning import FeatureClusterTree
+from morphablegraphs.utilities import convert_to_mgrd_skeleton
 
 class MockGraph(object):
     def __init__(self, skeleton):

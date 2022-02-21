@@ -61,9 +61,9 @@ from vis_utils.animation.animation_editor import AnimationEditorBase
 from tool.core.application_manager import ApplicationManager
 from .layout.motion_db_browser_dialog_ui import Ui_Dialog
 from tool.plugins.database.session_manager import SessionManager
-from tool.plugins.morphablegraphs.core.utilities import convert_to_mgrd_skeleton
-from tool.plugins.morphablegraphs.core.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
-from tool.plugins.morphablegraphs.core.utilities.db_interface import get_model_list_from_remote_db,upload_motion_model_to_remote_db, download_motion_model_from_remote_db, \
+from morphablegraphs.utilities import convert_to_mgrd_skeleton
+from morphablegraphs.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
+from morphablegraphs.utilities.db_interface import get_model_list_from_remote_db,upload_motion_model_to_remote_db, download_motion_model_from_remote_db, \
                                         delete_model_by_id_from_remote_db, upload_cluster_tree_to_remote_db, \
                                         download_cluster_tree_from_remote_db, create_cluster_tree_from_model, \
                                         load_cluster_tree_from_json, get_standard_config, convert_motion_to_static_motion_primitive, \

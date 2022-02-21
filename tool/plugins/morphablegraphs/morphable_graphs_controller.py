@@ -31,11 +31,11 @@ from anim_utils.animation_data.quaternion_frame import convert_quaternion_frames
 from anim_utils.utilities.log import set_log_mode, LOG_MODE_DEBUG
 from anim_utils.animation_data.skeleton_models import *
 from anim_utils.animation_data.motion_state import MotionState
-from tool.plugins.morphablegraphs.core.motion_model import MotionStateGraphLoader
-from tool.plugins.morphablegraphs.core.motion_generator.graph_walk import GraphWalk
-from tool.plugins.morphablegraphs.core import MotionGenerator, GraphWalkOptimizer, DEFAULT_ALGORITHM_CONFIG, AnnotatedMotionVector
-from tool.plugins.morphablegraphs.core import constraints as mg_constraints
-from tool.plugins.morphablegraphs.core import motion_generator
+from morphablegraphs.motion_model import MotionStateGraphLoader
+from morphablegraphs.motion_generator.graph_walk import GraphWalk
+from morphablegraphs import MotionGenerator, GraphWalkOptimizer, DEFAULT_ALGORITHM_CONFIG, AnnotatedMotionVector
+from morphablegraphs import constraints as mg_constraints
+from morphablegraphs import motion_generator
 
 SERVICE_CONFIG = {
     "model_data": "E:\\projects\\INTERACT\\repository\\data\\3 - Motion primitives\\motion_primitives_quaternion_PCA95 m32-integration-1.5.1",
