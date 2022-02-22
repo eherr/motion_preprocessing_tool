@@ -12,7 +12,7 @@ Using an integrated database browser, motions can be downloaded from [https://mo
 
 2. Clone the repository. 
 ```bat
-git clone it@github.com:eherr/motion_preprocessing_tool.git
+git clone git@github.com:eherr/motion_preprocessing_tool.git
 ```
 
 3. Install the base packages for [animation data editing](https://github.com/eherr/anim_utils) and [visualization](https://github.com/eherr/vis_utils). 
