@@ -49,7 +49,6 @@ class RetargetDialog(QDialog, Ui_Dialog):
         self.editSourceSkeletonModel.clicked.connect(self.edit_src_skeleton_model)
         self.editTargetSkeletonModel.clicked.connect(self.edit_target_skeleton_model)
         
-        self.db_url = constants.DB_URL
         self.target_controller = target_controller
         self.target_skeleton = self.target_controller.get_skeleton()
         self.target_model = self.target_skeleton.skeleton_model
