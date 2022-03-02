@@ -233,13 +233,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="uploadToDBButton">
-       <property name="text">
-        <string>Upload To Database</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QToolButton" name="retargetFromSourceButton">
        <property name="text">
         <string>Retarget from source</string>

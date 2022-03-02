@@ -79,13 +79,16 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
             if self.object_widgets[key].animated:
                 self.app_manager.updated_animation_frame.connect(self.object_widgets[key].updateAnimationTimeInGUI)
             if key in self.widget_buttons:
-                for (name, func) in self.widget_buttons[key]:
+                for (name, func, layout_name) in self.widget_buttons[key]:
                     new_button = QToolButton(self.object_widgets[key])
                     new_button.setObjectName(name)
                     action = QAction(name, self.object_widgets[key])
                     action.triggered.connect(partial(func,self.object_widgets[key]))
                     new_button.setDefaultAction(action)
                     setattr(self.object_widgets[key], name, new_button)
+                    if layout_name is not None:
+                        layout = getattr(self.object_widgets[key], layout_name)
+                        layout.addWidget(new_button)
 
     def init_menus(self):
         count = 0
@@ -257,10 +260,10 @@ class EditorWindow(QMainWindow, Ui_MainWindow):
         cls.plugin_object_constructors[name] = constructor
 
     @classmethod
-    def add_widget_button(cls, widget_name, name, function):
+    def add_widget_button(cls, widget_name, name, function, layout_name=None):
         if widget_name not in cls.widget_buttons:
             cls.widget_buttons[widget_name] = []
-        cls.widget_buttons[widget_name] += [(name, function)]
+        cls.widget_buttons[widget_name] += [(name, function, layout_name)]
 
     def toggle_full_screen(self):
         print("toggle full screen", self._full_screen)
