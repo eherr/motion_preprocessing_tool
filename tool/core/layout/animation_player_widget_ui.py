@@ -15,7 +15,7 @@ from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-from tool/core/widgets/time_line_label_view import TimeLineLabelView
+from tool.core.widgets.time_line_label_view import TimeLineLabelView
 
 
 class Ui_Form(object):
