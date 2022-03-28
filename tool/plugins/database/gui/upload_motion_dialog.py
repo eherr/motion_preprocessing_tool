@@ -35,6 +35,7 @@ from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
 from anim_utils.animation_data import BVHReader
 from tool.plugins.database.session_manager import SessionManager
 from tool.plugins.database import constants as db_constants
+from vis_utils.animation.skeleton_animation_controller import SkeletonAnimationController
 
 
 class UploadMotionDialog(QDialog, Ui_Dialog):
@@ -47,10 +48,6 @@ class UploadMotionDialog(QDialog, Ui_Dialog):
         self.db_url = db_constants.DB_URL
         self.session = SessionManager.session
         self.urlLineEdit.setText(self.db_url)
-        self.motion_table = "motion_clips"
-        self.action_table = "motion_primitives"
-        self.action_table = "actions"
-        self.action = "grasp"
         self.success = False
         self.fill_combo_box_with_skeletons()
         t = threading.Thread(target=self.fill_tree_widget)
@@ -98,28 +95,45 @@ class UploadMotionDialog(QDialog, Ui_Dialog):
         if col is not None:
             c_id, c_name, c_type = col
             self.success = True
-            
             is_processed = bool(self.isProcessedCheckBox.isChecked())
-            for c in self.controller_list:
-                name = c.scene_object.name
-                motion_data = c.get_json_data()
-                print("upload motion clip ", name, "to ", c_id, c_name, c_type, skeleton_name)
-                semantic_annotation = c._motion._semantic_annotation
-                meta_info = dict()
-                if len(semantic_annotation) >0:
-                    meta_info["sections"] = create_section_dict_from_annotation(semantic_annotation)
-                time_function = c._motion._time_function
-                if time_function is not None and is_processed:
-                    meta_info["time_function"] = time_function
-                else:
-                    is_processed = False
-
-                if len(meta_info) > 0:
-                    meta_info_str = json.dumps(meta_info)
-                else:
-                    meta_info_str = ""
-                upload_motion_to_db(self.db_url, name, motion_data, c_id, skeleton_name, meta_info_str, is_processed, session=self.session)
+            for o in self.controller_list:
+                print("upload", o.name)
+                if "animation_controller" in o._components:
+                    c = o._components["animation_controller"]
+                    self.upload_motion(c, c_id, c_name, c_type, skeleton_name, is_processed)
+                elif "animation_directory_explorer" in o._components:
+                    c = o._components["animation_directory_explorer"]
+                    self.upload_directory(c, c_id, c_name, c_type, skeleton_name, is_processed)
             self.close()
+
+    def upload_motion(self, c, c_id, c_name, c_type, skeleton_name, is_processed):
+        name = c.scene_object.name
+        motion_data = c.get_json_data()
+        print("upload motion clip ", name, "to ", c_id, c_name, c_type, skeleton_name)
+        semantic_annotation = c._motion._semantic_annotation
+        meta_info = dict()
+        if len(semantic_annotation) >0:
+            meta_info["sections"] = create_section_dict_from_annotation(semantic_annotation)
+        time_function = c._motion._time_function
+        if time_function is not None and is_processed:
+            meta_info["time_function"] = time_function
+        else:
+            is_processed = False
+
+        if len(meta_info) > 0:
+            meta_info_str = json.dumps(meta_info)
+        else:
+            meta_info_str = ""
+        upload_motion_to_db(self.db_url, name, motion_data, c_id, skeleton_name, meta_info_str, is_processed, session=self.session)
+
+    def upload_directory(self, c, c_id, c_name, c_type, skeleton_name, is_processed):
+        for filename in c._animation_files:
+            mv = c.load_file(filename)
+            motion_data = mv.to_db_format()
+            print("upload motion clip ", filename, "to ", c_id, c_name, c_type, skeleton_name)
+            is_processed = False
+            meta_info_str = ""
+            upload_motion_to_db(self.db_url, filename, motion_data, c_id, skeleton_name, meta_info_str, is_processed, session=self.session)
 
     def slot_reject(self):
         self.close()

@@ -1,6 +1,5 @@
 import os
 import json
-from tool.plugins.database.constants import DB_URL
 from tool.core.editor_window import EditorWindow
 from tool.core.application_manager import ApplicationManager
 from tool.constants import CONFIG_FILE
@@ -37,7 +36,9 @@ def upload_motions_to_db():
     for node_id in node_ids:
         o = ApplicationManager.instance.scene.getObject(node_id)
         if "animation_controller" in o._components:
-            controller_list.append(o._components["animation_controller"])
+            controller_list.append(o)
+        if "animation_directory_explorer" in o._components:
+            controller_list.append(o)
     if len(controller_list) > 0:
         dialog = UploadMotionDialog(controller_list)
         dialog.exec_()
@@ -45,6 +46,7 @@ def upload_motions_to_db():
             print("success")
 
 def login_to_server():
+    print(EditorWindow.instance.session_manager)
     login_dialog = LoginDialog()
     login_dialog.exec_()
     if login_dialog.success:
@@ -74,6 +76,7 @@ def create_section_dict_from_annotation(annotations):
     return motion_sections
 
 def upload_motion_to_db(widget):
+    from tool.plugins.database.constants import DB_URL
     node_id = widget._controller.scene_object.node_id
     if "data_base_ids" in widget._controller.scene_object.scene.internal_vars and node_id in widget._controller.scene_object.scene.internal_vars["data_base_ids"]:
         collection, motion_id, is_processed = widget._controller.scene_object.scene.internal_vars["data_base_ids"][node_id]
@@ -92,7 +95,8 @@ def upload_motion_to_db(widget):
             meta_info_str = json.dumps(meta_info)
         else:
             meta_info_str = ""
-        replace_motion_in_db(DB_URL, motion_id, bvh_name, motion_data, collection, skeleton_model_name, meta_info_str, is_processed, session=EditorWindow.instance.session)
+        session = EditorWindow.instance.session_manager.session
+        replace_motion_in_db(DB_URL, motion_id, bvh_name, motion_data, collection, skeleton_model_name, meta_info_str, is_processed, session=session)
 
     else:
         dialog = UploadMotionDialog([widget._controller])

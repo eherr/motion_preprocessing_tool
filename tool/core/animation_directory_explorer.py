@@ -76,6 +76,7 @@ class AnimationDirectoryExplorer(ComponentBase, AnimationController):
         animated_joints = list(bvh_reader.get_animated_joints())
         mv.skeleton = SkeletonBuilder().load_from_bvh(bvh_reader, animated_joints=animated_joints)
         self.motion_cache[filename] = mv
+        return mv
 
     def get_animation_files(self):
         return self._animation_files
