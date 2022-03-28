@@ -83,7 +83,6 @@ class AnimationPlayerBaseWidget(QWidget):
                 self.relativeRootCheckBox.setChecked(self._controller.relative_root)
             self.fill_combo_box_with_models()
             self.fill_annotation_combobox()
-            self.enable_upload()
 
     def fill_combo_box_with_models(self):
         if not isinstance(self._controller, SkeletonAnimationController):
@@ -490,14 +489,6 @@ class AnimationPlayerBaseWidget(QWidget):
         elif name in constants.LOCAL_SKELETON_MODELS:
             self._controller.set_skeleton_model(constants.LOCAL_SKELETON_MODELS[name]["model"])
 
-    def enable_upload(self):
-        node_id = self._controller.scene_object.node_id
-        enable = False
-        if "data_base_ids" in self._controller.scene_object.scene.internal_vars and node_id in self._controller.scene_object.scene.internal_vars["data_base_ids"]:
-            enable = True
-        if hasattr(self, "uploadToDBButton"):
-            self.uploadToDBButton.setEnabled(enable)
-   
     def slot_fps_text_changed(self, value):
         fps = float(value)
         if fps > 0:
