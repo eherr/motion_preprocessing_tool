@@ -50,8 +50,6 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.leftView.mouse_move.connect(self.on_mouse_move)
         self.leftView.mouse_release.connect(self.on_mouse_release)
         self.leftViewerLayout.addWidget(self.leftView)
-
-
         self.radius = 1.0
         self.fps = 60
         self.dt = 1/60
@@ -118,6 +116,8 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         self.setAnnotationStartButton.clicked.connect(self.set_annotation_edit_start)
         self.createAnnotationButton.clicked.connect(self.create_annotation_section)
         self.removeAnnotationButton.clicked.connect(self.remove_annotation_section)
+
+        self.scaleButton.clicked.connect(self.scale_animation)
 
         self.edited_knob = None
         self.success = False
@@ -541,3 +541,9 @@ class AnimationEditorDialog(QDialog, Ui_Dialog):
         for idx, label in enumerate(self.annotation_editor._semantic_annotation):
             self.labelComboBox.addItem(label, idx)
     
+    def scale_animation(self):
+        s = float(self.scaleLinEdit.text())
+        self._animation_editor.scale_frames(s)
+        self.skeleton_vis.set_scale(s)
+        self.show_change()
+

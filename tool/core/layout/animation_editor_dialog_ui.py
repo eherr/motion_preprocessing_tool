@@ -1,319 +1,510 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'animation_editor_dialog.ui',
-# licensing of 'animation_editor_dialog.ui' applies.
-#
-# Created: Fri Apr 24 23:10:35 2020
-#      by: pyside2-uic  running on PySide2 5.13.1
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'animation_editor_dialog.ui'
+##
+## Created by: Qt User Interface Compiler version 5.14.1
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
+    QRect, QSize, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
+    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
+    QRadialGradient)
+from PySide2.QtWidgets import *
+
+from tool.core.widgets.time_line_label_view import TimeLineLabelView
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
+        if Dialog.objectName():
+            Dialog.setObjectName(u"Dialog")
         Dialog.resize(778, 641)
-        self.gridLayout = QtWidgets.QGridLayout(Dialog)
-        self.gridLayout.setObjectName("gridLayout")
-        self.leftViewerLayout = QtWidgets.QGridLayout()
-        self.leftViewerLayout.setObjectName("leftViewerLayout")
+        self.gridLayout = QGridLayout(Dialog)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.leftViewerLayout = QGridLayout()
+        self.leftViewerLayout.setObjectName(u"leftViewerLayout")
+
         self.gridLayout.addLayout(self.leftViewerLayout, 0, 0, 1, 1)
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
-        self.label_8 = QtWidgets.QLabel(Dialog)
-        self.label_8.setObjectName("label_8")
+
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.horizontalLayout_10 = QHBoxLayout()
+        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.label_8 = QLabel(Dialog)
+        self.label_8.setObjectName(u"label_8")
+
         self.horizontalLayout_10.addWidget(self.label_8)
-        self.leftDisplayFrameSlider = QtWidgets.QSlider(Dialog)
-        self.leftDisplayFrameSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.leftDisplayFrameSlider.setObjectName("leftDisplayFrameSlider")
+
+        self.leftDisplayFrameSlider = QSlider(Dialog)
+        self.leftDisplayFrameSlider.setObjectName(u"leftDisplayFrameSlider")
+        self.leftDisplayFrameSlider.setOrientation(Qt.Horizontal)
+
         self.horizontalLayout_10.addWidget(self.leftDisplayFrameSlider)
-        self.leftDisplayFrameSpinBox = QtWidgets.QSpinBox(Dialog)
-        self.leftDisplayFrameSpinBox.setObjectName("leftDisplayFrameSpinBox")
+
+        self.leftDisplayFrameSpinBox = QSpinBox(Dialog)
+        self.leftDisplayFrameSpinBox.setObjectName(u"leftDisplayFrameSpinBox")
+
         self.horizontalLayout_10.addWidget(self.leftDisplayFrameSpinBox)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_10.addItem(spacerItem)
+
+        self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_10.addItem(self.horizontalSpacer_8)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_10)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.label_2 = QtWidgets.QLabel(Dialog)
-        self.label_2.setObjectName("label_2")
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.label_2 = QLabel(Dialog)
+        self.label_2.setObjectName(u"label_2")
+
         self.horizontalLayout_3.addWidget(self.label_2)
-        self.leftStartFrameSlider = QtWidgets.QSlider(Dialog)
-        self.leftStartFrameSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.leftStartFrameSlider.setObjectName("leftStartFrameSlider")
+
+        self.leftStartFrameSlider = QSlider(Dialog)
+        self.leftStartFrameSlider.setObjectName(u"leftStartFrameSlider")
+        self.leftStartFrameSlider.setOrientation(Qt.Horizontal)
+
         self.horizontalLayout_3.addWidget(self.leftStartFrameSlider)
-        self.leftStartFrameSpinBox = QtWidgets.QSpinBox(Dialog)
-        self.leftStartFrameSpinBox.setObjectName("leftStartFrameSpinBox")
+
+        self.leftStartFrameSpinBox = QSpinBox(Dialog)
+        self.leftStartFrameSpinBox.setObjectName(u"leftStartFrameSpinBox")
+
         self.horizontalLayout_3.addWidget(self.leftStartFrameSpinBox)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem1)
+
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_3)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_3)
-        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.label_3 = QtWidgets.QLabel(Dialog)
-        self.label_3.setObjectName("label_3")
+
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.label_3 = QLabel(Dialog)
+        self.label_3.setObjectName(u"label_3")
+
         self.horizontalLayout_4.addWidget(self.label_3)
-        self.leftEndFrameSlider = QtWidgets.QSlider(Dialog)
-        self.leftEndFrameSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.leftEndFrameSlider.setObjectName("leftEndFrameSlider")
+
+        self.leftEndFrameSlider = QSlider(Dialog)
+        self.leftEndFrameSlider.setObjectName(u"leftEndFrameSlider")
+        self.leftEndFrameSlider.setOrientation(Qt.Horizontal)
+
         self.horizontalLayout_4.addWidget(self.leftEndFrameSlider)
-        self.leftEndFrameSpinBox = QtWidgets.QSpinBox(Dialog)
-        self.leftEndFrameSpinBox.setObjectName("leftEndFrameSpinBox")
+
+        self.leftEndFrameSpinBox = QSpinBox(Dialog)
+        self.leftEndFrameSpinBox.setObjectName(u"leftEndFrameSpinBox")
+
         self.horizontalLayout_4.addWidget(self.leftEndFrameSpinBox)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem2)
+
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_4.addItem(self.horizontalSpacer_4)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_4)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.jointLabel = QtWidgets.QLabel(Dialog)
-        self.jointLabel.setObjectName("jointLabel")
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.jointLabel = QLabel(Dialog)
+        self.jointLabel.setObjectName(u"jointLabel")
+
         self.horizontalLayout.addWidget(self.jointLabel)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem3)
+
+        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer_5)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.label = QtWidgets.QLabel(Dialog)
-        self.label.setObjectName("label")
+
+        self.horizontalLayout_7 = QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.label = QLabel(Dialog)
+        self.label.setObjectName(u"label")
+
         self.horizontalLayout_7.addWidget(self.label)
-        self.fixJointButton = QtWidgets.QPushButton(Dialog)
-        self.fixJointButton.setObjectName("fixJointButton")
+
+        self.fixJointButton = QPushButton(Dialog)
+        self.fixJointButton.setObjectName(u"fixJointButton")
+
         self.horizontalLayout_7.addWidget(self.fixJointButton)
-        self.translateJointButton = QtWidgets.QPushButton(Dialog)
-        self.translateJointButton.setObjectName("translateJointButton")
+
+        self.translateJointButton = QPushButton(Dialog)
+        self.translateJointButton.setObjectName(u"translateJointButton")
+
         self.horizontalLayout_7.addWidget(self.translateJointButton)
-        self.translateXLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.translateXLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.translateXLineEdit.setObjectName("translateXLineEdit")
+
+        self.translateXLineEdit = QLineEdit(Dialog)
+        self.translateXLineEdit.setObjectName(u"translateXLineEdit")
+        self.translateXLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_7.addWidget(self.translateXLineEdit)
-        self.translateYLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.translateYLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.translateYLineEdit.setObjectName("translateYLineEdit")
+
+        self.translateYLineEdit = QLineEdit(Dialog)
+        self.translateYLineEdit.setObjectName(u"translateYLineEdit")
+        self.translateYLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_7.addWidget(self.translateYLineEdit)
-        self.translateZLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.translateZLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.translateZLineEdit.setObjectName("translateZLineEdit")
+
+        self.translateZLineEdit = QLineEdit(Dialog)
+        self.translateZLineEdit.setObjectName(u"translateZLineEdit")
+        self.translateZLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_7.addWidget(self.translateZLineEdit)
-        self.applyConstraintsButton = QtWidgets.QPushButton(Dialog)
-        self.applyConstraintsButton.setObjectName("applyConstraintsButton")
+
+        self.applyConstraintsButton = QPushButton(Dialog)
+        self.applyConstraintsButton.setObjectName(u"applyConstraintsButton")
+
         self.horizontalLayout_7.addWidget(self.applyConstraintsButton)
-        self.clearConstraintsButton = QtWidgets.QPushButton(Dialog)
-        self.clearConstraintsButton.setObjectName("clearConstraintsButton")
+
+        self.clearConstraintsButton = QPushButton(Dialog)
+        self.clearConstraintsButton.setObjectName(u"clearConstraintsButton")
+
         self.horizontalLayout_7.addWidget(self.clearConstraintsButton)
-        self.ccdCheckBox = QtWidgets.QCheckBox(Dialog)
+
+        self.ccdCheckBox = QCheckBox(Dialog)
+        self.ccdCheckBox.setObjectName(u"ccdCheckBox")
         self.ccdCheckBox.setChecked(True)
-        self.ccdCheckBox.setObjectName("ccdCheckBox")
+
         self.horizontalLayout_7.addWidget(self.ccdCheckBox)
-        self.collectConstraintsCheckBox = QtWidgets.QCheckBox(Dialog)
+
+        self.collectConstraintsCheckBox = QCheckBox(Dialog)
+        self.collectConstraintsCheckBox.setObjectName(u"collectConstraintsCheckBox")
         self.collectConstraintsCheckBox.setChecked(False)
-        self.collectConstraintsCheckBox.setObjectName("collectConstraintsCheckBox")
+
         self.horizontalLayout_7.addWidget(self.collectConstraintsCheckBox)
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_7.addItem(spacerItem4)
+
+        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_7.addItem(self.horizontalSpacer_7)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_7)
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.label_4 = QtWidgets.QLabel(Dialog)
-        self.label_4.setObjectName("label_4")
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.label_4 = QLabel(Dialog)
+        self.label_4.setObjectName(u"label_4")
+
         self.horizontalLayout_5.addWidget(self.label_4)
-        self.rotateJointButton = QtWidgets.QPushButton(Dialog)
-        self.rotateJointButton.setObjectName("rotateJointButton")
+
+        self.rotateJointButton = QPushButton(Dialog)
+        self.rotateJointButton.setObjectName(u"rotateJointButton")
+
         self.horizontalLayout_5.addWidget(self.rotateJointButton)
-        self.rotateXLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.rotateXLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.rotateXLineEdit.setObjectName("rotateXLineEdit")
+
+        self.rotateXLineEdit = QLineEdit(Dialog)
+        self.rotateXLineEdit.setObjectName(u"rotateXLineEdit")
+        self.rotateXLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_5.addWidget(self.rotateXLineEdit)
-        self.rotateYLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.rotateYLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.rotateYLineEdit.setObjectName("rotateYLineEdit")
+
+        self.rotateYLineEdit = QLineEdit(Dialog)
+        self.rotateYLineEdit.setObjectName(u"rotateYLineEdit")
+        self.rotateYLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_5.addWidget(self.rotateYLineEdit)
-        self.rotateZLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.rotateZLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.rotateZLineEdit.setObjectName("rotateZLineEdit")
+
+        self.rotateZLineEdit = QLineEdit(Dialog)
+        self.rotateZLineEdit.setObjectName(u"rotateZLineEdit")
+        self.rotateZLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_5.addWidget(self.rotateZLineEdit)
-        self.label_5 = QtWidgets.QLabel(Dialog)
-        self.label_5.setObjectName("label_5")
+
+        self.label_5 = QLabel(Dialog)
+        self.label_5.setObjectName(u"label_5")
+
         self.horizontalLayout_5.addWidget(self.label_5)
-        self.blendRangeLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.blendRangeLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.blendRangeLineEdit.setObjectName("blendRangeLineEdit")
+
+        self.blendRangeLineEdit = QLineEdit(Dialog)
+        self.blendRangeLineEdit.setObjectName(u"blendRangeLineEdit")
+        self.blendRangeLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_5.addWidget(self.blendRangeLineEdit)
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem5)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_5.addItem(self.horizontalSpacer_2)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_5)
-        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.deleteAfterButton = QtWidgets.QPushButton(Dialog)
-        self.deleteAfterButton.setObjectName("deleteAfterButton")
+
+        self.verticalLayout_4 = QVBoxLayout()
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.deleteAfterButton = QPushButton(Dialog)
+        self.deleteAfterButton.setObjectName(u"deleteAfterButton")
+
         self.horizontalLayout_6.addWidget(self.deleteAfterButton)
-        self.deleteBeforeButton = QtWidgets.QPushButton(Dialog)
-        self.deleteBeforeButton.setObjectName("deleteBeforeButton")
+
+        self.deleteBeforeButton = QPushButton(Dialog)
+        self.deleteBeforeButton.setObjectName(u"deleteBeforeButton")
+
         self.horizontalLayout_6.addWidget(self.deleteBeforeButton)
-        self.mirrorAnimationButton = QtWidgets.QPushButton(Dialog)
-        self.mirrorAnimationButton.setObjectName("mirrorAnimationButton")
+
+        self.mirrorAnimationButton = QPushButton(Dialog)
+        self.mirrorAnimationButton.setObjectName(u"mirrorAnimationButton")
+
         self.horizontalLayout_6.addWidget(self.mirrorAnimationButton)
-        self.concatenateButton = QtWidgets.QPushButton(Dialog)
-        self.concatenateButton.setObjectName("concatenateButton")
+
+        self.concatenateButton = QPushButton(Dialog)
+        self.concatenateButton.setObjectName(u"concatenateButton")
+
         self.horizontalLayout_6.addWidget(self.concatenateButton)
-        self.smoothFramesButton = QtWidgets.QPushButton(Dialog)
-        self.smoothFramesButton.setObjectName("smoothFramesButton")
+
+        self.smoothFramesButton = QPushButton(Dialog)
+        self.smoothFramesButton.setObjectName(u"smoothFramesButton")
+
         self.horizontalLayout_6.addWidget(self.smoothFramesButton)
-        self.smoothWindowSizeLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.smoothWindowSizeLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.smoothWindowSizeLineEdit.setObjectName("smoothWindowSizeLineEdit")
+
+        self.smoothWindowSizeLineEdit = QLineEdit(Dialog)
+        self.smoothWindowSizeLineEdit.setObjectName(u"smoothWindowSizeLineEdit")
+        self.smoothWindowSizeLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_6.addWidget(self.smoothWindowSizeLineEdit)
-        self.resampleButton = QtWidgets.QPushButton(Dialog)
-        self.resampleButton.setObjectName("resampleButton")
+
+        self.resampleButton = QPushButton(Dialog)
+        self.resampleButton.setObjectName(u"resampleButton")
+
         self.horizontalLayout_6.addWidget(self.resampleButton)
-        self.resampleFactorLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.resampleFactorLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.resampleFactorLineEdit.setObjectName("resampleFactorLineEdit")
+
+        self.resampleFactorLineEdit = QLineEdit(Dialog)
+        self.resampleFactorLineEdit.setObjectName(u"resampleFactorLineEdit")
+        self.resampleFactorLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_6.addWidget(self.resampleFactorLineEdit)
-        self.setFPSButton = QtWidgets.QPushButton(Dialog)
-        self.setFPSButton.setObjectName("setFPSButton")
+
+        self.setFPSButton = QPushButton(Dialog)
+        self.setFPSButton.setObjectName(u"setFPSButton")
+
         self.horizontalLayout_6.addWidget(self.setFPSButton)
-        self.fpsLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.fpsLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.fpsLineEdit.setObjectName("fpsLineEdit")
+
+        self.fpsLineEdit = QLineEdit(Dialog)
+        self.fpsLineEdit.setObjectName(u"fpsLineEdit")
+        self.fpsLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_6.addWidget(self.fpsLineEdit)
-        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_6.addItem(spacerItem6)
+
+        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_6)
+
+
         self.verticalLayout_4.addLayout(self.horizontalLayout_6)
+
+
         self.verticalLayout.addLayout(self.verticalLayout_4)
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        self.guessGroundHeightButton = QtWidgets.QPushButton(Dialog)
-        self.guessGroundHeightButton.setObjectName("guessGroundHeightButton")
+
+        self.horizontalLayout_8 = QHBoxLayout()
+        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
+        self.guessGroundHeightButton = QPushButton(Dialog)
+        self.guessGroundHeightButton.setObjectName(u"guessGroundHeightButton")
+
         self.horizontalLayout_8.addWidget(self.guessGroundHeightButton)
-        self.moveToGroundButton = QtWidgets.QPushButton(Dialog)
-        self.moveToGroundButton.setObjectName("moveToGroundButton")
+
+        self.moveToGroundButton = QPushButton(Dialog)
+        self.moveToGroundButton.setObjectName(u"moveToGroundButton")
+
         self.horizontalLayout_8.addWidget(self.moveToGroundButton)
-        self.label_7 = QtWidgets.QLabel(Dialog)
-        self.label_7.setObjectName("label_7")
+
+        self.label_7 = QLabel(Dialog)
+        self.label_7.setObjectName(u"label_7")
+
         self.horizontalLayout_8.addWidget(self.label_7)
-        self.sourceGroundHeightLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.sourceGroundHeightLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.sourceGroundHeightLineEdit.setObjectName("sourceGroundHeightLineEdit")
+
+        self.sourceGroundHeightLineEdit = QLineEdit(Dialog)
+        self.sourceGroundHeightLineEdit.setObjectName(u"sourceGroundHeightLineEdit")
+        self.sourceGroundHeightLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_8.addWidget(self.sourceGroundHeightLineEdit)
-        self.label_6 = QtWidgets.QLabel(Dialog)
-        self.label_6.setObjectName("label_6")
+
+        self.label_6 = QLabel(Dialog)
+        self.label_6.setObjectName(u"label_6")
+
         self.horizontalLayout_8.addWidget(self.label_6)
-        self.targetGroundHeightLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.targetGroundHeightLineEdit.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.targetGroundHeightLineEdit.setObjectName("targetGroundHeightLineEdit")
+
+        self.targetGroundHeightLineEdit = QLineEdit(Dialog)
+        self.targetGroundHeightLineEdit.setObjectName(u"targetGroundHeightLineEdit")
+        self.targetGroundHeightLineEdit.setMaximumSize(QSize(40, 16777215))
+
         self.horizontalLayout_8.addWidget(self.targetGroundHeightLineEdit)
-        self.detectFootContactsButton = QtWidgets.QPushButton(Dialog)
-        self.detectFootContactsButton.setObjectName("detectFootContactsButton")
+
+        self.detectFootContactsButton = QPushButton(Dialog)
+        self.detectFootContactsButton.setObjectName(u"detectFootContactsButton")
+
         self.horizontalLayout_8.addWidget(self.detectFootContactsButton)
-        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_8.addItem(spacerItem7)
+
+        self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_8.addItem(self.horizontalSpacer_9)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_8)
-        self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
-        self.label_9 = QtWidgets.QLabel(Dialog)
-        self.label_9.setObjectName("label_9")
+
+        self.horizontalLayout_11 = QHBoxLayout()
+        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
+        self.scaleButton = QPushButton(Dialog)
+        self.scaleButton.setObjectName(u"scaleButton")
+
+        self.horizontalLayout_11.addWidget(self.scaleButton)
+
+        self.scaleLinEdit = QLineEdit(Dialog)
+        self.scaleLinEdit.setObjectName(u"scaleLinEdit")
+        self.scaleLinEdit.setMaximumSize(QSize(40, 16777215))
+
+        self.horizontalLayout_11.addWidget(self.scaleLinEdit)
+
+        self.horizontalSpacer_11 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_11.addItem(self.horizontalSpacer_11)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_11)
+
+        self.horizontalLayout_9 = QHBoxLayout()
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.label_9 = QLabel(Dialog)
+        self.label_9.setObjectName(u"label_9")
+
         self.horizontalLayout_9.addWidget(self.label_9)
-        self.labelComboBox = QtWidgets.QComboBox(Dialog)
-        self.labelComboBox.setObjectName("labelComboBox")
+
+        self.labelComboBox = QComboBox(Dialog)
+        self.labelComboBox.setObjectName(u"labelComboBox")
+
         self.horizontalLayout_9.addWidget(self.labelComboBox)
-        self.setAnnotationStartButton = QtWidgets.QPushButton(Dialog)
-        self.setAnnotationStartButton.setObjectName("setAnnotationStartButton")
+
+        self.setAnnotationStartButton = QPushButton(Dialog)
+        self.setAnnotationStartButton.setObjectName(u"setAnnotationStartButton")
+
         self.horizontalLayout_9.addWidget(self.setAnnotationStartButton)
-        self.createAnnotationButton = QtWidgets.QPushButton(Dialog)
-        self.createAnnotationButton.setObjectName("createAnnotationButton")
+
+        self.createAnnotationButton = QPushButton(Dialog)
+        self.createAnnotationButton.setObjectName(u"createAnnotationButton")
+
         self.horizontalLayout_9.addWidget(self.createAnnotationButton)
-        self.removeAnnotationButton = QtWidgets.QPushButton(Dialog)
-        self.removeAnnotationButton.setObjectName("removeAnnotationButton")
+
+        self.removeAnnotationButton = QPushButton(Dialog)
+        self.removeAnnotationButton.setObjectName(u"removeAnnotationButton")
+
         self.horizontalLayout_9.addWidget(self.removeAnnotationButton)
-        self.groundFeetButton = QtWidgets.QPushButton(Dialog)
-        self.groundFeetButton.setObjectName("groundFeetButton")
+
+        self.groundFeetButton = QPushButton(Dialog)
+        self.groundFeetButton.setObjectName(u"groundFeetButton")
+
         self.horizontalLayout_9.addWidget(self.groundFeetButton)
-        spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem8)
+
+        self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_9.addItem(self.horizontalSpacer_10)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_9)
+
         self.contactLabelView = TimeLineLabelView(Dialog)
-        self.contactLabelView.setMaximumSize(QtCore.QSize(16777215, 100))
-        self.contactLabelView.setObjectName("contactLabelView")
+        self.contactLabelView.setObjectName(u"contactLabelView")
+        self.contactLabelView.setMaximumSize(QSize(16777215, 100))
+
         self.verticalLayout.addWidget(self.contactLabelView)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem9 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem9)
-        self.flipBlenderCoordinateSystemButton = QtWidgets.QPushButton(Dialog)
-        self.flipBlenderCoordinateSystemButton.setObjectName("flipBlenderCoordinateSystemButton")
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+
+        self.flipBlenderCoordinateSystemButton = QPushButton(Dialog)
+        self.flipBlenderCoordinateSystemButton.setObjectName(u"flipBlenderCoordinateSystemButton")
+
         self.horizontalLayout_2.addWidget(self.flipBlenderCoordinateSystemButton)
-        self.exportCommandsButton = QtWidgets.QPushButton(Dialog)
-        self.exportCommandsButton.setObjectName("exportCommandsButton")
+
+        self.exportCommandsButton = QPushButton(Dialog)
+        self.exportCommandsButton.setObjectName(u"exportCommandsButton")
+
         self.horizontalLayout_2.addWidget(self.exportCommandsButton)
-        self.undoButton = QtWidgets.QPushButton(Dialog)
-        self.undoButton.setObjectName("undoButton")
+
+        self.undoButton = QPushButton(Dialog)
+        self.undoButton.setObjectName(u"undoButton")
+
         self.horizontalLayout_2.addWidget(self.undoButton)
-        self.selectButton = QtWidgets.QPushButton(Dialog)
-        self.selectButton.setObjectName("selectButton")
+
+        self.selectButton = QPushButton(Dialog)
+        self.selectButton.setObjectName(u"selectButton")
+
         self.horizontalLayout_2.addWidget(self.selectButton)
-        self.cancelButton = QtWidgets.QPushButton(Dialog)
-        self.cancelButton.setObjectName("cancelButton")
+
+        self.cancelButton = QPushButton(Dialog)
+        self.cancelButton.setObjectName(u"cancelButton")
+
         self.horizontalLayout_2.addWidget(self.cancelButton)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_2)
+
+
         self.gridLayout.addLayout(self.verticalLayout, 1, 0, 1, 1)
 
+
         self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+        QMetaObject.connectSlotsByName(Dialog)
+    # setupUi
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtWidgets.QApplication.translate("Dialog", "Animation Editor", None, -1))
-        self.label_8.setText(QtWidgets.QApplication.translate("Dialog", "Displayed Frame", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("Dialog", "Edit Start", None, -1))
-        self.label_3.setText(QtWidgets.QApplication.translate("Dialog", "Edit End", None, -1))
-        self.jointLabel.setText(QtWidgets.QApplication.translate("Dialog", "Selected Joint: None", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("Dialog", "IK", None, -1))
-        self.fixJointButton.setText(QtWidgets.QApplication.translate("Dialog", "Fix Joint", None, -1))
-        self.translateJointButton.setText(QtWidgets.QApplication.translate("Dialog", "Translate Joint", None, -1))
-        self.translateXLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
-        self.translateYLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
-        self.translateZLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
-        self.applyConstraintsButton.setText(QtWidgets.QApplication.translate("Dialog", "Apply", None, -1))
-        self.clearConstraintsButton.setText(QtWidgets.QApplication.translate("Dialog", "Clear", None, -1))
-        self.ccdCheckBox.setText(QtWidgets.QApplication.translate("Dialog", "ccd", None, -1))
-        self.collectConstraintsCheckBox.setText(QtWidgets.QApplication.translate("Dialog", "collect", None, -1))
-        self.label_4.setText(QtWidgets.QApplication.translate("Dialog", "FK", None, -1))
-        self.rotateJointButton.setText(QtWidgets.QApplication.translate("Dialog", "Rotate Joint", None, -1))
-        self.rotateXLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
-        self.rotateYLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
-        self.rotateZLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
-        self.label_5.setText(QtWidgets.QApplication.translate("Dialog", "Blend Range", None, -1))
-        self.blendRangeLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "20", None, -1))
-        self.deleteAfterButton.setText(QtWidgets.QApplication.translate("Dialog", "Delete After Slider", None, -1))
-        self.deleteBeforeButton.setText(QtWidgets.QApplication.translate("Dialog", "Delete Before Slider", None, -1))
-        self.mirrorAnimationButton.setText(QtWidgets.QApplication.translate("Dialog", "Mirror", None, -1))
-        self.concatenateButton.setText(QtWidgets.QApplication.translate("Dialog", "Concatenate", None, -1))
-        self.smoothFramesButton.setText(QtWidgets.QApplication.translate("Dialog", "Smooth", None, -1))
-        self.smoothWindowSizeLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "15", None, -1))
-        self.resampleButton.setText(QtWidgets.QApplication.translate("Dialog", "Resample", None, -1))
-        self.resampleFactorLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "1", None, -1))
-        self.setFPSButton.setText(QtWidgets.QApplication.translate("Dialog", "SetFPS", None, -1))
-        self.fpsLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
-        self.guessGroundHeightButton.setText(QtWidgets.QApplication.translate("Dialog", "GuessGround", None, -1))
-        self.moveToGroundButton.setText(QtWidgets.QApplication.translate("Dialog", "Move To Ground", None, -1))
-        self.label_7.setText(QtWidgets.QApplication.translate("Dialog", "Source:", None, -1))
-        self.sourceGroundHeightLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
-        self.label_6.setText(QtWidgets.QApplication.translate("Dialog", "Target:", None, -1))
-        self.targetGroundHeightLineEdit.setText(QtWidgets.QApplication.translate("Dialog", "0", None, -1))
-        self.detectFootContactsButton.setText(QtWidgets.QApplication.translate("Dialog", "Detect Foot Contacts", None, -1))
-        self.label_9.setText(QtWidgets.QApplication.translate("Dialog", "Foot Contacts", None, -1))
-        self.setAnnotationStartButton.setText(QtWidgets.QApplication.translate("Dialog", "Set Start Frame", None, -1))
-        self.createAnnotationButton.setText(QtWidgets.QApplication.translate("Dialog", "Create Annotation", None, -1))
-        self.removeAnnotationButton.setText(QtWidgets.QApplication.translate("Dialog", "Remove Annotation", None, -1))
-        self.groundFeetButton.setText(QtWidgets.QApplication.translate("Dialog", "Apply Foot Grounding", None, -1))
-        self.flipBlenderCoordinateSystemButton.setText(QtWidgets.QApplication.translate("Dialog", "Flip Blender Coordinate Systems", None, -1))
-        self.exportCommandsButton.setText(QtWidgets.QApplication.translate("Dialog", "Export Commands", None, -1))
-        self.undoButton.setText(QtWidgets.QApplication.translate("Dialog", "Undo", None, -1))
-        self.selectButton.setText(QtWidgets.QApplication.translate("Dialog", "Accept", None, -1))
-        self.cancelButton.setText(QtWidgets.QApplication.translate("Dialog", "Cancel", None, -1))
+        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Animation Editor", None))
+        self.label_8.setText(QCoreApplication.translate("Dialog", u"Displayed Frame", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog", u"Edit Start", None))
+        self.label_3.setText(QCoreApplication.translate("Dialog", u"Edit End", None))
+        self.jointLabel.setText(QCoreApplication.translate("Dialog", u"Selected Joint: None", None))
+        self.label.setText(QCoreApplication.translate("Dialog", u"IK", None))
+        self.fixJointButton.setText(QCoreApplication.translate("Dialog", u"Fix Joint", None))
+        self.translateJointButton.setText(QCoreApplication.translate("Dialog", u"Translate Joint", None))
+        self.translateXLineEdit.setText(QCoreApplication.translate("Dialog", u"0", None))
+        self.translateYLineEdit.setText(QCoreApplication.translate("Dialog", u"0", None))
+        self.translateZLineEdit.setText(QCoreApplication.translate("Dialog", u"0", None))
+        self.applyConstraintsButton.setText(QCoreApplication.translate("Dialog", u"Apply", None))
+        self.clearConstraintsButton.setText(QCoreApplication.translate("Dialog", u"Clear", None))
+        self.ccdCheckBox.setText(QCoreApplication.translate("Dialog", u"ccd", None))
+        self.collectConstraintsCheckBox.setText(QCoreApplication.translate("Dialog", u"collect", None))
+        self.label_4.setText(QCoreApplication.translate("Dialog", u"FK", None))
+        self.rotateJointButton.setText(QCoreApplication.translate("Dialog", u"Rotate Joint", None))
+        self.rotateXLineEdit.setText(QCoreApplication.translate("Dialog", u"0", None))
+        self.rotateYLineEdit.setText(QCoreApplication.translate("Dialog", u"0", None))
+        self.rotateZLineEdit.setText(QCoreApplication.translate("Dialog", u"0", None))
+        self.label_5.setText(QCoreApplication.translate("Dialog", u"Blend Range", None))
+        self.blendRangeLineEdit.setText(QCoreApplication.translate("Dialog", u"20", None))
+        self.deleteAfterButton.setText(QCoreApplication.translate("Dialog", u"Delete After Slider", None))
+        self.deleteBeforeButton.setText(QCoreApplication.translate("Dialog", u"Delete Before Slider", None))
+        self.mirrorAnimationButton.setText(QCoreApplication.translate("Dialog", u"Mirror", None))
+        self.concatenateButton.setText(QCoreApplication.translate("Dialog", u"Concatenate", None))
+        self.smoothFramesButton.setText(QCoreApplication.translate("Dialog", u"Smooth", None))
+        self.smoothWindowSizeLineEdit.setText(QCoreApplication.translate("Dialog", u"15", None))
+        self.resampleButton.setText(QCoreApplication.translate("Dialog", u"Resample", None))
+        self.resampleFactorLineEdit.setText(QCoreApplication.translate("Dialog", u"1", None))
+        self.setFPSButton.setText(QCoreApplication.translate("Dialog", u"SetFPS", None))
+        self.fpsLineEdit.setText(QCoreApplication.translate("Dialog", u"0", None))
+        self.guessGroundHeightButton.setText(QCoreApplication.translate("Dialog", u"GuessGround", None))
+        self.moveToGroundButton.setText(QCoreApplication.translate("Dialog", u"Move To Ground", None))
+        self.label_7.setText(QCoreApplication.translate("Dialog", u"Source:", None))
+        self.sourceGroundHeightLineEdit.setText(QCoreApplication.translate("Dialog", u"0", None))
+        self.label_6.setText(QCoreApplication.translate("Dialog", u"Target:", None))
+        self.targetGroundHeightLineEdit.setText(QCoreApplication.translate("Dialog", u"0", None))
+        self.detectFootContactsButton.setText(QCoreApplication.translate("Dialog", u"Detect Foot Contacts", None))
+        self.scaleButton.setText(QCoreApplication.translate("Dialog", u"Scale", None))
+        self.scaleLinEdit.setText(QCoreApplication.translate("Dialog", u"1", None))
+        self.label_9.setText(QCoreApplication.translate("Dialog", u"Foot Contacts", None))
+        self.setAnnotationStartButton.setText(QCoreApplication.translate("Dialog", u"Set Start Frame", None))
+        self.createAnnotationButton.setText(QCoreApplication.translate("Dialog", u"Create Annotation", None))
+        self.removeAnnotationButton.setText(QCoreApplication.translate("Dialog", u"Remove Annotation", None))
+        self.groundFeetButton.setText(QCoreApplication.translate("Dialog", u"Apply Foot Grounding", None))
+        self.flipBlenderCoordinateSystemButton.setText(QCoreApplication.translate("Dialog", u"Flip Blender Coordinate Systems", None))
+        self.exportCommandsButton.setText(QCoreApplication.translate("Dialog", u"Export Commands", None))
+        self.undoButton.setText(QCoreApplication.translate("Dialog", u"Undo", None))
+        self.selectButton.setText(QCoreApplication.translate("Dialog", u"Accept", None))
+        self.cancelButton.setText(QCoreApplication.translate("Dialog", u"Cancel", None))
+    # retranslateUi
 
-from tool.core.widgets.time_line_label_view import TimeLineLabelView

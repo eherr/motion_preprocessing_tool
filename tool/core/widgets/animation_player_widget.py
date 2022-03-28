@@ -343,9 +343,9 @@ class AnimationPlayerBaseWidget(QWidget):
             self._controller._motion.mv.frame_time = animation_editor.controller._motion.mv.frame_time
             fps = str(np.ceil(1.0/self._controller._motion.mv.frame_time))
             self.fpsLineEdit.setText(fps)
-            
-            #skeleton = animation_editor.controller.get_skeleton()
-            #self._controller.set_skeleton(skeleton)
+            skeleton = animation_editor.controller.get_skeleton()
+            skeleton_vis = self._controller.scene_object._components["skeleton_vis"]
+            skeleton_vis.set_skeleton(skeleton)
             self._controller.replace_frames(new_frames)
             self._controller.updateTransformation()
             self.setFrameRange(0, n_frames-1)
