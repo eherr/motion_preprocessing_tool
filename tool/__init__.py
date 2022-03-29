@@ -32,7 +32,7 @@ def create_annotation_from_sections_list(sections, n_frames):
             indices_sections.append(frame_indices)
         annotations[label] = indices_sections
     #return annotations
-    return collections.OrderedDict(sorted(annotations.items(), key=lambda x: x[1][0][0]))
+    return collections.OrderedDict(sorted(annotations.items(), key=lambda x: x[1][0][0] if len(x[1]) > 0 else 0))
 
 def create_annotation_from_sections_dict(sections, n_frames):
     annotations = collections.OrderedDict()
@@ -60,7 +60,7 @@ def create_annotation_from_sections_dict(sections, n_frames):
             indices_sections.append(frame_indices)
         annotations[label] = indices_sections
     #return annotations
-    return collections.OrderedDict(sorted(annotations.items(), key=lambda x: x[1][0][0]))
+    return collections.OrderedDict(sorted(annotations.items(), key=lambda x: x[1][0][0] if len(x[1]) > 0 else 0))
 
 def get_bvh_from_str(bvh_str):
     bvh_reader = BVHReader("")
@@ -127,6 +127,7 @@ def load_motion_from_json(builder, skeleton_data, motion_data, name, collection_
             sections = meta_data["sections"]
             print("sections", sections)
             sections = meta_data["sections"]
+            print(meta_data)
             if type(sections) == list:
                 semantic_annotation = create_annotation_from_sections_list(sections, motion_vector.n_frames)
             else:
