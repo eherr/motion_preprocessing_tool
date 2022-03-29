@@ -52,7 +52,7 @@ from anim_utils.utilities.db_interface import create_new_collection_in_remote_db
                                         create_new_skeleton_in_db, load_skeleton_from_db,delete_skeleton_from_remote_db, retarget_motion_in_db, get_annotation_by_id_from_remote_db, \
                                         get_skeleton_from_remote_db, get_skeletons_from_remote_db,get_collections_from_remote_db, delete_collection_from_remote_db, \
                                         get_collections_by_parent_id_from_remote_db,replace_collection_in_remote_db, get_collection_by_id, \
-                                        start_cluster_job, replace_skeleton_in_remote_db, get_skeleton_model_from_remote_db
+                                        start_cluster_job, replace_skeleton_in_remote_db, get_collections_tree_by_parent_id_from_remote_db
 from vis_utils.io import load_json_file, save_json_file
 from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
 from anim_utils.animation_data import MotionVector, SkeletonBuilder
@@ -257,7 +257,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self._fill_model_list_from_db()
         self._fill_aligned_motion_list_from_db()
 
-    def fill_tree_widget(self, parent=None):
+    def fill_tree_widget_old(self, parent=None):
         if parent is None:
             self.collectionTreeWidget.clear()
             self.rootItem = QTreeWidgetItem(self.collectionTreeWidget, ["root", "root"])
@@ -269,14 +269,27 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         else:
             parent_id = parent[1]
             parent_item = parent[0]
-
         collection_list = get_collections_by_parent_id_from_remote_db(self.db_url, parent_id)
         if collection_list is not None:
             for col in collection_list:
                 colItem = QTreeWidgetItem(parent_item, [col[1], col[2]])
                 colItem.setData(0, Qt.UserRole, col[0])
                 self.fill_tree_widget((colItem, col[0]))
-            
+
+    def fill_tree_widget(self):
+        self.collectionTreeWidget.clear()
+        self.rootItem = QTreeWidgetItem(self.collectionTreeWidget, ["root", "root"])
+        self.rootItem.setData(0, Qt.UserRole, 0)
+        collection_tree = get_collections_tree_by_parent_id_from_remote_db(self.db_url, 0)
+        self._fill_tree_widget(collection_tree, self.rootItem)
+        self.rootItem.setExpanded(True)
+
+    def _fill_tree_widget(self, collection_tree, parent_item):
+        for key in collection_tree:
+            col = collection_tree[key]
+            col_item = QTreeWidgetItem(parent_item, [col["name"],col["type"]])
+            col_item.setData(0, Qt.UserRole, key)
+            self._fill_tree_widget(col["sub_tree"], col_item)
 
     def fill_combo_box_with_skeletons(self):
         self.skeletonListComboBox.clear()
@@ -379,7 +392,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         #print("selected item", item.text(),self.selected_id)
         motion_data = get_motion_by_id_from_remote_db(self.db_url, motion_id, is_processed)
         if motion_data is None:
-            print("Error: motion data is empty")
+            print("Error: loaded motion data is empty")
             return
         #skeleton_name = motion_data["skeletonModel"]
         skeleton_name = str(self.skeletonListComboBox.currentText())
