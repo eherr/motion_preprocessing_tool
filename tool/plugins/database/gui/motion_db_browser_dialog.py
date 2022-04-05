@@ -541,24 +541,27 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         #print(skeleton_name, len(motion_list), is_aligned, directory)
         for motion_id, name in motion_list:
             print("download motion", str(count)+"/"+str(n_motions), name, is_aligned)
-            self.export_motion_clip(skeleton, motion_id, name, directory)
+            self.export_motion_clip(skeleton, motion_id, name, directory, export_bvh=True)
             count+=1
 
-    def export_motion_clip(self, skeleton, motion_id, name, directory, export_bvh=False, export_json=False, export_bson=True):
+    def export_motion_clip(self, skeleton, motion_id, name, directory, export_bvh=True):
         print("export clip")
         motion_dict = get_motion_by_id_from_remote_db(self.db_url, motion_id, is_processed=False, session=self.session)
         if motion_dict is None:
             return
         print("write to file")
+        filename = directory+os.sep+name
         if export_bvh:
             motion_vector = MotionVector()
-            motion_vector.from_custom_unity_format(motion_dict)
-            bvh_str = get_bvh_string(skeleton, motion_vector.frames)
-            filename = directory+os.sep+name
+            motion_vector.from_custom_db_format(motion_dict)
+            motion_str = get_bvh_string(skeleton, motion_vector.frames)
             if not name.endswith(".bvh"):
                 filename += ".bvh"
-            with open(filename, "wt") as out_file:
-                out_file.write(bvh_str)
+        else:
+            motion_str = json.dumps(motion_dict)
+        with open(filename, "wt") as out_file:
+            out_file.write(motion_str)
+            
         filename = directory+os.sep+name
         annotation_str = get_annotation_by_id_from_remote_db(self.db_url, motion_id, is_processed=False, session=self.session)
         if annotation_str != "":
@@ -899,7 +902,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             print("Error: motion data is empty")
             return
         #motion_vector = MotionVector()
-        #motion_vector.from_custom_unity_format(motion_data)
+        #motion_vector.from_custom_db_format(motion_data)
         #bvh_str = get_bvh_string(skeleton, motion_vector.frames)
         #motion_vector.skeleton = skeleton
         meta_info_str = get_annotation_by_id_from_remote_db(self.db_url, motion_id)
