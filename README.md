@@ -17,28 +17,22 @@ git clone git@github.com:eherr/motion_preprocessing_tool.git
 
 3. Install the base packages for [animation data editing](https://github.com/eherr/anim_utils) and [visualization](https://github.com/eherr/vis_utils). 
 ```bat
-
-pip install git+https://github.com/eherr/anim_utils/
+pip install git+https://github.com/eherr/anim_utils
 
 pip install git+https://github.com/eherr/vis_utils
-
 ```
 
 
-4. The [morphablegraphs](https://github.com/eherr/morphablegraphs.git) module is optional to create and load statistical motion models. It needs to be checked out manually, due to the restricted mgrd submodule, which is a faster implementation that can be ignored.
+4. Optionally install the [morphablegraphs](https://github.com/eherr/morphablegraphs.git) package to create and load statistical motion models. 
 
 ```bat
-git clone git@github.com:dfki-asr/morphablegraphs.git
-cd morphablegraphs
-python setup.py install
+pip install git+https://github.com/dfki-asr/morphablegraphs
 ```
 
 5. Install other requirements. To run the tool on Windows, please download PyOpenGL from here: https://www.lfd.uci.edu/~gohlke/pythonlibs/.
 
 ```bat
-
 pip install -r requirements.txt
-
 ```
 5. Start the tool.
 ```bat
