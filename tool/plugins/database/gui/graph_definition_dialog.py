@@ -27,9 +27,7 @@ from PySide2.QtCore import Qt
 from .layout.graph_definition_dialog_ui import Ui_Dialog
 from tool.core.dialogs.enter_name_dialog import EnterNameDialog
 from .select_transition_dialog import SelectTransitionDialog
-from vis_utils.io import load_json_file
-from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
-from anim_utils.utilities.db_interface import DB_URL, get_collections_by_parent_id_from_remote_db
+from motion_db_interface import get_collections_by_parent_id_from_remote_db
 try:
     from morphablegraphs.utilities.db_interface import get_model_list_from_remote_db
     from morphablegraphs.motion_model import NODE_TYPE_STANDARD, NODE_TYPE_END, NODE_TYPE_START, NODE_TYPE_IDLE, NODE_TYPE_SINGLE

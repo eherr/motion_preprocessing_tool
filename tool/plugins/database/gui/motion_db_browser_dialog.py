@@ -47,7 +47,7 @@ from .graph_definition_dialog import GraphDefinitionDialog
 from .graph_table_view_dialog import GraphTableViewDialog
 from tool.core.dialogs.skeleton_editor_dialog import SkeletonEditorDialog
 from tool.core.dialogs.utils import load_motion_data_from_dir
-from anim_utils.utilities.db_interface import create_new_collection_in_remote_db, get_bvh_string, get_motion_list_from_remote_db, get_motion_by_id_from_remote_db, \
+from motion_db_interface import create_new_collection_in_remote_db, get_bvh_string, get_motion_list_from_remote_db, get_motion_by_id_from_remote_db, \
                                         delete_motion_by_id_from_remote_db,  upload_motion_to_db, replace_motion_in_db, get_time_function_by_id_from_remote_db, \
                                         create_new_skeleton_in_db, load_skeleton_from_db,delete_skeleton_from_remote_db, retarget_motion_in_db, get_annotation_by_id_from_remote_db, \
                                         get_skeleton_from_remote_db, get_skeletons_from_remote_db,get_collections_from_remote_db, delete_collection_from_remote_db, \

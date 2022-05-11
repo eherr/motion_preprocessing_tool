@@ -9,7 +9,7 @@ if os.path.isfile(CONFIG_FILE):
 
 from tool.plugins.database.gui import MotionDBBrowserDialog, GraphTableViewDialog, UploadMotionDialog, LoginDialog, SynchronizeSkeletonsWithDBDialog
 from tool.plugins.database.session_manager import SessionManager
-from anim_utils.utilities.db_interface import replace_motion_in_db
+from motion_db_interface import replace_motion_in_db
 
 EditorWindow.add_plugin_object("session_manager", SessionManager)
 EditorWindow.add_plugin_object("motion_db_browser_dialog", None)

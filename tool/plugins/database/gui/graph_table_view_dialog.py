@@ -31,7 +31,7 @@ from tool.core.dialogs.utils import get_animation_controllers
 from .graph_definition_dialog import GraphDefinitionDialog, EnterNameDialog
 from tool.core.dialogs.confirmation_dialog import ConfirmationDialog
 from anim_utils.animation_data import SkeletonBuilder
-from anim_utils.utilities.db_interface import call_rest_interface, get_skeletons_from_remote_db, get_skeleton_from_remote_db, get_skeleton_model_from_remote_db
+from motion_db_interface import call_rest_interface, get_skeletons_from_remote_db, get_skeleton_from_remote_db, get_skeleton_model_from_remote_db
 from vis_utils.io import load_json_file, save_json_file
 from tool.plugins.database.session_manager import SessionManager
 from tool.plugins.database.constants import DB_URL

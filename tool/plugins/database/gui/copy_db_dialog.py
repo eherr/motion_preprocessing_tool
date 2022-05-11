@@ -24,7 +24,7 @@ import threading
 from PySide2.QtWidgets import QDialog, QTreeWidgetItem, QFileDialog
 from PySide2.QtCore import Qt
 from .layout.copy_db_dialog_ui import Ui_Dialog
-from anim_utils.utilities.db_interface import get_collections_by_parent_id_from_remote_db
+from motion_db_interface import get_collections_by_parent_id_from_remote_db
 
 class CopyDBDialog(QDialog, Ui_Dialog):
     def __init__(self, db_url, parent=None):

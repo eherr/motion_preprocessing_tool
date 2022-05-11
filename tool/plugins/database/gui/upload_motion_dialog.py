@@ -28,7 +28,7 @@ from .layout.upload_motion_dialog_ui import Ui_Dialog
 from tool.core.dialogs.enter_name_dialog import EnterNameDialog
 from tool.core.dialogs.new_skeleton_dialog import NewSkeletonDialog
 from tool.core.dialogs.utils import get_animation_controllers, create_section_dict_from_annotation
-from anim_utils.utilities.db_interface import upload_motion_to_db, get_skeletons_from_remote_db, \
+from motion_db_interface import upload_motion_to_db, get_skeletons_from_remote_db, \
                         create_new_skeleton_in_db, get_collections_by_parent_id_from_remote_db
 from vis_utils.io import load_json_file
 from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
