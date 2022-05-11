@@ -15,7 +15,7 @@ Using an integrated database browser, motions can be downloaded from [https://mo
 git clone git@github.com:eherr/motion_preprocessing_tool.git
 ```
 
-3. Install the base packages for [animation data editing](https://github.com/eherr/anim_utils), [visualization](https://github.com/eherr/vis_utils) and the [db interface]https://github.com/eherr/motion_db_interface.
+3. Install the base packages for [animation data editing](https://github.com/eherr/anim_utils), [visualization](https://github.com/eherr/vis_utils) and the [db interface](https://github.com/eherr/motion_db_interface).
 ```bat
 
 pip install git+https://github.com/eherr/anim_utils
