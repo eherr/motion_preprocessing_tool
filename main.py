@@ -24,9 +24,10 @@ import sys, traceback
 import os
 #workaround for wrong Qt5 DLL path http://www.programmersought.com/article/8605863159/
 import PySide2
-dirname = os.path.dirname(PySide2.__file__)
-plugin_path = os.path.join(dirname, 'plugins', 'platforms')
-os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
+if os.name == 'nt':
+    dirname = os.path.dirname(PySide2.__file__)
+    plugin_path = os.path.join(dirname, 'plugins', 'platforms')
+    os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
 from PySide2.QtWidgets import QApplication
 from tool.constants import CONFIG_FILE
 import pygame
