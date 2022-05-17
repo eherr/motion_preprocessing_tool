@@ -8,7 +8,7 @@ Using an integrated database browser, motions can be downloaded from [https://mo
 
 ## Setup Instructions
 
-1. Create a virtual environment for Python 3.6.
+1. Create a virtual environment for Python 3.7.
 
 2. Clone the repository. 
 ```bat
@@ -45,7 +45,7 @@ pip install -r requirements.txt
 python main.py
 ```
 ## Functionality
-BVH/ASF files can be loaded via drag and drop on the 3D visualization window. When a file is loaded a scene object is automatically created and an entry inserted into the scene object list.  
+BVH, FBX and ASF files can be loaded via drag and drop on the 3D visualization window. When a file is loaded a scene object is automatically created and an entry inserted into the scene object list.  
 To show the animation controls select the corresponding object in the scene object list by pressing on the left most bar in the table. If the scene object was created from an ASF file, additional motions can be loaded from AMC files via the animation controls. 
 
 Character meshes with skeletons can also be imported from the [GLTF](https://github.com/KhronosGroup/glTF) format.  
