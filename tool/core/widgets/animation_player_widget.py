@@ -209,9 +209,9 @@ class AnimationPlayerBaseWidget(QWidget):
 
     def initSignals(self):
         self.animationToggleButton.setDefaultAction(self.toggle_animation_action)
-        self.createRagdollButton.setDefaultAction(self.create_ragdoll_action)
         self.retargetFromSourceButton.setDefaultAction(self.retarget_from_src_action)
         self.saveToBVHFileButton.setDefaultAction(self.save_to_bvh_file_action)
+        self.saveToFBXFileButton.setDefaultAction(self.save_to_fbx_file_action)
         self.copyFromSourceButton.setDefaultAction(self.copy_from_src_action)
         self.openEditorButton.setDefaultAction(self.open_animation_editor_action)
         self.saveToJSONFileButton.setDefaultAction(self.save_to_json_file_action)
@@ -224,7 +224,6 @@ class AnimationPlayerBaseWidget(QWidget):
         self.replaceAnimationButton.setDefaultAction(self.replace_action)
         self.plotJointsButton.setDefaultAction(self.plot_joints_action)
         self.loadAnimatedMeshButton.setDefaultAction(self.load_animated_mesh_action)
-        self.attachFigureButton.setDefaultAction(self.attach_figure_action)
         self.skeletonModelComboBox.currentIndexChanged.connect(self.set_skeleton_model)
         self.setReferenceFrameButton.setDefaultAction(self.set_reference_frame_action)
         self.splitMotionButton.setDefaultAction(self.split_motion_action)
@@ -323,7 +322,7 @@ class AnimationPlayerBaseWidget(QWidget):
 
     def save_to_file(self, export_format="bvh"):
         filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
-        self._controller.export_to_file(filename, export_format="bvh")
+        self._controller.export_to_file(filename, export_format=export_format)
 
     def copy_from_src(self):
         graphics_widget = ApplicationManager.instance.graphics_widget

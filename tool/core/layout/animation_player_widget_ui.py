@@ -196,15 +196,6 @@ class Ui_Form(object):
 
         self.horizontalLayout_3.addWidget(self.openEditorButton)
 
-        self.saveToBVHFileButton = QToolButton(Form)
-        self.saveToBVHFileButton.setObjectName(u"saveToBVHFileButton")
-
-        self.horizontalLayout_3.addWidget(self.saveToBVHFileButton)
-
-        self.saveToJSONFileButton = QToolButton(Form)
-        self.saveToJSONFileButton.setObjectName(u"saveToJSONFileButton")
-
-        self.horizontalLayout_3.addWidget(self.saveToJSONFileButton)
 
         self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -215,25 +206,23 @@ class Ui_Form(object):
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.loadAnimatedMeshButton = QToolButton(Form)
-        self.loadAnimatedMeshButton.setObjectName(u"loadAnimatedMeshButton")
 
-        self.horizontalLayout_4.addWidget(self.loadAnimatedMeshButton)
+        self.saveToBVHFileButton = QToolButton(Form)
+        self.saveToBVHFileButton.setObjectName(u"saveToBVHFileButton")
 
-        self.createRagdollButton = QToolButton(Form)
-        self.createRagdollButton.setObjectName(u"createRagdollButton")
+        self.horizontalLayout_4.addWidget(self.saveToBVHFileButton)
 
-        self.horizontalLayout_4.addWidget(self.createRagdollButton)
+        self.saveToFBXFileButton = QToolButton(Form)
+        self.saveToFBXFileButton.setObjectName(u"saveToFBXFileButton")
 
-        self.attachFigureButton = QToolButton(Form)
-        self.attachFigureButton.setObjectName(u"attachFigureButton")
+        self.horizontalLayout_4.addWidget(self.saveToFBXFileButton)
 
-        self.horizontalLayout_4.addWidget(self.attachFigureButton)
+        self.saveToJSONFileButton = QToolButton(Form)
+        self.saveToJSONFileButton.setObjectName(u"saveToJSONFileButton")
 
-        self.setReferenceFrameButton = QToolButton(Form)
-        self.setReferenceFrameButton.setObjectName(u"setReferenceFrameButton")
+        self.horizontalLayout_4.addWidget(self.saveToJSONFileButton)
 
-        self.horizontalLayout_4.addWidget(self.setReferenceFrameButton)
+
 
         self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -244,6 +233,18 @@ class Ui_Form(object):
 
         self.horizontalLayout_5 = QHBoxLayout()
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+
+
+        self.loadAnimatedMeshButton = QToolButton(Form)
+        self.loadAnimatedMeshButton.setObjectName(u"loadAnimatedMeshButton")
+        self.horizontalLayout_5.addWidget(self.loadAnimatedMeshButton)
+
+
+        self.setReferenceFrameButton = QToolButton(Form)
+        self.setReferenceFrameButton.setObjectName(u"setReferenceFrameButton")
+
+        self.horizontalLayout_5.addWidget(self.setReferenceFrameButton)
+
         self.replaceAnimationButton = QToolButton(Form)
         self.replaceAnimationButton.setObjectName(u"replaceAnimationButton")
 
@@ -294,8 +295,6 @@ class Ui_Form(object):
         self.saveToBVHFileButton.setText(QCoreApplication.translate("Form", u"Save To BVH", None))
         self.saveToJSONFileButton.setText(QCoreApplication.translate("Form", u"Save to JSON", None))
         self.loadAnimatedMeshButton.setText(QCoreApplication.translate("Form", u"Load Mesh", None))
-        self.createRagdollButton.setText(QCoreApplication.translate("Form", u"Create Ragdoll", None))
-        self.attachFigureButton.setText(QCoreApplication.translate("Form", u"Attach Figure", None))
         self.setReferenceFrameButton.setText(QCoreApplication.translate("Form", u"Set Reference Frame", None))
         self.replaceAnimationButton.setText(QCoreApplication.translate("Form", u"Replace Animation From BVH/ACM File", None))
         self.plotJointsButton.setText(QCoreApplication.translate("Form", u"Plot Joint Trajectories", None))
