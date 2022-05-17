@@ -99,7 +99,7 @@ def upload_motion_to_db(widget):
         replace_motion_in_db(DB_URL, motion_id, bvh_name, motion_data, collection, skeleton_model_name, meta_info_str, is_processed, session=session)
 
     else:
-        dialog = UploadMotionDialog([widget._controller])
+        dialog = UploadMotionDialog([widget._controller.scene_object])
         dialog.exec_()
         if dialog.success:
             print("success")
