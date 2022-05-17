@@ -149,7 +149,10 @@ class AnimationPlayerBaseWidget(QWidget):
 
 
         self.save_to_bvh_file_action = QAction("Save to BVH file", self)
-        self.save_to_bvh_file_action.triggered.connect(self.save_to_bvh_file)
+        self.save_to_bvh_file_action.triggered.connect(partial(self.save_to_file, export_format='bvh'))
+
+        self.save_to_fbx_file_action = QAction("Save to FBX file", self)
+        self.save_to_fbx_file_action.triggered.connect(partial(self.save_to_file, export_format='fbx'))
 
         self.copy_from_src_action = QAction("Copy From Source", self)
         self.copy_from_src_action.triggered.connect(self.copy_from_src)
@@ -318,7 +321,7 @@ class AnimationPlayerBaseWidget(QWidget):
     def draw_mode_selection_changed(self, idx):
         self._controller._visualization.draw_mode = int(idx)
 
-    def save_to_bvh_file(self):
+    def save_to_file(self, export_format="bvh"):
         filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
         self._controller.export_to_file(filename, export_format="bvh")
 
@@ -345,6 +348,7 @@ class AnimationPlayerBaseWidget(QWidget):
             skeleton = animation_editor.controller.get_skeleton()
             skeleton_vis = self._controller.scene_object._components["skeleton_vis"]
             skeleton_vis.set_skeleton(skeleton)
+            self._controller.skeleton = skeleton
             self._controller.replace_frames(new_frames)
             self._controller.updateTransformation()
             self.setFrameRange(0, n_frames-1)
