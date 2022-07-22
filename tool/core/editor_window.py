@@ -362,7 +362,7 @@ def toggle_visibility():
     ApplicationManager.instance.scene.toggle_visibility(node_ids)
 
 def save_screen_shot():
-    ApplicationManager.instance.views[0].frame_buffer.save_to_file("framebuffer.png")
+    ApplicationManager.instance.views[0].graphics_context.save_screenshot("framebuffer.png")
 
 def toggle_full_screen():
     EditorWindow.instance.toggle_full_screen()
