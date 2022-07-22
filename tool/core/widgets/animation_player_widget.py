@@ -370,7 +370,7 @@ class AnimationPlayerBaseWidget(QWidget):
             src_model = set_controller_dialog.src_model
             target_model = set_controller_dialog.target_model
             frame_range = set_controller_dialog.start_frame, set_controller_dialog.end_frame
-            self._controller._visualization.skeleton.skeleton_model = target_model
+            self._controller.get_skeleton().skeleton_model = target_model
             if "animation_controller" in list(src_object._components.keys()):
                 src_controller = src_object._components["animation_controller"]
                 n_frames = self._controller.retarget_from_src(src_controller, scale_factor, src_model, target_model, frame_range)
@@ -460,7 +460,7 @@ class AnimationPlayerBaseWidget(QWidget):
             scene.object_builder.create_object("animation_controller",copy_dialog.name, skeleton_copy, mv_copy, mv_copy.frame_time, semantic_annotation=semantic_annotation) 
 
     def plot_joint_trajectories(self):
-        select_joints_dialog = SelectJointsDialog(self._controller._visualization.skeleton, self)
+        select_joints_dialog = SelectJointsDialog(self._controller.get_skeleton(), self)
         select_joints_dialog.exec_()
         if select_joints_dialog.success:
             joint_list = select_joints_dialog.selected_joints
