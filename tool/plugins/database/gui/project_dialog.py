@@ -21,31 +21,25 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 from PySide2.QtWidgets import  QDialog
-from .layout.new_collection_dialog_ui import Ui_Dialog
+from .layout.project_dialog_ui import Ui_Dialog
 
 
-
-class NewCollectionDialog(QDialog, Ui_Dialog):
-    def __init__(self, parent_name, parent_id, default_name="", col_type="", parent=None):
+class ProjectDialog(QDialog, Ui_Dialog):
+    def __init__(self, info, parent=None):
         QDialog.__init__(self, parent)
         Ui_Dialog.setupUi(self, self)
         self.acceptButton.clicked.connect(self.slot_accept)
         self.rejectButton.clicked.connect(self.slot_reject)
-        self.parent_name = parent_name
-        self.parentLabel.setText("Parent: "+parent_name)
-        self.parent_id = parent_id
         self.success = False
-        self.name = default_name
-        self.nameLineEdit.setText(default_name)
-        self.col_type = col_type
-        self.typeLineEdit.setText(col_type)
-        self.owner = 0
+        self.name = info.get("name", "")
+        self.is_public = info.get("public", False)
+        self.nameLineEdit.setText(self.name)
+        self.publicCheckBox.setChecked(self.is_public)
         
     def slot_accept(self):
         self.success = True
         self.name = str(self.nameLineEdit.text())
-        self.col_type = str(self.typeLineEdit.text())
-        self.owner = int(self.ownerLineEdit.text())
+        self.is_public = self.publicCheckBox.checkState()
         self.success = True
         self.close()
 

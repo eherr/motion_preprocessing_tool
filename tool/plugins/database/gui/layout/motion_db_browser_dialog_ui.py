@@ -1,294 +1,493 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'motion_db_browser_dialog.ui',
-# licensing of 'motion_db_browser_dialog.ui' applies.
-#
-# Created: Thu Jan 30 16:49:10 2020
-#      by: pyside2-uic  running on PySide2 5.13.1
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'motion_db_browser_dialog.ui'
+##
+## Created by: Qt User Interface Compiler version 5.14.1
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
+    QRect, QSize, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
+    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
+    QRadialGradient)
+from PySide2.QtWidgets import *
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(859, 381)
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(Dialog)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.label = QtWidgets.QLabel(Dialog)
-        self.label.setObjectName("label")
+        if Dialog.objectName():
+            Dialog.setObjectName(u"Dialog")
+        Dialog.resize(859, 404)
+        self.gridLayout_3 = QGridLayout(Dialog)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.horizontalLayout_7 = QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.label = QLabel(Dialog)
+        self.label.setObjectName(u"label")
+
         self.horizontalLayout_7.addWidget(self.label)
-        self.urlLineEdit = QtWidgets.QLineEdit(Dialog)
-        self.urlLineEdit.setObjectName("urlLineEdit")
+
+        self.urlLineEdit = QLineEdit(Dialog)
+        self.urlLineEdit.setObjectName(u"urlLineEdit")
+
         self.horizontalLayout_7.addWidget(self.urlLineEdit)
-        self.statusLabel = QtWidgets.QLabel(Dialog)
-        self.statusLabel.setObjectName("statusLabel")
+
+        self.statusLabel = QLabel(Dialog)
+        self.statusLabel.setObjectName(u"statusLabel")
+
         self.horizontalLayout_7.addWidget(self.statusLabel)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_7.addItem(spacerItem)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_7)
-        self.skeletonHorizontalLayout = QtWidgets.QHBoxLayout()
-        self.skeletonHorizontalLayout.setObjectName("skeletonHorizontalLayout")
-        self.skeletonLabel = QtWidgets.QLabel(Dialog)
-        self.skeletonLabel.setObjectName("skeletonLabel")
+
+        self.horizontalSpacer_11 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_7.addItem(self.horizontalSpacer_11)
+
+
+        self.gridLayout_3.addLayout(self.horizontalLayout_7, 0, 0, 1, 1)
+
+        self.horizontalLayout_9 = QHBoxLayout()
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.label_2 = QLabel(Dialog)
+        self.label_2.setObjectName(u"label_2")
+
+        self.horizontalLayout_9.addWidget(self.label_2)
+
+        self.projectListComboBox = QComboBox(Dialog)
+        self.projectListComboBox.setObjectName(u"projectListComboBox")
+        self.projectListComboBox.setMinimumSize(QSize(100, 0))
+
+        self.horizontalLayout_9.addWidget(self.projectListComboBox)
+
+        self.newProjectButton = QPushButton(Dialog)
+        self.newProjectButton.setObjectName(u"newProjectButton")
+
+        self.horizontalLayout_9.addWidget(self.newProjectButton)
+
+        self.editProjectButton = QPushButton(Dialog)
+        self.editProjectButton.setObjectName(u"editProjectButton")
+
+        self.horizontalLayout_9.addWidget(self.editProjectButton)
+
+        self.deleteProjectButton = QPushButton(Dialog)
+        self.deleteProjectButton.setObjectName(u"deleteProjectButton")
+
+        self.horizontalLayout_9.addWidget(self.deleteProjectButton)
+
+        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_9.addItem(self.horizontalSpacer_7)
+
+
+        self.gridLayout_3.addLayout(self.horizontalLayout_9, 1, 0, 1, 1)
+
+        self.skeletonHorizontalLayout = QHBoxLayout()
+        self.skeletonHorizontalLayout.setObjectName(u"skeletonHorizontalLayout")
+        self.skeletonLabel = QLabel(Dialog)
+        self.skeletonLabel.setObjectName(u"skeletonLabel")
+
         self.skeletonHorizontalLayout.addWidget(self.skeletonLabel)
-        self.skeletonListComboBox = QtWidgets.QComboBox(Dialog)
-        self.skeletonListComboBox.setMinimumSize(QtCore.QSize(100, 0))
-        self.skeletonListComboBox.setObjectName("skeletonListComboBox")
+
+        self.skeletonListComboBox = QComboBox(Dialog)
+        self.skeletonListComboBox.setObjectName(u"skeletonListComboBox")
+        self.skeletonListComboBox.setMinimumSize(QSize(100, 0))
+
         self.skeletonHorizontalLayout.addWidget(self.skeletonListComboBox)
-        self.newSkeletonButton = QtWidgets.QPushButton(Dialog)
-        self.newSkeletonButton.setObjectName("newSkeletonButton")
+
+        self.newSkeletonButton = QPushButton(Dialog)
+        self.newSkeletonButton.setObjectName(u"newSkeletonButton")
+
         self.skeletonHorizontalLayout.addWidget(self.newSkeletonButton)
-        self.deleteSkeletonButton = QtWidgets.QPushButton(Dialog)
-        self.deleteSkeletonButton.setObjectName("deleteSkeletonButton")
+
+        self.deleteSkeletonButton = QPushButton(Dialog)
+        self.deleteSkeletonButton.setObjectName(u"deleteSkeletonButton")
+
         self.skeletonHorizontalLayout.addWidget(self.deleteSkeletonButton)
-        self.replaceSkeletonButton = QtWidgets.QPushButton(Dialog)
-        self.replaceSkeletonButton.setObjectName("replaceSkeletonButton")
+
+        self.replaceSkeletonButton = QPushButton(Dialog)
+        self.replaceSkeletonButton.setObjectName(u"replaceSkeletonButton")
+
         self.skeletonHorizontalLayout.addWidget(self.replaceSkeletonButton)
-        self.loadSkeletonButton = QtWidgets.QPushButton(Dialog)
-        self.loadSkeletonButton.setObjectName("loadSkeletonButton")
+
+        self.loadSkeletonButton = QPushButton(Dialog)
+        self.loadSkeletonButton.setObjectName(u"loadSkeletonButton")
+
         self.skeletonHorizontalLayout.addWidget(self.loadSkeletonButton)
-        self.exportSkeletonButton = QtWidgets.QPushButton(Dialog)
-        self.exportSkeletonButton.setObjectName("exportSkeletonButton")
+
+        self.exportSkeletonButton = QPushButton(Dialog)
+        self.exportSkeletonButton.setObjectName(u"exportSkeletonButton")
+
         self.skeletonHorizontalLayout.addWidget(self.exportSkeletonButton)
-        self.editSkeletonButton = QtWidgets.QPushButton(Dialog)
-        self.editSkeletonButton.setObjectName("editSkeletonButton")
+
+        self.editSkeletonButton = QPushButton(Dialog)
+        self.editSkeletonButton.setObjectName(u"editSkeletonButton")
+
         self.skeletonHorizontalLayout.addWidget(self.editSkeletonButton)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.skeletonHorizontalLayout.addItem(spacerItem1)
-        self.verticalLayout_2.addLayout(self.skeletonHorizontalLayout)
-        self.splitter = QtWidgets.QSplitter(Dialog)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setObjectName("splitter")
-        self.layoutWidget = QtWidgets.QWidget(self.splitter)
-        self.layoutWidget.setObjectName("layoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
+
+        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.skeletonHorizontalLayout.addItem(self.horizontalSpacer_6)
+
+
+        self.gridLayout_3.addLayout(self.skeletonHorizontalLayout, 2, 0, 1, 1)
+
+        self.splitter = QSplitter(Dialog)
+        self.splitter.setObjectName(u"splitter")
+        self.splitter.setOrientation(Qt.Horizontal)
+        self.layoutWidget = QWidget(self.splitter)
+        self.layoutWidget.setObjectName(u"layoutWidget")
+        self.verticalLayout = QVBoxLayout(self.layoutWidget)
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.collectionTreeWidget = QtWidgets.QTreeWidget(self.layoutWidget)
-        self.collectionTreeWidget.setObjectName("collectionTreeWidget")
+        self.collectionTreeWidget = QTreeWidget(self.layoutWidget)
+        self.collectionTreeWidget.setObjectName(u"collectionTreeWidget")
+
         self.verticalLayout.addWidget(self.collectionTreeWidget)
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_6.addItem(spacerItem2)
-        self.addCollectionButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.addCollectionButton.setObjectName("addCollectionButton")
+
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.horizontalSpacer_12 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_12)
+
+        self.addCollectionButton = QPushButton(self.layoutWidget)
+        self.addCollectionButton.setObjectName(u"addCollectionButton")
+
         self.horizontalLayout_6.addWidget(self.addCollectionButton)
-        self.editCollectionButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.editCollectionButton.setObjectName("editCollectionButton")
+
+        self.editCollectionButton = QPushButton(self.layoutWidget)
+        self.editCollectionButton.setObjectName(u"editCollectionButton")
+
         self.horizontalLayout_6.addWidget(self.editCollectionButton)
-        self.deleteCollectionButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.deleteCollectionButton.setObjectName("deleteCollectionButton")
+
+        self.deleteCollectionButton = QPushButton(self.layoutWidget)
+        self.deleteCollectionButton.setObjectName(u"deleteCollectionButton")
+
         self.horizontalLayout_6.addWidget(self.deleteCollectionButton)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_6)
-        self.tabWidget = QtWidgets.QTabWidget(self.splitter)
-        self.tabWidget.setObjectName("tabWidget")
-        self.clip_tab = QtWidgets.QWidget()
-        self.clip_tab.setObjectName("clip_tab")
-        self.gridLayout = QtWidgets.QGridLayout(self.clip_tab)
-        self.gridLayout.setObjectName("gridLayout")
-        self.processedMotionListWidget = QtWidgets.QListWidget(self.clip_tab)
-        self.processedMotionListWidget.setObjectName("processedMotionListWidget")
+
+        self.splitter.addWidget(self.layoutWidget)
+        self.tabWidget = QTabWidget(self.splitter)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.clip_tab = QWidget()
+        self.clip_tab.setObjectName(u"clip_tab")
+        self.gridLayout = QGridLayout(self.clip_tab)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.processedMotionListWidget = QListWidget(self.clip_tab)
+        self.processedMotionListWidget.setObjectName(u"processedMotionListWidget")
+
         self.gridLayout.addWidget(self.processedMotionListWidget, 0, 0, 1, 1)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem3)
-        self.selectButton = QtWidgets.QPushButton(self.clip_tab)
-        self.selectButton.setObjectName("selectButton")
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+
+        self.selectButton = QPushButton(self.clip_tab)
+        self.selectButton.setObjectName(u"selectButton")
+
         self.horizontalLayout_2.addWidget(self.selectButton)
-        self.deleteMotionButton = QtWidgets.QPushButton(self.clip_tab)
-        self.deleteMotionButton.setObjectName("deleteMotionButton")
+
+        self.deleteMotionButton = QPushButton(self.clip_tab)
+        self.deleteMotionButton.setObjectName(u"deleteMotionButton")
+
         self.horizontalLayout_2.addWidget(self.deleteMotionButton)
+
+
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem4)
-        self.importCollectionButton = QtWidgets.QPushButton(self.clip_tab)
-        self.importCollectionButton.setObjectName("importCollectionButton")
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalSpacer2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer2)
+
+        self.importCollectionButton = QPushButton(self.clip_tab)
+        self.importCollectionButton.setObjectName(u"importCollectionButton")
+
         self.horizontalLayout_3.addWidget(self.importCollectionButton)
-        self.exportCollectionButton = QtWidgets.QPushButton(self.clip_tab)
-        self.exportCollectionButton.setObjectName("exportCollectionButton")
+
+        self.exportCollectionButton = QPushButton(self.clip_tab)
+        self.exportCollectionButton.setObjectName(u"exportCollectionButton")
+
         self.horizontalLayout_3.addWidget(self.exportCollectionButton)
+
+
         self.gridLayout.addLayout(self.horizontalLayout_3, 2, 0, 1, 1)
-        self.horizontalLayout_32 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_32.setObjectName("horizontalLayout_32")
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_32.addItem(spacerItem5)
-        self.alignMotionsButton = QtWidgets.QPushButton(self.clip_tab)
-        self.alignMotionsButton.setObjectName("alignMotionsButton")
+
+        self.horizontalLayout_32 = QHBoxLayout()
+        self.horizontalLayout_32.setObjectName(u"horizontalLayout_32")
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_32.addItem(self.horizontalSpacer_3)
+
+        self.alignMotionsButton = QPushButton(self.clip_tab)
+        self.alignMotionsButton.setObjectName(u"alignMotionsButton")
+
         self.horizontalLayout_32.addWidget(self.alignMotionsButton)
+
+
         self.gridLayout.addLayout(self.horizontalLayout_32, 3, 0, 1, 1)
-        self.horizontalLayout_34 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_34.setObjectName("horizontalLayout_34")
-        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_34.addItem(spacerItem6)
-        self.setTimeFunctionButton = QtWidgets.QPushButton(self.clip_tab)
-        self.setTimeFunctionButton.setObjectName("setTimeFunctionButton")
+
+        self.horizontalLayout_34 = QHBoxLayout()
+        self.horizontalLayout_34.setObjectName(u"horizontalLayout_34")
+        self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_34.addItem(self.horizontalSpacer_8)
+
+        self.setTimeFunctionButton = QPushButton(self.clip_tab)
+        self.setTimeFunctionButton.setObjectName(u"setTimeFunctionButton")
+
         self.horizontalLayout_34.addWidget(self.setTimeFunctionButton)
-        self.editMotionsButton = QtWidgets.QPushButton(self.clip_tab)
-        self.editMotionsButton.setObjectName("editMotionsButton")
+
+        self.editMotionsButton = QPushButton(self.clip_tab)
+        self.editMotionsButton.setObjectName(u"editMotionsButton")
+
         self.horizontalLayout_34.addWidget(self.editMotionsButton)
-        self.retargetMotionsButton = QtWidgets.QPushButton(self.clip_tab)
-        self.retargetMotionsButton.setObjectName("retargetMotionsButton")
+
+        self.retargetMotionsButton = QPushButton(self.clip_tab)
+        self.retargetMotionsButton.setObjectName(u"retargetMotionsButton")
+
         self.horizontalLayout_34.addWidget(self.retargetMotionsButton)
-        self.copyMotionsButton = QtWidgets.QPushButton(self.clip_tab)
-        self.copyMotionsButton.setObjectName("copyMotionsButton")
+
+        self.copyMotionsButton = QPushButton(self.clip_tab)
+        self.copyMotionsButton.setObjectName(u"copyMotionsButton")
+
         self.horizontalLayout_34.addWidget(self.copyMotionsButton)
+
+
         self.gridLayout.addLayout(self.horizontalLayout_34, 4, 0, 1, 1)
+
         self.tabWidget.addTab(self.clip_tab, "")
-        self.aligned_tab = QtWidgets.QWidget()
-        self.aligned_tab.setObjectName("aligned_tab")
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.aligned_tab)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.alignedMotionListWidget = QtWidgets.QListWidget(self.aligned_tab)
-        self.alignedMotionListWidget.setObjectName("alignedMotionListWidget")
+        self.processedMotionListWidget.raise_()
+        self.aligned_tab = QWidget()
+        self.aligned_tab.setObjectName(u"aligned_tab")
+        self.verticalLayout_3 = QVBoxLayout(self.aligned_tab)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.alignedMotionListWidget = QListWidget(self.aligned_tab)
+        self.alignedMotionListWidget.setObjectName(u"alignedMotionListWidget")
+
         self.verticalLayout_3.addWidget(self.alignedMotionListWidget)
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_8.addItem(spacerItem7)
-        self.selectAlignedMotionButton = QtWidgets.QPushButton(self.aligned_tab)
-        self.selectAlignedMotionButton.setObjectName("selectAlignedMotionButton")
+
+        self.horizontalLayout_8 = QHBoxLayout()
+        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
+        self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_8.addItem(self.horizontalSpacer_10)
+
+        self.selectAlignedMotionButton = QPushButton(self.aligned_tab)
+        self.selectAlignedMotionButton.setObjectName(u"selectAlignedMotionButton")
+
         self.horizontalLayout_8.addWidget(self.selectAlignedMotionButton)
-        self.deleteAlignedMotionButton = QtWidgets.QPushButton(self.aligned_tab)
-        self.deleteAlignedMotionButton.setObjectName("deleteAlignedMotionButton")
+
+        self.deleteAlignedMotionButton = QPushButton(self.aligned_tab)
+        self.deleteAlignedMotionButton.setObjectName(u"deleteAlignedMotionButton")
+
         self.horizontalLayout_8.addWidget(self.deleteAlignedMotionButton)
+
+
         self.verticalLayout_3.addLayout(self.horizontalLayout_8)
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem8)
-        self.createMotionModelButton = QtWidgets.QPushButton(self.aligned_tab)
-        self.createMotionModelButton.setObjectName("createMotionModelButton")
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_5.addItem(self.horizontalSpacer_9)
+
+        self.createMotionModelButton = QPushButton(self.aligned_tab)
+        self.createMotionModelButton.setObjectName(u"createMotionModelButton")
+
         self.horizontalLayout_5.addWidget(self.createMotionModelButton)
+
+
         self.verticalLayout_3.addLayout(self.horizontalLayout_5)
-        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        spacerItem9 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem9)
-        self.exportAlignedCollectionButton = QtWidgets.QPushButton(self.aligned_tab)
-        self.exportAlignedCollectionButton.setObjectName("exportAlignedCollectionButton")
+
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_4.addItem(self.horizontalSpacer_5)
+
+        self.exportAlignedCollectionButton = QPushButton(self.aligned_tab)
+        self.exportAlignedCollectionButton.setObjectName(u"exportAlignedCollectionButton")
+
         self.horizontalLayout_4.addWidget(self.exportAlignedCollectionButton)
-        self.retargetAlignedMotionsButton = QtWidgets.QPushButton(self.aligned_tab)
-        self.retargetAlignedMotionsButton.setObjectName("retargetAlignedMotionsButton")
+
+        self.retargetAlignedMotionsButton = QPushButton(self.aligned_tab)
+        self.retargetAlignedMotionsButton.setObjectName(u"retargetAlignedMotionsButton")
+
         self.horizontalLayout_4.addWidget(self.retargetAlignedMotionsButton)
+
+
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
+
         self.tabWidget.addTab(self.aligned_tab, "")
-        self.model_tab = QtWidgets.QWidget()
-        self.model_tab.setObjectName("model_tab")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.model_tab)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        self.modelListWidget = QtWidgets.QListWidget(self.model_tab)
-        self.modelListWidget.setObjectName("modelListWidget")
+        self.model_tab = QWidget()
+        self.model_tab.setObjectName(u"model_tab")
+        self.gridLayout_2 = QGridLayout(self.model_tab)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.modelListWidget = QListWidget(self.model_tab)
+        self.modelListWidget.setObjectName(u"modelListWidget")
+
         self.gridLayout_2.addWidget(self.modelListWidget, 0, 0, 1, 1)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem10 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem10)
-        self.downloadMotionModelButton = QtWidgets.QPushButton(self.model_tab)
-        self.downloadMotionModelButton.setObjectName("downloadMotionModelButton")
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer_2)
+
+        self.downloadMotionModelButton = QPushButton(self.model_tab)
+        self.downloadMotionModelButton.setObjectName(u"downloadMotionModelButton")
+
         self.horizontalLayout.addWidget(self.downloadMotionModelButton)
-        self.deleteMotionModelButton = QtWidgets.QPushButton(self.model_tab)
-        self.deleteMotionModelButton.setObjectName("deleteMotionModelButton")
+
+        self.deleteMotionModelButton = QPushButton(self.model_tab)
+        self.deleteMotionModelButton.setObjectName(u"deleteMotionModelButton")
+
         self.horizontalLayout.addWidget(self.deleteMotionModelButton)
+
+
         self.gridLayout_2.addLayout(self.horizontalLayout, 1, 0, 1, 1)
-        self.horizontalLayout_33 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_33.setObjectName("horizontalLayout_33")
-        spacerItem11 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_33.addItem(spacerItem11)
-        self.importMotionModelButton = QtWidgets.QPushButton(self.model_tab)
-        self.importMotionModelButton.setObjectName("importMotionModelButton")
+
+        self.horizontalLayout_33 = QHBoxLayout()
+        self.horizontalLayout_33.setObjectName(u"horizontalLayout_33")
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_33.addItem(self.horizontalSpacer_4)
+
+        self.importMotionModelButton = QPushButton(self.model_tab)
+        self.importMotionModelButton.setObjectName(u"importMotionModelButton")
+
         self.horizontalLayout_33.addWidget(self.importMotionModelButton)
-        self.exportMotionModelButton = QtWidgets.QPushButton(self.model_tab)
-        self.exportMotionModelButton.setObjectName("exportMotionModelButton")
+
+        self.exportMotionModelButton = QPushButton(self.model_tab)
+        self.exportMotionModelButton.setObjectName(u"exportMotionModelButton")
+
         self.horizontalLayout_33.addWidget(self.exportMotionModelButton)
+
+
         self.gridLayout_2.addLayout(self.horizontalLayout_33, 2, 0, 1, 1)
-        self.horizontalLayout_323 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_323.setObjectName("horizontalLayout_323")
-        spacerItem12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_323.addItem(spacerItem12)
-        self.createClusterTreeButton = QtWidgets.QPushButton(self.model_tab)
-        self.createClusterTreeButton.setObjectName("createClusterTreeButton")
+
+        self.horizontalLayout_323 = QHBoxLayout()
+        self.horizontalLayout_323.setObjectName(u"horizontalLayout_323")
+        self.horizontalSpacer_31 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_323.addItem(self.horizontalSpacer_31)
+
+        self.createClusterTreeButton = QPushButton(self.model_tab)
+        self.createClusterTreeButton.setObjectName(u"createClusterTreeButton")
+
         self.horizontalLayout_323.addWidget(self.createClusterTreeButton)
-        self.exportClusterTreeJSONButton = QtWidgets.QPushButton(self.model_tab)
-        self.exportClusterTreeJSONButton.setObjectName("exportClusterTreeJSONButton")
+
+        self.exportClusterTreeJSONButton = QPushButton(self.model_tab)
+        self.exportClusterTreeJSONButton.setObjectName(u"exportClusterTreeJSONButton")
+
         self.horizontalLayout_323.addWidget(self.exportClusterTreeJSONButton)
-        self.exportClusterTreePCKButton = QtWidgets.QPushButton(self.model_tab)
-        self.exportClusterTreePCKButton.setObjectName("exportClusterTreePCKButton")
+
+        self.exportClusterTreePCKButton = QPushButton(self.model_tab)
+        self.exportClusterTreePCKButton.setObjectName(u"exportClusterTreePCKButton")
+
         self.horizontalLayout_323.addWidget(self.exportClusterTreePCKButton)
+
+
         self.gridLayout_2.addLayout(self.horizontalLayout_323, 3, 0, 1, 1)
+
         self.tabWidget.addTab(self.model_tab, "")
-        self.verticalLayout_2.addWidget(self.splitter)
-        self.horizontalLayout_31 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_31.setObjectName("horizontalLayout_31")
-        spacerItem13 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_31.addItem(spacerItem13)
-        self.useComputeClusterCheckBox = QtWidgets.QCheckBox(Dialog)
-        self.useComputeClusterCheckBox.setObjectName("useComputeClusterCheckBox")
+        self.splitter.addWidget(self.tabWidget)
+
+        self.gridLayout_3.addWidget(self.splitter, 3, 0, 1, 1)
+
+        self.horizontalLayout_31 = QHBoxLayout()
+        self.horizontalLayout_31.setObjectName(u"horizontalLayout_31")
+        self.horizontalSpacer21 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_31.addItem(self.horizontalSpacer21)
+
+        self.useComputeClusterCheckBox = QCheckBox(Dialog)
+        self.useComputeClusterCheckBox.setObjectName(u"useComputeClusterCheckBox")
+
         self.horizontalLayout_31.addWidget(self.useComputeClusterCheckBox)
-        self.debugInfoButton = QtWidgets.QPushButton(Dialog)
-        self.debugInfoButton.setObjectName("debugInfoButton")
+
+        self.debugInfoButton = QPushButton(Dialog)
+        self.debugInfoButton.setObjectName(u"debugInfoButton")
+
         self.horizontalLayout_31.addWidget(self.debugInfoButton)
-        self.exportDatabaseButton = QtWidgets.QPushButton(Dialog)
-        self.exportDatabaseButton.setObjectName("exportDatabaseButton")
+
+        self.exportDatabaseButton = QPushButton(Dialog)
+        self.exportDatabaseButton.setObjectName(u"exportDatabaseButton")
+
         self.horizontalLayout_31.addWidget(self.exportDatabaseButton)
-        self.generateMGFromFIleButton = QtWidgets.QPushButton(Dialog)
-        self.generateMGFromFIleButton.setObjectName("generateMGFromFIleButton")
+
+        self.generateMGFromFIleButton = QPushButton(Dialog)
+        self.generateMGFromFIleButton.setObjectName(u"generateMGFromFIleButton")
+
         self.horizontalLayout_31.addWidget(self.generateMGFromFIleButton)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_31)
+
+
+        self.gridLayout_3.addLayout(self.horizontalLayout_31, 4, 0, 1, 1)
+
 
         self.retranslateUi(Dialog)
+
         self.tabWidget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+
+        QMetaObject.connectSlotsByName(Dialog)
+    # setupUi
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtWidgets.QApplication.translate("Dialog", "Motion Database Browser", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("Dialog", "URL", None, -1))
-        self.statusLabel.setText(QtWidgets.QApplication.translate("Dialog", "Status", None, -1))
-        self.skeletonLabel.setText(QtWidgets.QApplication.translate("Dialog", "Skeleton", None, -1))
-        self.newSkeletonButton.setText(QtWidgets.QApplication.translate("Dialog", "New Skeleton", None, -1))
-        self.deleteSkeletonButton.setText(QtWidgets.QApplication.translate("Dialog", "Delete Skeleton", None, -1))
-        self.replaceSkeletonButton.setText(QtWidgets.QApplication.translate("Dialog", "Replace Skeleton", None, -1))
-        self.loadSkeletonButton.setText(QtWidgets.QApplication.translate("Dialog", "Load Skeleton into Scene", None, -1))
-        self.exportSkeletonButton.setText(QtWidgets.QApplication.translate("Dialog", "Export Skeleton", None, -1))
-        self.editSkeletonButton.setText(QtWidgets.QApplication.translate("Dialog", "Edit Skeleton", None, -1))
-        self.collectionTreeWidget.headerItem().setText(0, QtWidgets.QApplication.translate("Dialog", "Name", None, -1))
-        self.collectionTreeWidget.headerItem().setText(1, QtWidgets.QApplication.translate("Dialog", "Type", None, -1))
-        self.addCollectionButton.setText(QtWidgets.QApplication.translate("Dialog", "Add Collection", None, -1))
-        self.editCollectionButton.setText(QtWidgets.QApplication.translate("Dialog", "Edit Collection", None, -1))
-        self.deleteCollectionButton.setText(QtWidgets.QApplication.translate("Dialog", "Delete Collection", None, -1))
-        self.selectButton.setText(QtWidgets.QApplication.translate("Dialog", "Load Selected Motions into Scene", None, -1))
-        self.deleteMotionButton.setText(QtWidgets.QApplication.translate("Dialog", "Delete Selected Motions", None, -1))
-        self.importCollectionButton.setText(QtWidgets.QApplication.translate("Dialog", "Import Collection from Folder", None, -1))
-        self.exportCollectionButton.setText(QtWidgets.QApplication.translate("Dialog", "Export Collection To Folder", None, -1))
-        self.alignMotionsButton.setText(QtWidgets.QApplication.translate("Dialog", "Align Motion Clips", None, -1))
-        self.setTimeFunctionButton.setText(QtWidgets.QApplication.translate("Dialog", "Set Time Function", None, -1))
-        self.editMotionsButton.setText(QtWidgets.QApplication.translate("Dialog", "Edit Selected Motions", None, -1))
-        self.retargetMotionsButton.setText(QtWidgets.QApplication.translate("Dialog", "Retarget Selected Motions", None, -1))
-        self.copyMotionsButton.setText(QtWidgets.QApplication.translate("Dialog", "Copy Selected Motions", None, -1))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.clip_tab), QtWidgets.QApplication.translate("Dialog", "Motion Clips", None, -1))
-        self.selectAlignedMotionButton.setText(QtWidgets.QApplication.translate("Dialog", "Load Selected Motions into Scene", None, -1))
-        self.deleteAlignedMotionButton.setText(QtWidgets.QApplication.translate("Dialog", "Delete Selected Motions", None, -1))
-        self.createMotionModelButton.setText(QtWidgets.QApplication.translate("Dialog", "Create Motion Model", None, -1))
-        self.exportAlignedCollectionButton.setText(QtWidgets.QApplication.translate("Dialog", "Export Collection", None, -1))
-        self.retargetAlignedMotionsButton.setText(QtWidgets.QApplication.translate("Dialog", "Retarget Selected Motions", None, -1))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.aligned_tab), QtWidgets.QApplication.translate("Dialog", "Aligned Motion Clips", None, -1))
-        self.downloadMotionModelButton.setText(QtWidgets.QApplication.translate("Dialog", "Load Motion Model into scene", None, -1))
-        self.deleteMotionModelButton.setText(QtWidgets.QApplication.translate("Dialog", "Delete Selected Model", None, -1))
-        self.importMotionModelButton.setText(QtWidgets.QApplication.translate("Dialog", "Import Motion Model", None, -1))
-        self.exportMotionModelButton.setText(QtWidgets.QApplication.translate("Dialog", "Export Motion Model", None, -1))
-        self.createClusterTreeButton.setText(QtWidgets.QApplication.translate("Dialog", "Create Cluster Tree", None, -1))
-        self.exportClusterTreeJSONButton.setText(QtWidgets.QApplication.translate("Dialog", "Export Cluster Tree To JSON ", None, -1))
-        self.exportClusterTreePCKButton.setText(QtWidgets.QApplication.translate("Dialog", "Export Cluster Tree To Pickle ", None, -1))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.model_tab), QtWidgets.QApplication.translate("Dialog", "Motion Models", None, -1))
-        self.useComputeClusterCheckBox.setText(QtWidgets.QApplication.translate("Dialog", "Use Kubernetes", None, -1))
-        self.debugInfoButton.setText(QtWidgets.QApplication.translate("Dialog", "Print Debug Info", None, -1))
-        self.exportDatabaseButton.setText(QtWidgets.QApplication.translate("Dialog", "Export Database To Folder", None, -1))
-        self.generateMGFromFIleButton.setText(QtWidgets.QApplication.translate("Dialog", "Generate Morphable Graph ", None, -1))
+        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Motion Database Browser", None))
+        self.label.setText(QCoreApplication.translate("Dialog", u"URL", None))
+        self.statusLabel.setText(QCoreApplication.translate("Dialog", u"Status", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog", u"Project", None))
+        self.newProjectButton.setText(QCoreApplication.translate("Dialog", u"New", None))
+        self.editProjectButton.setText(QCoreApplication.translate("Dialog", u"Edit", None))
+        self.deleteProjectButton.setText(QCoreApplication.translate("Dialog", u"Delete", None))
+        self.skeletonLabel.setText(QCoreApplication.translate("Dialog", u"Skeleton", None))
+        self.newSkeletonButton.setText(QCoreApplication.translate("Dialog", u"New Skeleton", None))
+        self.deleteSkeletonButton.setText(QCoreApplication.translate("Dialog", u"Delete Skeleton", None))
+        self.replaceSkeletonButton.setText(QCoreApplication.translate("Dialog", u"Replace Skeleton", None))
+        self.loadSkeletonButton.setText(QCoreApplication.translate("Dialog", u"Load Skeleton into Scene", None))
+        self.exportSkeletonButton.setText(QCoreApplication.translate("Dialog", u"Export Skeleton", None))
+        self.editSkeletonButton.setText(QCoreApplication.translate("Dialog", u"Edit Skeleton", None))
+        ___qtreewidgetitem = self.collectionTreeWidget.headerItem()
+        ___qtreewidgetitem.setText(1, QCoreApplication.translate("Dialog", u"Type", None));
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("Dialog", u"Name", None));
+        self.addCollectionButton.setText(QCoreApplication.translate("Dialog", u"Add Collection", None))
+        self.editCollectionButton.setText(QCoreApplication.translate("Dialog", u"Edit Collection", None))
+        self.deleteCollectionButton.setText(QCoreApplication.translate("Dialog", u"Delete Collection", None))
+        self.selectButton.setText(QCoreApplication.translate("Dialog", u"Load Selected Motions into Scene", None))
+        self.deleteMotionButton.setText(QCoreApplication.translate("Dialog", u"Delete Selected Motions", None))
+        self.importCollectionButton.setText(QCoreApplication.translate("Dialog", u"Import Collection from Folder", None))
+        self.exportCollectionButton.setText(QCoreApplication.translate("Dialog", u"Export Collection To Folder", None))
+        self.alignMotionsButton.setText(QCoreApplication.translate("Dialog", u"Align Motion Clips", None))
+        self.setTimeFunctionButton.setText(QCoreApplication.translate("Dialog", u"Set Time Function", None))
+        self.editMotionsButton.setText(QCoreApplication.translate("Dialog", u"Edit Selected Motions", None))
+        self.retargetMotionsButton.setText(QCoreApplication.translate("Dialog", u"Retarget Selected Motions", None))
+        self.copyMotionsButton.setText(QCoreApplication.translate("Dialog", u"Copy Selected Motions", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.clip_tab), QCoreApplication.translate("Dialog", u"Motion Clips", None))
+        self.selectAlignedMotionButton.setText(QCoreApplication.translate("Dialog", u"Load Selected Motions into Scene", None))
+        self.deleteAlignedMotionButton.setText(QCoreApplication.translate("Dialog", u"Delete Selected Motions", None))
+        self.createMotionModelButton.setText(QCoreApplication.translate("Dialog", u"Create Motion Model", None))
+        self.exportAlignedCollectionButton.setText(QCoreApplication.translate("Dialog", u"Export Collection", None))
+        self.retargetAlignedMotionsButton.setText(QCoreApplication.translate("Dialog", u"Retarget Selected Motions", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.aligned_tab), QCoreApplication.translate("Dialog", u"Aligned Motion Clips", None))
+        self.downloadMotionModelButton.setText(QCoreApplication.translate("Dialog", u"Load Motion Model into scene", None))
+        self.deleteMotionModelButton.setText(QCoreApplication.translate("Dialog", u"Delete Selected Model", None))
+        self.importMotionModelButton.setText(QCoreApplication.translate("Dialog", u"Import Motion Model", None))
+        self.exportMotionModelButton.setText(QCoreApplication.translate("Dialog", u"Export Motion Model", None))
+        self.createClusterTreeButton.setText(QCoreApplication.translate("Dialog", u"Create Cluster Tree", None))
+        self.exportClusterTreeJSONButton.setText(QCoreApplication.translate("Dialog", u"Export Cluster Tree To JSON ", None))
+        self.exportClusterTreePCKButton.setText(QCoreApplication.translate("Dialog", u"Export Cluster Tree To Pickle ", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.model_tab), QCoreApplication.translate("Dialog", u"Motion Models", None))
+        self.useComputeClusterCheckBox.setText(QCoreApplication.translate("Dialog", u"Use Kubernetes", None))
+        self.debugInfoButton.setText(QCoreApplication.translate("Dialog", u"Print Debug Info", None))
+        self.exportDatabaseButton.setText(QCoreApplication.translate("Dialog", u"Export Database To Folder", None))
+        self.generateMGFromFIleButton.setText(QCoreApplication.translate("Dialog", u"Generate Morphable Graph ", None))
+    # retranslateUi
 

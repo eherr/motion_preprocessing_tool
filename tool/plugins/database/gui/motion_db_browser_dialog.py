@@ -40,6 +40,7 @@ from tool.core.dialogs.confirmation_dialog import ConfirmationDialog
 from tool.core.dialogs.new_skeleton_dialog import NewSkeletonDialog
 from .retarget_db_dialog import RetargetDBDialog
 from .copy_db_dialog import CopyDBDialog
+from .project_dialog import ProjectDialog
 from .new_collection_dialog import NewCollectionDialog
 from .edit_collection_dialog import EditCollectionDialog
 from .motion_modelling_dialog import MotionModellingDialog
@@ -52,7 +53,8 @@ from motion_db_interface import create_new_collection_in_remote_db, get_bvh_stri
                                         create_new_skeleton_in_db, load_skeleton_from_db,delete_skeleton_from_remote_db, retarget_motion_in_db, get_annotation_by_id_from_remote_db, \
                                         get_skeleton_from_remote_db, get_skeletons_from_remote_db,get_collections_from_remote_db, delete_collection_from_remote_db, \
                                         get_collections_by_parent_id_from_remote_db,replace_collection_in_remote_db, get_collection_by_id, \
-                                        start_cluster_job, replace_skeleton_in_remote_db, get_collections_tree_by_parent_id_from_remote_db
+                                        start_cluster_job, replace_skeleton_in_remote_db, get_collections_tree_by_parent_id_from_remote_db, \
+                                        get_project_list, get_project_info, add_new_project, edit_project, remove_project 
 from vis_utils.io import load_json_file, save_json_file
 from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
 from anim_utils.animation_data import MotionVector, SkeletonBuilder
@@ -68,6 +70,11 @@ from motion_db_interface import get_model_list_from_remote_db,upload_motion_mode
                                         download_cluster_tree_from_remote_db
 from morphablegraphs.utilities.db_interface import create_motion_model_in_db, align_motions_in_db, get_standard_config, create_cluster_tree_from_model, load_cluster_tree_from_json
 from tool.plugins.database import constants as db_constants
+import os, ssl
+if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
+getattr(ssl, '_create_unverified_context', None)):
+    ssl._create_default_https_context = ssl._create_unverified_context
+    
 def normalize(v):
     return v/np.linalg.norm(v)
 
@@ -171,6 +178,9 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.setModal(0)
         Ui_Dialog.setupUi(self, self)
         self.scene = scene
+        self.newProjectButton.clicked.connect(self.slot_new_project)
+        self.editProjectButton.clicked.connect(self.slot_edit_project)
+        self.deleteProjectButton.clicked.connect(self.slot_delete_project)
         self.selectButton.clicked.connect(partial(MotionDBBrowserDialog.slot_load_motions, self, 0))
         self.deleteMotionButton.clicked.connect(partial(MotionDBBrowserDialog.slot_delete_motion, self,0))
         self.selectAlignedMotionButton.clicked.connect(partial(MotionDBBrowserDialog.slot_load_motions, self, 1))
@@ -216,16 +226,16 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
 
             
         self.urlLineEdit.setText(self.db_url)
+        self.fill_combo_box_with_projects()
         self.fill_combo_box_with_skeletons()
-        self.update_lists()
+        self.update_all_lists()
         self.processedMotionListWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.alignedMotionListWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.skeletonListComboBox.currentIndexChanged.connect(self.update_lists)
+        self.projectListComboBox.currentIndexChanged.connect(self.update_all_lists)
         self.collectionTreeWidget.itemClicked.connect(self.update_lists)
         self.urlLineEdit.textChanged.connect(self.set_url)
         self.tabWidget.currentChanged.connect(self.toggle_motion_primitive_list)
-        t = threading.Thread(target=self.fill_tree_widget)
-        t.start()
         self.n_samples = 10000
         self.n_subdivisions_per_level = 4
         self.k8s_resources = db_constants.K8S_RESOURCES
@@ -251,35 +261,45 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         tab_name = self.tabWidget.currentWidget().objectName()
         print("tab_name", tab_name)
 
+    def update_all_lists(self):
+        project_id = self.projectListComboBox.currentData()
+        self.project_info = get_project_info(self.db_url, project_id, session=self.session)
+        if self.project_info is None:
+            print("Error: project could not be found", project_id)
+            return
+        t = threading.Thread(target=self._update_all_lists)
+        t.start()
+
     def update_lists(self):
+        t = threading.Thread(target=self._update_motion_lists)
+        t.start()
+
+    def _update_all_lists(self):
+        self.fill_tree_widget()
+        self._update_motion_lists()
+
+    def _update_motion_lists(self):
         self._fill_motion_list_from_db()
         self._fill_model_list_from_db()
         self._fill_aligned_motion_list_from_db()
 
-    def fill_tree_widget_old(self, parent=None):
-        if parent is None:
-            self.collectionTreeWidget.clear()
-            self.rootItem = QTreeWidgetItem(self.collectionTreeWidget, ["root", "root"])
-            self.rootItem.setExpanded(True)
-            # root collection has id 0
-            parent_id = 0
-            parent_item = self.rootItem
-            self.rootItem.setData(0, Qt.UserRole, parent_id)
-        else:
-            parent_id = parent[1]
-            parent_item = parent[0]
-        collection_list = get_collections_by_parent_id_from_remote_db(self.db_url, parent_id)
-        if collection_list is not None:
-            for col in collection_list:
-                colItem = QTreeWidgetItem(parent_item, [col[1], col[2]])
-                colItem.setData(0, Qt.UserRole, col[0])
-                self.fill_tree_widget((colItem, col[0]))
+    def fill_combo_box_with_projects(self):
+        self.projectListComboBox.clear()
+        project_list = get_project_list(self.db_url, session=self.session)
+        print("project_list", project_list)
+        if project_list is None:
+            return
+        print(project_list)
+        for p in project_list:
+            p_name = p[1]
+            self.projectListComboBox.addItem(p_name, p[0])
 
     def fill_tree_widget(self):
         self.collectionTreeWidget.clear()
+        collection = self.project_info["collection"]
         self.rootItem = QTreeWidgetItem(self.collectionTreeWidget, ["root", "root"])
-        self.rootItem.setData(0, Qt.UserRole, 0)
-        collection_tree = get_collections_tree_by_parent_id_from_remote_db(self.db_url, 0)
+        self.rootItem.setData(0, Qt.UserRole, collection)
+        collection_tree = get_collections_tree_by_parent_id_from_remote_db(self.db_url, collection)
         self._fill_tree_widget(collection_tree, self.rootItem)
         self.rootItem.setExpanded(True)
 
@@ -422,6 +442,35 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 delete_motion_by_id_from_remote_db(self.db_url, selected_id, is_processed, session=self.session)
             self._fill_motion_list_from_db()
 
+    def slot_new_project(self):
+        dialog = ProjectDialog(dict())
+        dialog.exec_()
+        if dialog.success:
+            add_new_project(self.db_url, dialog.name, dialog.is_public ,self.session)
+            self.fill_combo_box_with_projects()
+            self.update_all_lists()
+    
+    def slot_edit_project(self):
+        if self.project_info is None:
+            return
+        dialog = ProjectDialog(self.project_info)
+        dialog.exec_()
+        if dialog.success:
+            project_id = self.projectListComboBox.currentData()
+            edit_project(self.db_url, project_id, dialog.name, dialog.is_public ,self.session)
+            self.fill_combo_box_with_projects()
+            self.update_all_lists()
+
+    def slot_delete_project(self):
+        dialog = ConfirmationDialog()
+        dialog.exec_()
+        if dialog.success:
+            project_id = self.projectListComboBox.currentData()
+            remove_project(self.db_url, project_id, self.session)
+            self.fill_combo_box_with_projects()
+            self.update_all_lists()
+
+
     def slot_new_collection(self):
         col = self.get_collection()
         if col is None:
@@ -522,11 +571,17 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             self.export_collection_clips_to_folder(c_id, skeleton_name, directory, is_aligned)
             #self.export_processed_motion_data(skeleton_name, directory, c_id)
 
-    def export_collection_clips_to_folder(self, c_id, skeleton_name, directory, is_aligned):
-        print("export", is_aligned)
+    def export_collection_clips_to_folder(self, c_id, skeleton_name, directory, is_processed):
+        print("export", is_processed)
         #is_aligned = 1
         skeleton = load_skeleton_from_db(self.db_url, skeleton_name)
-        motion_list = get_motion_list_from_remote_db(self.db_url, c_id, skeleton_name, is_aligned, self.session)
+        joint_count = 0
+        for joint_name in skeleton.nodes.keys():
+            if len(skeleton.nodes[joint_name].children) > 0 and "EndSite" not in joint_name:
+                joint_count+=1
+        skeleton.reference_frame_length = joint_count * 4 + 3
+
+        motion_list = get_motion_list_from_remote_db(self.db_url, c_id, skeleton_name, is_processed, self.session)
         if motion_list is None:
             print("could not find motions")
             return
@@ -539,27 +594,33 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         count = 1
         #print(skeleton_name, len(motion_list), is_aligned, directory)
         for motion_id, name in motion_list:
-            print("download motion", str(count)+"/"+str(n_motions), name, is_aligned)
-            self.export_motion_clip(skeleton, motion_id, name, directory, export_bvh=True)
+            print("download motion", str(count)+"/"+str(n_motions), name, is_processed)
+            self.export_motion_clip(skeleton, motion_id, name, directory, is_processed, export_bvh=True)
             count+=1
 
-    def export_motion_clip(self, skeleton, motion_id, name, directory, export_bvh=True):
+    def export_motion_clip(self, skeleton, motion_id, name, directory, is_processed, export_bvh=True):
         print("export clip")
-        motion_dict = get_motion_by_id_from_remote_db(self.db_url, motion_id, is_processed=False, session=self.session)
+        motion_dict = get_motion_by_id_from_remote_db(self.db_url, motion_id, is_processed=is_processed, session=self.session)
         if motion_dict is None:
             return
         print("write to file")
         filename = directory+os.sep+name
+        
+        print("ref frame length",skeleton.reference_frame_length)
         if export_bvh:
             motion_vector = MotionVector()
             motion_vector.from_custom_db_format(motion_dict)
-            motion_str = get_bvh_string(skeleton, motion_vector.frames)
+            print("loaded",name, motion_vector.frames.shape)
+            frames = motion_vector.frames
+            if motion_vector.frames.shape[1] < skeleton.reference_frame_length:
+                frames = skeleton.add_fixed_joint_parameters_to_motion(frames)
+            motion_str = get_bvh_string(skeleton, frames)
             if not name.endswith(".bvh"):
                 filename += ".bvh"
         else:
             motion_str = json.dumps(motion_dict)
         with open(filename, "wt") as out_file:
-            out_file.write(motion_str)
+             out_file.write(motion_str)
             
         filename = directory+os.sep+name
         annotation_str = get_annotation_by_id_from_remote_db(self.db_url, motion_id, is_processed=False, session=self.session)
@@ -746,13 +807,21 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 skeleton_data = get_skeleton_from_remote_db(self.db_url, skeleton_name, self.session)
                 save_json_file(skeleton_data, skeleton_dir + os.sep + skeleton_name+"_skeleton.json")
                 
-                #self.export_raw_motion_data(skeleton_name, skeleton_dir + os.sep + "raw")
+                self.export_raw_motion_data(skeleton_name, skeleton_dir + os.sep + "raw")
                 self.export_processed_motion_data(skeleton_name, skeleton_dir + os.sep + "processed")
                 #self.export_aligned_motion_data(skeleton_name, skeleton_dir + os.sep + "aligned")
                 self.export_motion_models(skeleton_name, skeleton_dir + os.sep + "models")
                 break
                   
-            
+    def export_raw_motion_data(self, skeleton_name, out_dir, parent=0):
+        for col in get_collections_by_parent_id_from_remote_db(self.db_url, parent):
+            print(col)
+            col_id, col_name, col_type, owner = col
+            action_dir = out_dir+os.sep+col_name
+            if self.model_filter is None or col_name in self.model_filter:
+                self.export_collection_clips_to_folder(col_id, skeleton_name, action_dir, is_aligned=0)
+            self.export_raw_motion_data(skeleton_name, action_dir, col_id)
+    
     def export_motion_models(self, skeleton_name, out_dir, parent=0):
         for col in get_collections_by_parent_id_from_remote_db(self.db_url, parent, self.session):
             col_id, col_name, col_type, owner = col
@@ -760,21 +829,13 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             self.export_motion_primitive_models(col_id, skeleton_name, action_dir)
             self.export_motion_models(skeleton_name, action_dir, col_id)
 
-    def export_aligned_motion_data(self, skeleton_name, out_dir, parent=0):
-        for col in get_collections_by_parent_id_from_remote_db(self.db_url, parent):
-            col_id, col_name, col_type, owner = col
-            action_dir = out_dir+os.sep+col_name
-            if self.model_filter is None or col_name in self.model_filter:
-                self.export_collection_clips_to_folder(col_id, skeleton_name, action_dir, is_aligned=1)
-            self.export_aligned_motion_data(skeleton_name, action_dir, col_id)
-
     def export_processed_motion_data(self, skeleton_name, out_dir, parent=0):
         for col in get_collections_by_parent_id_from_remote_db(self.db_url, parent):
             print(col)
             col_id, col_name, col_type, owner = col
             action_dir = out_dir+os.sep+col_name
             if self.model_filter is None or col_name in self.model_filter:
-                self.export_collection_clips_to_folder(col_id, skeleton_name, action_dir, is_aligned=0)
+                self.export_collection_clips_to_folder(col_id, skeleton_name, action_dir, is_aligned=1)
             self.export_processed_motion_data(skeleton_name, action_dir, col_id)
 
     def export_motion_primitive_models(self, mp_name, skeleton_name, out_dir):
