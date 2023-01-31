@@ -1190,6 +1190,9 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         print("loaded", frame_sum,"frames")
 
     def disable_editing(self):
+        self.newProjectButton.setEnabled(False)
+        self.editProjectButton.setEnabled(False)
+        self.deleteProjectButton.setEnabled(False)
         self.addCollectionButton.setEnabled(False)
         self.editCollectionButton.setEnabled(False)
         self.deleteCollectionButton.setEnabled(False)
