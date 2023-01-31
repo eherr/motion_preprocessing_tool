@@ -13,6 +13,7 @@ from .blend_animation_controller import BlendAnimationController, AnimationBlend
 from .simple_navigation_agent import SimpleNavigationAgent
 from vis_utils.scene.scene_object_builder import SceneObjectBuilder, SceneObject
 from vis_utils.scene.utils import get_random_color
+from .gui.morphable_graph_controller_widget import MorphableGraphControllerWidget
 
 def create_blend_controller(self, name, skeleton, motions, joint_name=None, constrained_frame=-1):
     joint_name = "hand_l"

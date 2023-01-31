@@ -95,9 +95,9 @@ class MotionPrimitiveControllerWidget(AnimationPlayerBaseWidget, Ui_Form):
 
     def set_object(self, controller):
         AnimationPlayerBaseWidget.set_object(self, controller)
-        if controller is not None:
+        if self._controller is not None:
             self.fill_joints_combobox()
-            n_frames = controller.getNumberOfFrames()
+            n_frames = self._controller.getNumberOfFrames()
             self.frameNumberSpinBox.setRange(0, n_frames-1)
 
     def set_config(self):
