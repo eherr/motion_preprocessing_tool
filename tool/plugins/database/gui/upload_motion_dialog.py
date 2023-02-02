@@ -29,10 +29,10 @@ from tool.core.dialogs.enter_name_dialog import EnterNameDialog
 from tool.core.dialogs.new_skeleton_dialog import NewSkeletonDialog
 from tool.core.dialogs.utils import get_animation_controllers, create_section_dict_from_annotation
 from motion_db_interface import upload_motion_to_db, get_skeletons_from_remote_db, \
-                        create_new_skeleton_in_db, get_collections_by_parent_id_from_remote_db
+                        create_new_skeleton_in_db, get_collections_by_parent_id_from_remote_db,\
+                            get_project_list, get_project_info
 from vis_utils.io import load_json_file
 from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
-from anim_utils.animation_data import BVHReader
 from tool.plugins.database.session_manager import SessionManager
 from tool.plugins.database import constants as db_constants
 from vis_utils.animation.skeleton_animation_controller import SkeletonAnimationController
@@ -45,26 +45,36 @@ class UploadMotionDialog(QDialog, Ui_Dialog):
         Ui_Dialog.setupUi(self, self)
         self.selectButton.clicked.connect(self.slot_accept)
         self.cancelButton.clicked.connect(self.slot_reject)
+        self.projectComboBox.currentIndexChanged.connect(self.update_collection_tree)
         self.db_url = db_constants.DB_URL
         self.session = SessionManager.session
         self.urlLineEdit.setText(self.db_url)
         self.success = False
+        self.project_info = None
+        self.fill_combo_box_with_projects()
         self.fill_combo_box_with_skeletons()
-        t = threading.Thread(target=self.fill_tree_widget)
-        t.start()
+        self.update_collection_tree()
         self.urlLineEdit.textChanged.connect(self.set_url)
 
     def set_url(self, text):
         print("set url", text)
         self.db_url = str(text)
 
-    def fill_tree_widget(self, parent=None):
+    def update_collection_tree(self):
+        project_id = self.projectComboBox.currentData()
+        self.project_info = get_project_info(self.db_url, project_id, session=self.session)
+        if self.project_info is None:
+            print("Error: project could not be found", project_id)
+            return
+        self._fill_tree_widget()
+
+    def _fill_tree_widget(self, parent=None):
         if parent is None:
             self.collectionTreeWidget.clear()
             self.rootItem = QTreeWidgetItem(self.collectionTreeWidget, ["root", "root"])
             self.rootItem.setExpanded(True)
             # root collection has id 0
-            parent_id = 0
+            parent_id = self.project_info["collection"]
             parent_item = self.rootItem
             self.rootItem.setData(0, Qt.UserRole, parent_id)
         else:
@@ -75,7 +85,7 @@ class UploadMotionDialog(QDialog, Ui_Dialog):
         for col in collection_list:
             colItem = QTreeWidgetItem(parent_item, [col[1], col[2]])
             colItem.setData(0, Qt.UserRole, col[0])
-            self.fill_tree_widget((colItem, col[0]))
+            self._fill_tree_widget((colItem, col[0]))
 
     def get_collection(self):
         colItem = self.collectionTreeWidget.currentItem()
@@ -88,6 +98,16 @@ class UploadMotionDialog(QDialog, Ui_Dialog):
         skeleton_list = get_skeletons_from_remote_db(self.db_url)
         for idx, s in enumerate(skeleton_list):
             self.skeletonModelComboBox.addItem(s[1], idx)
+
+    def fill_combo_box_with_projects(self):
+        self.projectComboBox.clear()
+        project_list = get_project_list(self.db_url) 
+        print("project_list", project_list)
+        if project_list is None:
+            return
+        for p in project_list:
+            p_name = p[1]
+            self.projectComboBox.addItem(p_name, p[0])
 
     def slot_accept(self):
         skeleton_name = str(self.skeletonModelComboBox.currentText())

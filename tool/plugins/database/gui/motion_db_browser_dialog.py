@@ -226,6 +226,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
 
             
         self.urlLineEdit.setText(self.db_url)
+        self.project_info = None
         self.fill_combo_box_with_projects()
         self.fill_combo_box_with_skeletons()
         self.update_all_lists()
