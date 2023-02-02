@@ -32,10 +32,9 @@ from functools import partial
 import asyncio
 from concurrent.futures import ProcessPoolExecutor
 from multiprocessing import cpu_count
-from PySide2 import QtWidgets, QtCore, QtUiTools
-from PySide2.QtWidgets import QDialog, QListWidgetItem, QFileDialog, QAbstractItemView, QTreeWidgetItem
+from PySide2 import QtWidgets
+from PySide2.QtWidgets import QDialog, QListWidgetItem, QFileDialog, QTreeWidgetItem
 from PySide2.QtCore import Qt
-from tool.core.dialogs.enter_name_dialog import EnterNameDialog
 from tool.core.dialogs.confirmation_dialog import ConfirmationDialog
 from tool.core.dialogs.new_skeleton_dialog import NewSkeletonDialog
 from .retarget_db_dialog import RetargetDBDialog
@@ -47,14 +46,7 @@ from .motion_modelling_dialog import MotionModellingDialog
 from .graph_definition_dialog import GraphDefinitionDialog
 from .graph_table_view_dialog import GraphTableViewDialog
 from tool.core.dialogs.skeleton_editor_dialog import SkeletonEditorDialog
-from tool.core.dialogs.utils import load_motion_data_from_dir
-from motion_db_interface import create_new_collection_in_remote_db, get_bvh_string, get_motion_list_from_remote_db, get_motion_by_id_from_remote_db, \
-                                        delete_motion_by_id_from_remote_db,  upload_motion_to_db, replace_motion_in_db, get_time_function_by_id_from_remote_db, \
-                                        create_new_skeleton_in_db, load_skeleton_from_db,delete_skeleton_from_remote_db, retarget_motion_in_db, get_annotation_by_id_from_remote_db, \
-                                        get_skeleton_from_remote_db, get_skeletons_from_remote_db,get_collections_from_remote_db, delete_collection_from_remote_db, \
-                                        get_collections_by_parent_id_from_remote_db,replace_collection_in_remote_db, get_collection_by_id, \
-                                        start_cluster_job, replace_skeleton_in_remote_db, get_collections_tree_by_parent_id_from_remote_db, \
-                                        get_project_list, get_project_info, add_new_project, edit_project, remove_project 
+from motion_db_interface import retarget_motion_in_db, start_cluster_job, ModelDBSession
 from vis_utils.io import load_json_file, save_json_file
 from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
 from anim_utils.animation_data import MotionVector, SkeletonBuilder
@@ -63,13 +55,11 @@ from vis_utils.animation.animation_editor import AnimationEditorBase
 from tool.core.application_manager import ApplicationManager
 from .layout.motion_db_browser_dialog_ui import Ui_Dialog
 from tool.plugins.database.session_manager import SessionManager
+from tool.plugins.database import constants as db_constants
+from morphablegraphs.utilities.db_interface import create_motion_model_in_db, align_motions_in_db, get_standard_config, create_cluster_tree_from_model, load_cluster_tree_from_json
 from morphablegraphs.utilities import convert_to_mgrd_skeleton
 from morphablegraphs.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
-from motion_db_interface import get_model_list_from_remote_db,upload_motion_model_to_remote_db, download_motion_model_from_remote_db, \
-                                        delete_model_by_id_from_remote_db, upload_cluster_tree_to_remote_db, \
-                                        download_cluster_tree_from_remote_db
-from morphablegraphs.utilities.db_interface import create_motion_model_in_db, align_motions_in_db, get_standard_config, create_cluster_tree_from_model, load_cluster_tree_from_json
-from tool.plugins.database import constants as db_constants
+from anim_utils.animation_data import SkeletonBuilder
 import os, ssl
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
 getattr(ssl, '_create_unverified_context', None)):
@@ -109,28 +99,8 @@ def quaternion_to_axis_angle2(q):
     z = q[3] / math.sqrt(1-q[0]*q[0])
     return normalize([x,y,z]),a
 
-def get_avg_step_length(model, n_samples, method="median") :
-    sample_lengths = []
-    for i in range(n_samples):
-        s = np.ravel(model.sample_low_dimensional_vector())
-        sample_lengths.append(get_step_length_for_sample(model, s))
-    if method == "average":
-        step_length = sum(sample_lengths)/n_samples
-    else:
-        step_length = np.median(sample_lengths)
-    return step_length
+    
 
-def get_step_length_for_sample(model, s, method="arc_length"):
-    # get quaternion frames from s_vector
-    quat_frames = model.back_project(s, use_time_parameters=False).get_motion_vector()
-    if method == "arc_length":
-        root_pos = quat_frames[:,:3]
-        step_length = get_arc_length_from_points(root_pos)
-    else:
-        step_length = np.linalg.norm(quat_frames[-1][:3] - quat_frames[0][:3])
-    return step_length
-
-        
 def get_arc_length_from_points(points):
     """
     Note: accuracy depends on the granulariy of points
@@ -144,6 +114,28 @@ def get_arc_length_from_points(points):
             arc_length += np.linalg.norm(delta)
         last_p = p
     return arc_length
+    
+def get_step_length_for_sample(model, s, method="arc_length"):
+    # get quaternion frames from s_vector
+    quat_frames = model.back_project(s, use_time_parameters=False).get_motion_vector()
+    if method == "arc_length":
+        root_pos = quat_frames[:,:3]
+        step_length = get_arc_length_from_points(root_pos)
+    else:
+        step_length = np.linalg.norm(quat_frames[-1][:3] - quat_frames[0][:3])
+    return step_length
+
+def get_avg_step_length(model, n_samples, method="median") :
+    sample_lengths = []
+    for i in range(n_samples):
+        s = np.ravel(model.sample_low_dimensional_vector())
+        sample_lengths.append(get_step_length_for_sample(model, s))
+    if method == "average":
+        step_length = sum(sample_lengths)/n_samples
+    else:
+        step_length = np.median(sample_lengths)
+    return step_length
+
 
 
 def chunks(l, n):
@@ -217,6 +209,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.rootItem = None
         self.db_url = db_constants.DB_URL
         self.session = SessionManager.session
+        self.mdb_session = ModelDBSession(self.db_url, self.session)
         print("set session", self.session)
         if self.session is not None and "user" in self.session:
             self.statusLabel.setText("Status: Authenticated as "+self.session["user"])
@@ -264,7 +257,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
 
     def update_all_lists(self):
         project_id = self.projectListComboBox.currentData()
-        self.project_info = get_project_info(self.db_url, project_id, session=self.session)
+        self.project_info = self.mdb_session.get_project_info(project_id)
         if self.project_info is None:
             print("Error: project could not be found", project_id)
             return
@@ -286,7 +279,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
 
     def fill_combo_box_with_projects(self):
         self.projectListComboBox.clear()
-        project_list = get_project_list(self.db_url, session=self.session)
+        project_list = self.mdb_session.get_project_list()
         print("project_list", project_list)
         if project_list is None:
             return
@@ -300,7 +293,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         collection = self.project_info["collection"]
         self.rootItem = QTreeWidgetItem(self.collectionTreeWidget, ["root", "root"])
         self.rootItem.setData(0, Qt.UserRole, collection)
-        collection_tree = get_collections_tree_by_parent_id_from_remote_db(self.db_url, collection)
+        collection_tree = self.mdb_session.get_collections_tree(collection)
         self._fill_tree_widget(collection_tree, self.rootItem)
         self.rootItem.setExpanded(True)
 
@@ -313,7 +306,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
 
     def fill_combo_box_with_skeletons(self):
         self.skeletonListComboBox.clear()
-        skeleton_list = get_skeletons_from_remote_db(self.db_url)
+        skeleton_list = self.mdb_session.get_skeleton_list()
         if skeleton_list is None:
             return
         print(skeleton_list)
@@ -344,7 +337,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         c_id, c_name, c_type = col
         print("update lists", c_id)
         skeleton = str(self.skeletonListComboBox.currentText())
-        motion_list = get_motion_list_from_remote_db(self.db_url, c_id, skeleton, is_processed=False, session=self.session)
+        motion_list = self.mdb_session.get_motion_list(c_id, skeleton, is_processed=False)
         if motion_list is None:
             return
         print("loaded", len(motion_list), "clips")
@@ -361,7 +354,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             return
         c_id, c_name, c_type = col
         skeleton = str(self.skeletonListComboBox.currentText())
-        motion_list = get_motion_list_from_remote_db(self.db_url, c_id, skeleton, is_processed=True)
+        motion_list = self.mdb_session.get_motion_list(c_id, skeleton, is_processed=True)
         if motion_list is None:
             return
         print("loaded", len(motion_list), "aligned clips")
@@ -379,7 +372,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             return
         c_id, c_name, c_type = col
         skeleton = str(self.skeletonListComboBox.currentText())
-        model_list = get_model_list_from_remote_db(self.db_url, c_id, skeleton)
+        model_list = self.mdb_session.get_model_list(c_id, skeleton)
         print("model list", model_list)
         if model_list is None:
             return
@@ -410,18 +403,18 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
 
     def load_motion_from_db(self, motion_id, motion_name, collection, is_processed=False):
         #print("selected item", item.text(),self.selected_id)
-        motion_data = get_motion_by_id_from_remote_db(self.db_url, motion_id, is_processed)
+        motion_data = self.mdb_session.get_motion_data(motion_id, is_processed)
+        meta_info_str = self.mdb_session.get_motion_meta_data(motion_id, is_processed)
         if motion_data is None:
             print("Error: loaded motion data is empty")
             return
         #skeleton_name = motion_data["skeletonModel"]
         skeleton_name = str(self.skeletonListComboBox.currentText())
         print("load skeleton", skeleton_name)
-        skeleton_data = get_skeleton_from_remote_db(self.db_url, skeleton_name)
+        skeleton_data = self.mdb_session.get_skeleton_data(skeleton_name) 
         if skeleton_data is None:
             print("Error: skeleton data is empty")
             return
-        meta_info_str = get_annotation_by_id_from_remote_db(self.db_url, motion_id, is_processed)
         skeleton_model = None
         if skeleton_name in SKELETON_MODELS:
             skeleton_model = SKELETON_MODELS[skeleton_name]
@@ -440,14 +433,14 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             for item in items:
                 selected_id = int(item.data(Qt.UserRole))
                 print("delete", selected_id, is_processed)
-                delete_motion_by_id_from_remote_db(self.db_url, selected_id, is_processed, session=self.session)
+                self.mdb_session.delete_motion(selected_id, is_processed)
             self._fill_motion_list_from_db()
 
     def slot_new_project(self):
         dialog = ProjectDialog(dict())
         dialog.exec_()
         if dialog.success:
-            add_new_project(self.db_url, dialog.name, dialog.is_public ,self.session)
+            self.mdb_session.add_new_project(dialog.name, dialog.is_public)
             self.fill_combo_box_with_projects()
             self.update_all_lists()
     
@@ -458,7 +451,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         dialog.exec_()
         if dialog.success:
             project_id = self.projectListComboBox.currentData()
-            edit_project(self.db_url, project_id, dialog.name, dialog.is_public ,self.session)
+            self.mdb_session.edit_project(project_id, dialog.name, dialog.is_public)
             self.fill_combo_box_with_projects()
             self.update_all_lists()
 
@@ -467,7 +460,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         dialog.exec_()
         if dialog.success:
             project_id = self.projectListComboBox.currentData()
-            remove_project(self.db_url, project_id, self.session)
+            self.mdb_session.remove_project(project_id)
             self.fill_combo_box_with_projects()
             self.update_all_lists()
 
@@ -484,7 +477,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             col_type = dialog.col_type
             owner = dialog.owner
             print("create", name, col_type)
-            create_new_collection_in_remote_db(self.db_url, name, col_type, c_id, owner, self.session)
+            self.mdb_session.create_new_collection(name, col_type, c_id, owner)
             self.fill_tree_widget()
             self._fill_motion_list_from_db()
     
@@ -506,7 +499,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             p_id = dialog.parent_id
             owner = dialog.owner
             print("set to", name, col_type)
-            replace_collection_in_remote_db(self.db_url, c_id, name, col_type, p_id, owner, self.session)
+            self.mdb_session.replace_collection(c_id, name, col_type, p_id, owner)
             self.fill_tree_widget()
             self._fill_motion_list_from_db()
 
@@ -517,7 +510,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         if dialog.success:
             collection = self.get_collection()
             if collection is not None:
-                delete_collection_from_remote_db(self.db_url, collection[0], self.session)
+                self.mdb_session.delete_collection(collection[0])
                 self.fill_tree_widget()
                 self._fill_motion_list_from_db()
 
@@ -534,7 +527,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                     meta_data = json.dumps(meta_data)
                 #elif name in SKELETON_MODELS:
                 #    meta_data = json.dumps(SKELETON_MODELS[name])
-                create_new_skeleton_in_db(self.db_url, name, data, meta_data, self.session)
+                self.mdb_session.create_new_skeleton(name, data, meta_data)
                 self.fill_combo_box_with_skeletons()
                 self._fill_motion_list_from_db()
             else:
@@ -545,7 +538,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         dialog.exec_()
         if dialog.success:
             skeleton_name = str(self.skeletonListComboBox.currentText())
-            delete_skeleton_from_remote_db(self.db_url, skeleton_name, self.session)
+            self.mdb_session.delete_skeleton(skeleton_name)
             self.fill_combo_box_with_skeletons()
             self._fill_motion_list_from_db()
 
@@ -557,7 +550,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             items = self.modelListWidget.selectedItems()
             for item in items:
                 selected_id = int(item.data(Qt.UserRole))
-                delete_model_by_id_from_remote_db(self.db_url, selected_id, self.session)
+                self.mdb_session.delete_model(selected_id)
             self.update_lists()
 
     def slot_export_collection_to_folder(self, is_aligned=False):
@@ -569,75 +562,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 return
             c_id, c_name, c_type = col
             skeleton_name = str(self.skeletonListComboBox.currentText())
-            self.export_collection_clips_to_folder(c_id, skeleton_name, directory, is_aligned)
-            #self.export_processed_motion_data(skeleton_name, directory, c_id)
-
-    def export_collection_clips_to_folder(self, c_id, skeleton_name, directory, is_processed):
-        print("export", is_processed)
-        #is_aligned = 1
-        skeleton = load_skeleton_from_db(self.db_url, skeleton_name)
-        joint_count = 0
-        for joint_name in skeleton.nodes.keys():
-            if len(skeleton.nodes[joint_name].children) > 0 and "EndSite" not in joint_name:
-                joint_count+=1
-        skeleton.reference_frame_length = joint_count * 4 + 3
-
-        motion_list = get_motion_list_from_remote_db(self.db_url, c_id, skeleton_name, is_processed, self.session)
-        if motion_list is None:
-            print("could not find motions")
-            return
-        n_motions = len(motion_list)
-        if n_motions < 1:
-            print("no motions", c_id)
-            return
-        if not os.path.isdir(directory):
-            os.makedirs(directory)
-        count = 1
-        #print(skeleton_name, len(motion_list), is_aligned, directory)
-        for motion_id, name in motion_list:
-            print("download motion", str(count)+"/"+str(n_motions), name, is_processed)
-            self.export_motion_clip(skeleton, motion_id, name, directory, is_processed, export_bvh=True)
-            count+=1
-
-    def export_motion_clip(self, skeleton, motion_id, name, directory, is_processed, export_bvh=True):
-        print("export clip")
-        motion_dict = get_motion_by_id_from_remote_db(self.db_url, motion_id, is_processed=is_processed, session=self.session)
-        if motion_dict is None:
-            return
-        print("write to file")
-        filename = directory+os.sep+name
-        
-        print("ref frame length",skeleton.reference_frame_length)
-        if export_bvh:
-            motion_vector = MotionVector()
-            motion_vector.from_custom_db_format(motion_dict)
-            print("loaded",name, motion_vector.frames.shape)
-            frames = motion_vector.frames
-            if motion_vector.frames.shape[1] < skeleton.reference_frame_length:
-                frames = skeleton.add_fixed_joint_parameters_to_motion(frames)
-            motion_str = get_bvh_string(skeleton, frames)
-            if not name.endswith(".bvh"):
-                filename += ".bvh"
-        else:
-            motion_str = json.dumps(motion_dict)
-        with open(filename, "wt") as out_file:
-             out_file.write(motion_str)
-            
-        filename = directory+os.sep+name
-        annotation_str = get_annotation_by_id_from_remote_db(self.db_url, motion_id, is_processed=False, session=self.session)
-        if annotation_str != "":
-            annotation_filename = filename + "_meta_info.json"
-            with open(annotation_filename, "wt") as out_file:
-                out_file.write(annotation_str)
-        else:
-            print("no meta info")
-        time_function_str = get_time_function_by_id_from_remote_db(self.db_url, motion_id, self.session)
-        if time_function_str != "":
-            time_function_filename = filename + "_time_function.json"
-            with open(time_function_filename, "wt") as out_file:
-                out_file.write(time_function_str)
-        else:
-            print("no time function")
+            self.mdb_session.export_collection_clips_to_folder(c_id, skeleton_name, directory, is_aligned)
 
     def slot_import_collection_from_folder(self):
         directory = QFileDialog.getExistingDirectory(self, "Select Directory")
@@ -647,20 +572,12 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             if col is None:
                 return
             c_id, c_name, c_type = col
-            motion_data_list = load_motion_data_from_dir(directory)
-            count = 1
-            n_motions = len(motion_data_list)
-            for name, data in motion_data_list.items():
-                print("upload motion", str(count)+"/"+str(n_motions), name)
-                is_processed = False
-                motion_data = data["bvh_str"]
-                upload_motion_to_db(self.db_url, name, motion_data, c_id, data["skeleton_model"], data["meta_info"], is_processed, self.session)
-                count+=1
+            self.mdb_session.import_collection_from_directory(c_id, directory)
             self._fill_motion_list_from_db()
 
     def delete_motion(self, motion_id_list):
         for motion_id in motion_id_list:
-            delete_motion_by_id_from_remote_db(self.db_url, motion_id, self.session)
+            self.mdb_session.delete_motion(motion_id)
         self._fill_motion_list_from_db()
 
     def slot_align_motions(self):
@@ -700,7 +617,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         
         config = get_standard_config()
         spline_basis_factor = config["n_spatial_basis_factor"]
-        skeleton = load_skeleton_from_db(self.db_url, skeleton_name)
+        skeleton = self.mdb_session.load_skeleton(skeleton_name)
         dialog = MotionModellingDialog(skeleton, c_name, spline_basis_factor)
         dialog.exec_()
         if not dialog.success:
@@ -709,11 +626,10 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         name = dialog.name
         spline_basis_factor = dialog.spline_basis_factor
         animated_joints = dialog.animated_joints
-        # TODO start process with detached window
         if not self.useComputeClusterCheckBox.isChecked():
+            # TODO start process with detached window
             create_motion_model_in_db(self.db_url, skeleton_name, c_id, name, spline_basis_factor, animated_joints, self.session)
         else:
-            
             parameter_str = self.db_url+ " " + skeleton_name + " "+ str(c_id) +" " +name + " " + str(spline_basis_factor)
             if animated_joints:
                 parameter_str += " --joint_filter "
@@ -743,14 +659,14 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             skeleton = str(self.skeletonListComboBox.currentText())
             name = filename.split(os.sep)[-1]
             config = get_standard_config()
-            upload_motion_model_to_remote_db(self.db_url, name, c_id, skeleton, model_data, config, self.session)
+            self.mdb_session.upload_model(name, c_id, skeleton, model_data, config)
     
     def slot_download_motion_model(self):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
         model_name = str(item.text())
-        model_data = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
-        cluster_tree_data = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
+        model_data = self.mdb_session.download_model(model_id)
+        cluster_tree_data = self.mdb_session.download_model_meta_data(model_id)
         if model_data is not None:
             self.scene.object_builder.create_object("motion_primitive", model_name, model_data, cluster_tree_data)
 
@@ -758,7 +674,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
         model_name = str(item.text())
-        model_data = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
+        model_data = self.mdb_session.download_model(model_id)
         if model_data is not None:
             filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
             with open(filename, "w") as out_file:
@@ -767,21 +683,20 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
     def slot_create_cluster_tree(self):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
-        model = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
-        tree = create_cluster_tree_from_model(model, self.n_samples, self.n_subdivisions_per_level)
+        model_data = self.mdb_session.download_model(model_id)
+        tree = create_cluster_tree_from_model(model_data, self.n_samples, self.n_subdivisions_per_level)
         tree_data = dict()
         tree_data["data"] = tree.data.tolist()
         tree_data["features"] = tree._features.tolist()
         tree_data["options"] = tree._options
         tree_data["root"] = tree.node_to_json()
         tree_data = json.dumps(tree_data)
-        upload_cluster_tree_to_remote_db(self.db_url, model_id, tree_data, self.session)
+        self.mdb_session.upload_model_meta_data(model_id, tree_data)
 
     def slot_export_cluster_tree_json(self):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
-        model_name = str(item.text())
-        cluster_tree_data_str = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
+        cluster_tree_data_str = self.mdb_session.download_model_meta_data(model_id)
         if cluster_tree_data_str is not None:
             filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
             with open(filename, "w") as out_file:
@@ -790,8 +705,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
     def slot_export_cluster_tree_pickle(self):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
-        model_name = str(item.text())
-        cluster_tree_data = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
+        cluster_tree_data = self.mdb_session.download_model_meta_data(model_id)
         if cluster_tree_data is not None:
             cluster_tree = load_cluster_tree_from_json(cluster_tree_data)
             filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
@@ -802,56 +716,8 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         if os.path.isdir(directory):
             for i in range(self.skeletonListComboBox.count()):
                 skeleton_name = str(self.skeletonListComboBox.itemText(i))
-                skeleton_dir = directory+os.sep+skeleton_name
-                if not os.path.isdir(skeleton_dir):
-                    os.makedirs(skeleton_dir)
-                skeleton_data = get_skeleton_from_remote_db(self.db_url, skeleton_name, self.session)
-                save_json_file(skeleton_data, skeleton_dir + os.sep + skeleton_name+"_skeleton.json")
-                
-                self.export_raw_motion_data(skeleton_name, skeleton_dir + os.sep + "raw")
-                self.export_processed_motion_data(skeleton_name, skeleton_dir + os.sep + "processed")
-                #self.export_aligned_motion_data(skeleton_name, skeleton_dir + os.sep + "aligned")
-                self.export_motion_models(skeleton_name, skeleton_dir + os.sep + "models")
-                break
-                  
-    def export_raw_motion_data(self, skeleton_name, out_dir, parent=0):
-        for col in get_collections_by_parent_id_from_remote_db(self.db_url, parent):
-            print(col)
-            col_id, col_name, col_type, owner = col
-            action_dir = out_dir+os.sep+col_name
-            if self.model_filter is None or col_name in self.model_filter:
-                self.export_collection_clips_to_folder(col_id, skeleton_name, action_dir, is_aligned=0)
-            self.export_raw_motion_data(skeleton_name, action_dir, col_id)
-    
-    def export_motion_models(self, skeleton_name, out_dir, parent=0):
-        for col in get_collections_by_parent_id_from_remote_db(self.db_url, parent, self.session):
-            col_id, col_name, col_type, owner = col
-            action_dir = out_dir+os.sep+col_name
-            self.export_motion_primitive_models(col_id, skeleton_name, action_dir)
-            self.export_motion_models(skeleton_name, action_dir, col_id)
-
-    def export_processed_motion_data(self, skeleton_name, out_dir, parent=0):
-        for col in get_collections_by_parent_id_from_remote_db(self.db_url, parent):
-            print(col)
-            col_id, col_name, col_type, owner = col
-            action_dir = out_dir+os.sep+col_name
-            if self.model_filter is None or col_name in self.model_filter:
-                self.export_collection_clips_to_folder(col_id, skeleton_name, action_dir, is_aligned=1)
-            self.export_processed_motion_data(skeleton_name, action_dir, col_id)
-
-    def export_motion_primitive_models(self, mp_name, skeleton_name, out_dir):
-        model_list = get_model_list_from_remote_db(self.db_url, mp_name, skeleton_name, self.session)
-        if len(model_list) > 0 and not os.path.isdir(out_dir):
-            os.makedirs(out_dir)
-        for model_id, name in model_list:
-            model_data = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
-            with open(out_dir+ os.sep + name + "_quaternion_mm.json", "w+") as out_file:
-                out_file.write(json.dumps(model_data))
-            cluster_tree_data = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
-            if cluster_tree_data is not None:
-                with open(out_dir+ os.sep + name + "_cluster_tree.json", "w+") as out_file:
-                    out_file.write(json.dumps(cluster_tree_data))
-
+                self.mdb_session.export_database_of_skeleton_to_directory(directory, skeleton_name)
+        
     def slot_retarget_motions(self, is_aligned=0):
         dialog = RetargetDBDialog(self.db_url)
         dialog.exec_()
@@ -872,8 +738,8 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 motion_name = str(item.text())
                 motions.append((motion_id, motion_name))
 
-            src_skeleton = load_skeleton_from_db(self.db_url, src_skeleton_name, self.session)
-            target_skeleton = load_skeleton_from_db(self.db_url, target_skeleton_name, self.session)
+            src_skeleton = self.mdb_session.load_skeleton(src_skeleton_name)
+            target_skeleton = self.mdb_session.load_skeleton(target_skeleton_name)
             
             joint_map = generate_joint_map(src_skeleton.skeleton_model, target_skeleton.skeleton_model)
             retargeting = Retargeting(src_skeleton, target_skeleton, joint_map, src_scale, additional_rotation_map=None, place_on_ground=place_on_ground)
@@ -923,8 +789,8 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                     motion_id = int(item.data(Qt.UserRole))
                     motion_name = str(item.text())
                     motions.append((motion_id, motion_name))
-                src_skeleton = load_skeleton_from_db(self.db_url, src_skeleton_name, self.session)
-                target_skeleton = load_skeleton_from_db(self.db_url, target_skeleton_name, self.session)
+                src_skeleton = self.mdb_session.load_skeleton(src_skeleton_name)
+                target_skeleton = self.mdb_session.load_skeleton(target_skeleton_name)
                 joint_map = generate_joint_map(src_skeleton.skeleton_model, target_skeleton.skeleton_model)
                 retargeting = Retargeting(src_skeleton, target_skeleton, joint_map, src_scale, additional_rotation_map=None, place_on_ground=place_on_ground)
 
@@ -945,7 +811,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         if dialog.success and dialog.collection is not None:
             collection = dialog.collection
             skeleton_name = str(self.skeletonListComboBox.currentText())
-            skeleton = load_skeleton_from_db(self.db_url, skeleton_name, self.session)
+            skeleton = self.mdb_session.load_skeleton(skeleton_name)
             items = self.processedMotionListWidget.selectedItems()
             n_motions = len(items)
             count = 1
@@ -954,20 +820,8 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 motion_name = str(item.text())
                 motion_name+="_copy"
                 print("copy motion", str(count)+"/"+str(n_motions), motion_name)
-                self.copy_motion_in_db(skeleton, motion_id, motion_name, collection, skeleton_name)
+                self.mdb_session.copy_motion_in_db(motion_id, motion_name, collection, skeleton_name)
                 count+=1
-   
-    def copy_motion_in_db(self, skeleton, motion_id, motion_name, collection, skeleton_model_name):
-        motion_data = get_motion_by_id_from_remote_db(self.db_url, motion_id, is_processed=False, session=self.session)
-        if motion_data is None:
-            print("Error: motion data is empty")
-            return
-        #motion_vector = MotionVector()
-        #motion_vector.from_custom_db_format(motion_data)
-        #bvh_str = get_bvh_string(skeleton, motion_vector.frames)
-        #motion_vector.skeleton = skeleton
-        meta_info_str = get_annotation_by_id_from_remote_db(self.db_url, motion_id)
-        upload_motion_to_db(self.db_url, motion_name, motion_data, collection, skeleton_model_name, meta_info_str, session=self.session)
 
     def slot_edit_motions(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File', '.')[0]
@@ -982,7 +836,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             skeleton_name = str(self.skeletonListComboBox.currentText())
             items = self.processedMotionListWidget.selectedItems()
             n_motions = len(items)
-            skeleton = load_skeleton_from_db(self.db_url, skeleton_name, self.session)
+            skeleton = self.mdb_session.load_skeleton(skeleton_name)
             count = 1
             for item in items:
                 motion_id = int(item.data(Qt.UserRole))
@@ -992,7 +846,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 count += 1
 
     def edit_motion_in_db(self, skeleton, motion_id, motion_name, collection, skeleton_name, instructions): 
-        motion_data = get_motion_by_id_from_remote_db(self.db_url, motion_id, is_processed=False, session=self.session)
+        motion_data = self.mdb_session.get_motion_data(motion_id, is_processed=False)
         if motion_data is None:
             print("Error: motion data is empty")
             return
@@ -1007,7 +861,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         #bvh_str = get_bvh_string(skeleton, motion_vector.frames)
         motion_data = motion_vector.to_db_format()
         meta_data = None
-        replace_motion_in_db(self.db_url, motion_id, motion_name, motion_data, collection, skeleton_name, meta_data, is_processed=False, session=self.session)
+        self.mdb_session.replace_motion(motion_id, motion_name, motion_data, collection, skeleton_name, meta_data, is_processed=False)
 
     def slot_set_timefunction(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File', '.')[0]
@@ -1028,13 +882,13 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                     data = ""
                     collection = ""
                     skeleton_name = ""
-                    meta_data = get_annotation_by_id_from_remote_db(self.db_url, motion_id, is_processed=False, session=self.session)
+                    meta_data = self.mdb_session.get_motion_meta_data(motion_id, is_processed=False)
                     if meta_data is None:
                         meta_data = dict()
                     meta_data["time_function"] = time_function
                     meta_data =  bson.dumps(meta_data)
-                    replace_motion_in_db(self.db_url, motion_id, motion_name, data, collection, 
-                                        skeleton_name, meta_data, is_processed=True, session=self.session)
+                    self.mdb_session.replace_motion(motion_id, motion_name, data, collection, 
+                                        skeleton_name, meta_data, is_processed=True)
                 count += 1
 
     def slot_generate_graph_definition(self):
@@ -1059,67 +913,10 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             filename = str(filename)
             save_json_file(dialog.data, filename)
         
-    def slot_generate_morphablegraph_directory(self):
-        filename = QFileDialog.getOpenFileName(self, 'Open File', '.')[0]
-        filename = str(filename)
-        if os.path.isfile(filename):
-            graph_def = load_json_file(filename)
-            if graph_def is None:
-                return
-            directory = QFileDialog.getExistingDirectory(self, "Select Directory")
-            skeleton_name = str(self.skeletonListComboBox.currentText())
-            print("directory", directory)
-            if os.path.isdir(directory):
-                self.generate_morphable_graph_directory(skeleton_name, graph_def, directory)
     
-    def generate_morphable_graph_directory(self, skeleton_name, grapf_def, out_dir):
-        skeleton_data = get_skeleton_from_remote_db(self.db_url, skeleton_name, self.session)
-        skeleton = SkeletonBuilder().load_from_custom_unity_format(skeleton_data)
-        mgrd_skeleton = convert_to_mgrd_skeleton(skeleton)
-        skeleton.skeleton_model = SKELETON_MODELS[skeleton_name] # TODO read from database
-        save_json_file(skeleton.to_json(), out_dir + os.sep + "skeleton.json")
-        out_dir = out_dir + os.sep + "elementary_action_models"
-        if not os.path.isdir(out_dir):
-            os.makedirs(out_dir)
-        for a in grapf_def["actionDefinitions"].keys():
-            action_def =  grapf_def["actionDefinitions"][a]
-            action_dir = out_dir + os.sep + "elementary_action_"+a
-            if not os.path.isdir(action_dir):
-                os.makedirs(action_dir)
-            meta_info = dict()
-            meta_info["stats"] = dict()
-            meta_info["start_states"] =action_def["start_states"]
-            meta_info["end_states"] = action_def["end_states"]
-            if "idle_states" in action_def:
-                meta_info["idle_states"] = action_def["idle_states"]
-            for mp_name in action_def["nodes"]:
-                meta_info["stats"][mp_name] = dict()
-                print("export motion primitive", mp_name)
-                model_list = get_model_list_from_remote_db(self.db_url, mp_name, skeleton_name, self.session)
-                model_list += get_model_list_from_remote_db(self.db_url, a+"_"+mp_name, skeleton_name, self.session)
-                if len(model_list) <1:
-                    continue
-                model_id, name = model_list[-1]
-                model_data = download_motion_model_from_remote_db(self.db_url, model_id, self.session)
-                with open(action_dir+ os.sep +  a+"_"+mp_name + "_quaternion_mm.json", "w+") as out_file:
-                    out_file.write(json.dumps(model_data))
-                cluster_tree_data = download_cluster_tree_from_remote_db(self.db_url, model_id, self.session)
-                if cluster_tree_data is not None:
-                    with open(action_dir+ os.sep +  a+"_"+mp_name + "_quaternion_cluster_tree.json", "w+") as out_file:
-                        out_file.write(json.dumps(cluster_tree_data))
-
-                model = MotionPrimitiveModelWrapper()
-                model._initialize_from_json(mgrd_skeleton, model_data)
-                n_standard_transitions = 1
-                n_samples = 5
-                meta_info["stats"][mp_name]["average_step_length"] = get_avg_step_length(model, n_samples)
-                meta_info["stats"][mp_name]["n_standard_transitions"] = n_standard_transitions
-
-            save_json_file(meta_info, action_dir + os.sep + "meta_information.json")
-
     def slot_load_skeleton(self):
         skeleton_name = str(self.skeletonListComboBox.currentText())
-        skeleton = load_skeleton_from_db(self.db_url, skeleton_name, self.session)
+        skeleton = self.mdb_session.load_skeleton(skeleton_name)
         if skeleton is not None:
             motion_vector = MotionVector()
             motion_vector.frames = [skeleton.reference_frame]
@@ -1132,7 +929,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         skeleton_name = str(self.skeletonListComboBox.currentText())
         filename = str(QFileDialog.getSaveFileName(self, 'Save To File', '.')[0])
         if filename != "":
-            skeleton = load_skeleton_from_db(self.db_url, skeleton_name, self.session)
+            skeleton = self.mdb_session.load_skeleton(skeleton_name)
             skeleton_data = skeleton.to_json()
             save_json_file(skeleton_data, filename)
 
@@ -1149,13 +946,13 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             if meta_data is not None:
                 meta_data = json.dumps(meta_data)
             if data is not None or meta_data is not None:
-                replace_skeleton_in_remote_db(self.db_url, name, data, meta_data, self.session)
+                self.mdb_session.replace_skeleton(name, data, meta_data)
             print("replaced skeleton", skeleton_name)
 
     def slot_edit_skeleton(self):
         graphics_widget = ApplicationManager.instance.graphics_widget
         skeleton_name = str(self.skeletonListComboBox.currentText())
-        skeleton = load_skeleton_from_db(self.db_url, skeleton_name, self.session)
+        skeleton = self.mdb_session.load_skeleton(skeleton_name)
         skeleton_editor = SkeletonEditorDialog(skeleton_name, skeleton, graphics_widget, graphics_widget.parent)
         skeleton_editor.exec_()
         if skeleton_editor.success and skeleton_editor.skeleton_model is not None:
@@ -1164,7 +961,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 skeleton_data = json.dumps(skeleton_editor.skeleton_data)
             print("edit skeleton")
             meta_data = json.dumps(skeleton_editor.skeleton_model)  
-            replace_skeleton_in_remote_db(self.db_url, skeleton_name, skeleton_data, meta_data, self.session)
+            self.mdb_session.replace_skeleton(skeleton_name, skeleton_data, meta_data)
         else:
             print("ignore changes")
         
@@ -1174,13 +971,13 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         if collection is None:
             return
         c_id, c_name, c_type = collection
-        motion_list = get_motion_list_from_remote_db(self.db_url, c_id, skeleton_name, is_processed=False, session=self.session)
+        motion_list = self.mdb_session.get_motion_list(c_id, skeleton_name)
         if motion_list is None:
             return
         print("loaded", len(motion_list), "clips")
         frame_sum = 0
         for motion_id, name in motion_list:
-            motion_data = get_motion_by_id_from_remote_db(self.db_url, motion_id, self.session)
+            motion_data = self.mdb_session.get_motion_data(motion_id)
             if motion_data is None:
                 print("Error: motion data is empty")
                 return
@@ -1216,8 +1013,60 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.editMotionsButton.setEnabled(False)
         self.importCollectionButton.setEnabled(False)
 
-def main():
-    get_collections_by_parent_id_from_remote_db("motion.dfki.de/8888", 0)
+    def slot_generate_morphablegraph_directory(self):
+        filename = QFileDialog.getOpenFileName(self, 'Open File', '.')[0]
+        filename = str(filename)
+        if os.path.isfile(filename):
+            graph_def = load_json_file(filename)
+            if graph_def is None:
+                return
+            directory = QFileDialog.getExistingDirectory(self, "Select Directory")
+            skeleton_name = str(self.skeletonListComboBox.currentText())
+            print("directory", directory)
+            if os.path.isdir(directory):
+                self.generate_morphable_graph_directory(skeleton_name, graph_def, directory)
 
-if __name__ == "__main__":
-    main()
+    def generate_morphable_graph_directory(self, skeleton_name, grapf_def, out_dir):
+        skeleton_data = self.mdb_session.get_skeleton_data(skeleton_name)
+        skeleton = SkeletonBuilder().load_from_custom_unity_format(skeleton_data)
+        mgrd_skeleton = convert_to_mgrd_skeleton(skeleton)
+        skeleton.skeleton_model = self.mdb_session.get_skeleton_meta_data(skeleton_name)
+        save_json_file(skeleton.to_json(), out_dir + os.sep + "skeleton.json")
+        out_dir = out_dir + os.sep + "elementary_action_models"
+        if not os.path.isdir(out_dir):
+            os.makedirs(out_dir)
+        for a in grapf_def["actionDefinitions"].keys():
+            action_def =  grapf_def["actionDefinitions"][a]
+            action_dir = out_dir + os.sep + "elementary_action_"+a
+            if not os.path.isdir(action_dir):
+                os.makedirs(action_dir)
+            meta_info = dict()
+            meta_info["stats"] = dict()
+            meta_info["start_states"] =action_def["start_states"]
+            meta_info["end_states"] = action_def["end_states"]
+            if "idle_states" in action_def:
+                meta_info["idle_states"] = action_def["idle_states"]
+            for mp_name in action_def["nodes"]:
+                meta_info["stats"][mp_name] = dict()
+                print("export motion primitive", mp_name)
+                model_list = self.mdb_session.get_model_list(mp_name, skeleton_name)
+                model_list += self.mdb_session.get_model_list(a+"_"+mp_name, skeleton_name)
+                if len(model_list) <1:
+                    continue
+                model_id, name = model_list[-1]
+                model_data = self.mdb_session.download_model(model_id)
+                with open(action_dir+ os.sep +  a+"_"+mp_name + "_quaternion_mm.json", "w+") as out_file:
+                    out_file.write(json.dumps(model_data))
+                cluster_tree_data = self.mdb_session.download_model_meta_data(model_id)
+                if cluster_tree_data is not None:
+                    with open(action_dir+ os.sep +  a+"_"+mp_name + "_quaternion_cluster_tree.json", "w+") as out_file:
+                        out_file.write(json.dumps(cluster_tree_data))
+
+                model = MotionPrimitiveModelWrapper()
+                model._initialize_from_json(mgrd_skeleton, model_data)
+                n_standard_transitions = 1
+                n_samples = 5
+                meta_info["stats"][mp_name]["average_step_length"] = get_avg_step_length(model, n_samples)
+                meta_info["stats"][mp_name]["n_standard_transitions"] = n_standard_transitions
+
+            save_json_file(meta_info, action_dir + os.sep + "meta_information.json")
