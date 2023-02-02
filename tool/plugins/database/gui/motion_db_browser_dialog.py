@@ -659,7 +659,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             skeleton = str(self.skeletonListComboBox.currentText())
             name = filename.split(os.sep)[-1]
             config = get_standard_config()
-            self.mdb_session.upload_model(name, c_id, skeleton, model_data, config)
+            self.mdb_session.upload_model(name, c_id, skeleton, model_data, model_format="mm", config=config)
     
     def slot_download_motion_model(self):
         item = self.modelListWidget.currentItem()
@@ -1049,8 +1049,8 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             for mp_name in action_def["nodes"]:
                 meta_info["stats"][mp_name] = dict()
                 print("export motion primitive", mp_name)
-                model_list = self.mdb_session.get_model_list(mp_name, skeleton_name)
-                model_list += self.mdb_session.get_model_list(a+"_"+mp_name, skeleton_name)
+                model_list = self.mdb_session.get_model_list(mp_name, skeleton_name, model_format="mm")
+                model_list += self.mdb_session.get_model_list(a+"_"+mp_name, skeleton_name, model_format="mm")
                 if len(model_list) <1:
                     continue
                 model_id, name = model_list[-1]
