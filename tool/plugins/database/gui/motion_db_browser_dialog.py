@@ -60,6 +60,7 @@ from morphablegraphs.utilities.db_interface import create_motion_model_in_db, al
 from morphablegraphs.utilities import convert_to_mgrd_skeleton
 from morphablegraphs.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
 from anim_utils.animation_data import SkeletonBuilder
+import matplotlib.pyplot as plt
 import os, ssl
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
 getattr(ssl, '_create_unverified_context', None)):
@@ -161,8 +162,21 @@ def run_retargeting_process(pool, db_url, batch, retargeting, collection, target
         yield from asyncio.sleep(0.1)
     print("done")
 
+def add_plot(ax, timesteps, rewards, lengths, label):
+    ax[0].plot(timesteps, rewards, label = label)
+    ax[0].set_xlabel('timesteps')
+    ax[0].set_ylabel('rewards')
+    ax[1].plot(timesteps, lengths, label = label)
+    ax[1].set_xlabel('timesteps')
+    ax[1].set_ylabel('lengths')
 
-
+def plot_experiment(runs):
+    fig, ax = plt.subplots(1,2)
+    for label in runs:
+        add_plot(ax, runs[label]["t"], runs[label]["r"], runs[label]["l"], label)
+    plt.tight_layout()
+    plt.legend()
+    plt.show()
 
 class MotionDBBrowserDialog(QDialog, Ui_Dialog):
     def __init__(self, scene, parent=None):
@@ -206,6 +220,9 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.retargetAlignedMotionsButton.clicked.connect(partial(MotionDBBrowserDialog.slot_retarget_motions_parallel,self, True))
         self.editSkeletonButton.clicked.connect(self.slot_edit_skeleton)
         self.debugInfoButton.clicked.connect(self.slot_print_debug_info)
+        self.plotExperimentButton.clicked.connect(self.slot_plot_experiment)
+        self.exportExperimentButton.clicked.connect(self.slot_export_experiment)
+        self.deleteExperimentButton.clicked.connect(self.slot_delete_experiment)
         self.rootItem = None
         self.db_url = db_constants.DB_URL
         self.session = SessionManager.session
@@ -222,11 +239,11 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.project_info = None
         self.fill_combo_box_with_projects()
         self.fill_combo_box_with_skeletons()
-        self.update_all_lists()
+        self.update_collection_tree()
         self.processedMotionListWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.alignedMotionListWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.skeletonListComboBox.currentIndexChanged.connect(self.update_lists)
-        self.projectListComboBox.currentIndexChanged.connect(self.update_all_lists)
+        self.projectListComboBox.currentIndexChanged.connect(self.update_collection_tree)
         self.collectionTreeWidget.itemClicked.connect(self.update_lists)
         self.urlLineEdit.textChanged.connect(self.set_url)
         self.tabWidget.currentChanged.connect(self.toggle_motion_primitive_list)
@@ -255,27 +272,28 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         tab_name = self.tabWidget.currentWidget().objectName()
         print("tab_name", tab_name)
 
-    def update_all_lists(self):
+    def update_collection_tree(self):
         project_id = self.projectListComboBox.currentData()
         self.project_info = self.mdb_session.get_project_info(project_id)
         if self.project_info is None:
             print("Error: project could not be found", project_id)
             return
-        t = threading.Thread(target=self._update_all_lists)
+        t = threading.Thread(target=self._update_collection_tree)
         t.start()
+        
+    def _update_collection_tree(self):
+        self.fill_tree_widget()
+        self._update_lists()
 
     def update_lists(self):
-        t = threading.Thread(target=self._update_motion_lists)
+        t = threading.Thread(target=self._update_lists)
         t.start()
 
-    def _update_all_lists(self):
-        self.fill_tree_widget()
-        self._update_motion_lists()
-
-    def _update_motion_lists(self):
+    def _update_lists(self):
         self._fill_motion_list_from_db()
         self._fill_model_list_from_db()
         self._fill_aligned_motion_list_from_db()
+        self._fill_experiment_list_from_db()
 
     def fill_combo_box_with_projects(self):
         self.projectListComboBox.clear()
@@ -381,6 +399,24 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             item.setText(name)
             item.setData(Qt.UserRole, node_id)
             self.modelListWidget.addItem(item)
+    
+    def _fill_experiment_list_from_db(self, idx=None):
+        self.experimentListWidget.clear()
+        col = self.get_collection()
+        if col is None:
+            return
+        c_id, c_name, c_type = col
+        skeleton = str(self.skeletonListComboBox.currentText())
+        exp_list = self.mdb_session.get_experiment_list(c_id, skeleton)
+        print("experiment list", exp_list)
+        if exp_list is None:
+            return
+        for node_id, name in exp_list:
+            item = QListWidgetItem()
+            item.setText(name)
+            item.setData(Qt.UserRole, node_id)
+            self.experimentListWidget.addItem(item)
+
 
     def slot_load_motions(self, is_aligned=0):
         if is_aligned==0:
@@ -442,7 +478,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         if dialog.success:
             self.mdb_session.add_new_project(dialog.name, dialog.is_public)
             self.fill_combo_box_with_projects()
-            self.update_all_lists()
+            self.update_collection_tree()
     
     def slot_edit_project(self):
         if self.project_info is None:
@@ -453,7 +489,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             project_id = self.projectListComboBox.currentData()
             self.mdb_session.edit_project(project_id, dialog.name, dialog.is_public)
             self.fill_combo_box_with_projects()
-            self.update_all_lists()
+            self.update_collection_tree()
 
     def slot_delete_project(self):
         dialog = ConfirmationDialog()
@@ -462,7 +498,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             project_id = self.projectListComboBox.currentData()
             self.mdb_session.remove_project(project_id)
             self.fill_combo_box_with_projects()
-            self.update_all_lists()
+            self.update_collection_tree()
 
 
     def slot_new_collection(self):
@@ -1070,3 +1106,50 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 meta_info["stats"][mp_name]["n_standard_transitions"] = n_standard_transitions
 
             save_json_file(meta_info, action_dir + os.sep + "meta_information.json")
+
+    def slot_plot_experiment(self):
+        runs = self.get_plot_data()
+        if len(runs) > 0:
+            plot_experiment(runs)
+
+    def get_plot_data(self):
+        from scipy.signal import savgol_filter
+        def process_plot_data(log_data):
+            timesteps, rewards, lengths = [], [], []
+            for i in range(len(log_data)):
+                rewards.append(log_data[i][0])
+                lengths.append(log_data[i][1])
+                timesteps.append(log_data[i][2])
+            return timesteps, rewards, lengths
+        apply_smoothing = self.smoothPlotCheckBox.checkState() == Qt.Checked
+        items = self.experimentListWidget.selectedItems()
+        runs = dict()
+        for item in items:
+            label = str(item.text())
+            selected_id = int(item.data(Qt.UserRole))
+            data = self.mdb_session.get_experiment_log(selected_id)
+            print("plot", selected_id, label)
+            t, r, l = process_plot_data(data["log_data"])
+            entry= dict()
+            entry["t"] = t
+            entry["r"] = savgol_filter(r, 51, 3) if apply_smoothing else r
+            entry["l"] = savgol_filter(l, 51, 3) if apply_smoothing else l
+            runs[label] = entry
+        return runs
+
+    def slot_delete_experiment(self):
+        dialog = ConfirmationDialog()
+        dialog.exec_()
+        if dialog.success:
+            items = self.experimentListWidget.selectedItems()
+            for item in items:
+                selected_id = int(item.data(Qt.UserRole))
+                self.mdb_session.remove_experiment(selected_id)
+            self.update_lists()
+
+    def slot_export_experiment(self):
+        filename = QFileDialog.getSaveFileName(self, 'Save File', '.')[0]
+        filename = str(filename)
+        run_data = self.get_plot_data()
+        save_json_file(run_data, filename)
+        
