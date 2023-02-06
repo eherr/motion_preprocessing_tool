@@ -433,10 +433,6 @@ QRadioButton::indicator:checked
 
 QCheckBox::indicator{
     color: white;
-    background-color: #323232;
-    border: 1px solid #b1b1b1;
-    width: 9px;
-    height: 9px;
 }
 
 QRadioButton::indicator
@@ -449,10 +445,6 @@ QRadioButton::indicator:hover, QCheckBox::indicator:hover
     border: 1px solid #ffaa00;
 }
 
-QCheckBox::indicator:checked
-{
-    image:url(:/images/checkbox.png);
-}
 
 QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
 {
