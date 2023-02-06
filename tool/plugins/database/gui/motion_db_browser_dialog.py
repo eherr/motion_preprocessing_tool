@@ -701,8 +701,8 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
         model_name = str(item.text())
-        model_data = self.mdb_session.download_model(model_id)
-        cluster_tree_data = self.mdb_session.download_model_meta_data(model_id)
+        model_data = self.mdb_session.download_motion_model(model_id)
+        cluster_tree_data = self.mdb_session.download_cluster_tree(model_id)
         if model_data is not None:
             self.scene.object_builder.create_object("motion_primitive", model_name, model_data, cluster_tree_data)
 
@@ -714,12 +714,12 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         if model_data is not None:
             filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
             with open(filename, "w") as out_file:
-                out_file.write(json.dumps(model_data))
+                out_file.write(model_data)
 
     def slot_create_cluster_tree(self):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
-        model_data = self.mdb_session.download_model(model_id)
+        model_data = self.mdb_session.download_motion_model(model_id)
         tree = create_cluster_tree_from_model(model_data, self.n_samples, self.n_subdivisions_per_level)
         tree_data = dict()
         tree_data["data"] = tree.data.tolist()
@@ -727,12 +727,12 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         tree_data["options"] = tree._options
         tree_data["root"] = tree.node_to_json()
         tree_data = json.dumps(tree_data)
-        self.mdb_session.upload_model_meta_data(model_id, tree_data)
+        self.mdb_session.upload_cluster_tree(model_id, tree_data)
 
     def slot_export_cluster_tree_json(self):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
-        cluster_tree_data_str = self.mdb_session.download_model_meta_data(model_id)
+        cluster_tree_data_str = self.mdb_session.download_cluster_tree(model_id)
         if cluster_tree_data_str is not None:
             filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
             with open(filename, "w") as out_file:
@@ -741,7 +741,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
     def slot_export_cluster_tree_pickle(self):
         item = self.modelListWidget.currentItem()
         model_id = int(item.data(Qt.UserRole))
-        cluster_tree_data = self.mdb_session.download_model_meta_data(model_id)
+        cluster_tree_data = self.mdb_session.download_cluster_tree(model_id)
         if cluster_tree_data is not None:
             cluster_tree = load_cluster_tree_from_json(cluster_tree_data)
             filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
@@ -1090,10 +1090,10 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 if len(model_list) <1:
                     continue
                 model_id, name = model_list[-1]
-                model_data = self.mdb_session.download_model(model_id)
+                model_data = self.mdb_session.download_motion_model(model_id)
                 with open(action_dir+ os.sep +  a+"_"+mp_name + "_quaternion_mm.json", "w+") as out_file:
                     out_file.write(json.dumps(model_data))
-                cluster_tree_data = self.mdb_session.download_model_meta_data(model_id)
+                cluster_tree_data = self.mdb_session.download_cluster_tree(model_id)
                 if cluster_tree_data is not None:
                     with open(action_dir+ os.sep +  a+"_"+mp_name + "_quaternion_cluster_tree.json", "w+") as out_file:
                         out_file.write(json.dumps(cluster_tree_data))
