@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Research\physics\workspace\mosi_app_mgtools\motion_analysis\GUI\layout\.\action_sequence_dialog.ui',
-# licensing of 'D:\Research\physics\workspace\mosi_app_mgtools\motion_analysis\GUI\layout\.\action_sequence_dialog.ui' applies.
+# Form implementation generated from reading ui file 'D:\Research\physics\workspace\mosi_app_mgtools\tool\GUI\layout\.\action_sequence_dialog.ui',
+# licensing of 'D:\Research\physics\workspace\mosi_app_mgtools\tool\GUI\layout\.\action_sequence_dialog.ui' applies.
 #
 # Created: Wed Jan 15 17:42:02 2020
 #      by: pyside2-uic  running on PySide2 5.13.1

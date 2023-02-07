@@ -28,6 +28,7 @@ import os
 import glob
 from anim_utils.animation_data.motion_state import MotionState
 from vis_utils.animation.state_machine_controller import StateMachineController
+from vis_utils.scene.scene_object_builder import SceneObjectBuilder, SceneObject
 from anim_utils.animation_data.motion_concatenation import align_joint
 from anim_utils.motion_editing import MotionGrounding
 from anim_utils.animation_data.bvh import BVHReader
@@ -42,7 +43,9 @@ from morphablegraphs.motion_model.static_motion_primitive import StaticMotionPri
 from morphablegraphs.motion_generator.mg_state_planner import MGStatePlanner, get_node_aligning_2d_transform, ANIMATED_JOINTS_CUSTOM
 from morphablegraphs.constraints.constraint_builder import UnityFrameConstraint
 from morphablegraphs.motion_generator.mg_state_queue import StateQueueEntry
-
+from .simple_navigation_agent import SimpleNavigationAgent
+from vis_utils.scene.utils import get_random_color
+from morphablegraphs.motion_model.motion_state_graph_loader import MotionStateGraphLoader
 
 def rotate_vector_deg(vec, a):
     a = np.radians(a)
@@ -724,3 +727,73 @@ class MorphableGraphStateMachine(StateMachineController):
         self.stop_current_state = True
         #self.transition_to_next_state_controlled()
         self.lock.release()
+    
+def load_morphable_graph_state_machine(builder, path, use_all_joints=True):
+    scene_object = SceneObject()
+    scene_object.scene = builder._scene
+    builder.create_component("morphablegraph_state_machine", scene_object, path, use_all_joints)
+    builder._scene.addObject(scene_object)
+    return scene_object
+
+def load_morphable_graph_state_machine_from_db(builder, db_path, skeleton_name, graph_id, use_all_joints=False, config=DEFAULT_CONFIG):
+    scene_object = SceneObject()
+    scene_object.scene = builder._scene
+    builder.create_component("morphablegraph_state_machine_from_db", scene_object,  db_path, skeleton_name, graph_id, use_all_joints, config)
+    builder._scene.addObject(scene_object)
+    return scene_object
+
+def attach_mg_state_machine(builder, scene_object,file_path, use_all_joints=True, config=DEFAULT_CONFIG):
+    color=get_random_color()  
+    loader = MotionStateGraphLoader()
+    loader.use_all_joints = use_all_joints# = set animated joints to all
+    if os.path.isfile(file_path):
+        loader.set_data_source(file_path[:-4])
+        graph = loader.build()
+        name = file_path.split("/")[-1]
+        start_node = None
+        animation_controller = MorphableGraphStateMachine(scene_object, graph, start_node, use_all_joints=use_all_joints, config=config, pfnn_data=loader.pfnn_data)
+        scene_object.add_component("morphablegraph_state_machine", animation_controller)
+        scene_object.name = name
+        if builder._scene.visualize:
+            vis = builder.create_component("skeleton_vis", scene_object, animation_controller.get_skeleton(), color)
+            animation_controller.set_visualization(vis)
+            #scene_object._components["morphablegraph_state_machine"].update_scene_object.connect(builder._scene.slotUpdateSceneObjectRelay)
+
+        agent = SimpleNavigationAgent(scene_object)
+        scene_object.add_component("nav_agent", agent)
+        return animation_controller
+
+def attach_mg_state_machine_from_db(builder, scene_object, db_url, skeleton_name, graph_id, use_all_joints=False, config=DEFAULT_CONFIG):
+    color=get_random_color()
+    loader = MotionStateGraphLoader()
+    # set animated joints to all necessary for combination of models with different joints
+    loader.use_all_joints = use_all_joints
+    frame_time = 1.0/72
+    graph = loader.build_from_database(db_url, skeleton_name, graph_id, frame_time)
+    start_node = None
+    name = skeleton_name
+    animation_controller = MorphableGraphStateMachine(scene_object, graph, start_node, use_all_joints=use_all_joints, config=config, pfnn_data=loader.pfnn_data)
+    scene_object.add_component("morphablegraph_state_machine", animation_controller)
+    scene_object.name = name
+    if builder._scene.visualize:
+        vis = builder.create_component("skeleton_vis", scene_object, animation_controller.get_skeleton(), color)
+        animation_controller.set_visualization(vis)
+        #scene_object._components["morphablegraph_state_machine"].update_scene_object.connect(builder._scene.slotUpdateSceneObjectRelay)
+
+    agent = SimpleNavigationAgent(scene_object)
+    scene_object.add_component("nav_agent", agent)
+    return animation_controller
+
+
+SceneObjectBuilder.register_component("morphablegraph_state_machine", attach_mg_state_machine)
+SceneObjectBuilder.register_component("morphablegraph_state_machine_from_db", attach_mg_state_machine_from_db)
+
+SceneObjectBuilder.register_file_handler("mg.zip", load_morphable_graph_state_machine)
+SceneObjectBuilder.register_object("mg_state_machine_from_db", load_morphable_graph_state_machine_from_db)
+try:
+    from functools import partial
+    from tool.core.editor_window import EditorWindow, open_file_dialog
+    mg_menu_actions = [{"text": "Load MG State Machine", "function": partial(open_file_dialog, "mg.zip")}]
+    EditorWindow.add_actions_to_menu("File", mg_menu_actions)
+except:
+    pass

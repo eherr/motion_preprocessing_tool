@@ -22,10 +22,12 @@
 # USE OR OTHER DEALINGS IN THE SOFTWARE.
 import collections
 import numpy as np
+import pickle
 from vis_utils.animation.animation_controller import AnimationController
 from vis_utils.animation.skeleton_visualization import SkeletonVisualization
 from vis_utils.scene.components import ComponentBase
 from vis_utils.animation.skeleton_animation_controller import LegacySkeletonAnimationController
+from vis_utils.scene.scene_object_builder import SceneObjectBuilder, SceneObject
 import operator
 from anim_utils.animation_data import MotionVector
 from anim_utils.animation_data.motion_blending import generate_frame_using_iterative_slerp
@@ -255,7 +257,6 @@ class BlendAnimationController(LegacySkeletonAnimationController):
         return self.track.parameter_labels
 
     def save_to_file(self, filename):
-        import pickle
         with open(filename, "wb") as out_file:
             pickle.dump(self.track, out_file)
 
@@ -271,4 +272,73 @@ class BlendAnimationController(LegacySkeletonAnimationController):
 
     def get_frame_time(self):
         return self.track.frame_time
+
+
+def create_blend_controller(self, name, skeleton, motions, joint_name=None, constrained_frame=-1):
+    joint_name = "hand_l"
+    constrained_frame = 50
+    count = float(len(motions))
+    if count > 0:
+        scene_object = SceneObject()
+        scene_object.name = name
+        blend_animation_controller = BlendAnimationController(scene_object)
+        node = AnimationBlendNode()
+        for idx, motion in enumerate(motions):
+            print("add motion ", idx, count - 1)
+            # pos = float(idx)/(count-1)
+            if joint_name is None:
+                x = motion.frames[constrained_frame][0]
+                z = motion.frames[constrained_frame][2]
+                node.add_motion("motion_" + str(idx), motion.frames, [x, z])
+            else:
+                frame = motion.frames[constrained_frame]
+                p = skeleton.nodes[joint_name].get_global_position(frame)
+                x = p[0]
+                y = p[2]
+                z = p[2]
+                node.add_motion("motion_"+str(idx), motion.frames, [x,y, z])
+        node.update_weights()
+        if joint_name is None:
+            node.set_parameter_labels(["x", "z"])
+        else:
+            node.set_parameter_labels(["x", "y", "z"])
+
+        node.frame_time = motions[0].frame_time
+        blend_animation_controller.set_track(node)
+        blend_animation_controller.set_skeleton(skeleton)
+        blend_animation_controller.updateTransformation(0)
+        scene_object.add_component("blend_controller", blend_animation_controller)
+        self._scene.addAnimationController(scene_object, "blend_controller")
+
+
+def load_blend_controller(self, filename):
+    with open(filename, "rb") as in_file:
+        node = pickle.load(in_file)
+        scene_object = SceneObject()
+        name = filename.split("/")[-1]
+        scene_object.name = name
+        blend_animation_controller = BlendAnimationController(scene_object)
+        blend_animation_controller.set_track(node)
+        blend_animation_controller.set_skeleton(node.skeleton)
+        blend_animation_controller.updateTransformation(0)
+        scene_object.add_component("blend_controller", blend_animation_controller)
+        self._scene.addAnimationController(scene_object, "blend_controller")
+
     
+
+
+SceneObjectBuilder.register_file_handler("blend_controller", load_blend_controller)
+SceneObjectBuilder.register_object("blend_controller", create_blend_controller)
+try:
+    def create_blend_animation_controller():
+        node_ids = EditorWindow.instance.getSelectedSceneObjects()
+        anim_controllers = ApplicationManager.instance.scene.get_animation_controllers(node_ids)
+        motions = [c._motion for c in anim_controllers]
+        if len(motions) > 0:
+            name = "Blend Controller"
+            skeleton = anim_controllers[0].get_skeleton_copy()
+            ApplicationManager.instance.scene.object_builder.create_object("blend_controller",name, skeleton, motions)
+
+    EditorWindow.add_actions_to_menu("Create", [{"text": "Blend Animation Controller", "function": create_blend_animation_controller}])
+except:
+    pass        

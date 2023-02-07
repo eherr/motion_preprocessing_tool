@@ -25,6 +25,7 @@ from copy import deepcopy
 from vis_utils.animation.animation_controller import AnimationController, CONTROLLER_TYPE_MG
 from vis_utils.animation.skeleton_animation_controller import LegacySkeletonAnimationController, SkeletonAnimationController
 from vis_utils.animation.skeleton_visualization import SkeletonVisualization
+from vis_utils.scene.scene_object_builder import SceneObjectBuilder, SceneObject
 from anim_utils.animation_data import BVHWriter, MotionVector
 from anim_utils.utilities.io_helper_functions import write_to_json_file
 from anim_utils.animation_data.quaternion_frame import convert_quaternion_frames_to_euler_frames
@@ -58,6 +59,15 @@ SERVICE_CONFIG = {
     "create_ca_vis_data": False
 }
 
+DEFAULT_CONFIG = dict()
+DEFAULT_CONFIG["algorithm"]  = DEFAULT_ALGORITHM_CONFIG
+DEFAULT_CONFIG["algorithm"]["n_random_samples"] = 300
+DEFAULT_CONFIG["algorithm"]["n_cluster_search_candidates"] = 4
+DEFAULT_CONFIG["algorithm"]["local_optimization_settings"]["max_iterations"] = 1000
+DEFAULT_CONFIG["algorithm"]["local_optimization_settings"]["method"] = "L-BFGS-B"
+DEFAULT_CONFIG["algorithm"]["local_optimization_mode"] = "none"
+DEFAULT_CONFIG["algorithm"]["inverse_kinematics_settings"]["interpolation_window"]= 120
+DEFAULT_CONFIG["algorithm"]["inverse_kinematics_settings"]["transition_window"]= 60
 
 class MorphableGraphsController(SkeletonAnimationController):#LegacySkeletonAnimationController
     """ The MorphableGraphsController class displays a motion genenrated by a graph of statistical motion models
@@ -265,3 +275,73 @@ class MorphableGraphsController(SkeletonAnimationController):#LegacySkeletonAnim
 
     def get_frame_time(self):
         return self.frameTime
+
+def load_morphable_graphs_file(builder, filename):
+    scene_object = SceneObject()
+    loader = MotionStateGraphLoader()
+    loader.set_data_source(filename[:-4])
+    loader.use_all_joints = False  # = set animated joints to all
+    name = filename.split("/")[-1]
+    graph = loader.build()
+    animation_controller = MorphableGraphsController(scene_object, name, graph, color=get_random_color())
+    scene_object.add_component("morphablegraphs_controller", animation_controller)
+    scene_object.add_component("skeleton_vis", animation_controller._visualization)
+    scene_object.name = animation_controller.name
+    animation_controller.init_visualization()
+    builder._scene.addAnimationController(scene_object, "morphablegraphs_controller")
+    return scene_object
+
+
+def load_motion_graph_controller(self, name, skeleton, motion_graph, frame_time):
+    scene_object = SceneObject()
+    motion_graph_controller = MotionGraphController(scene_object, color=get_random_color(), mg=motion_graph)
+    motion_graph_controller.name = name
+    motion_graph_controller.frameTime = frame_time
+    motion_graph_controller.set_skeleton(skeleton)
+    motion_graph_controller.init_visualization()
+    scene_object.name = motion_graph_controller.name
+    scene_object.add_component("motion_graph_controller", motion_graph_controller)
+    self.addAnimationController(scene_object, "motion_graph_controller")
+    return scene_object
+
+def attach_mg_generator_from_db(builder, scene_object, db_url, skeleton_name, graph_id, use_all_joints=False, config=DEFAULT_CONFIG):
+    color=get_random_color()
+    loader = MotionStateGraphLoader()
+    # set animated joints to all necessary for combination of models with different joints
+    loader.use_all_joints = use_all_joints
+    frame_time = 1.0/72
+    graph = loader.build_from_database(db_url, skeleton_name, graph_id, frame_time)
+    start_node = None
+    name = skeleton_name
+    animation_controller = MorphableGraphsController(scene_object, name, graph, start_node=start_node, config=DEFAULT_ALGORITHM_CONFIG, color=get_random_color()) #start_node, use_all_joints=use_all_joints, config=config, pfnn_data=loader.pfnn_data)
+   
+    #scene_object.add_component("skeleton_vis", animation_controller._visualization)
+    scene_object.add_component("morphablegraphs_controller", animation_controller)
+    scene_object.name = name
+    if builder._scene.visualize:
+        vis = builder.create_component("skeleton_vis", scene_object, animation_controller.get_skeleton(), color)
+        animation_controller.set_visualization(vis)
+        #scene_object._components["morphablegraph_state_machine"].update_scene_object.connect(builder._scene.slotUpdateSceneObjectRelay)
+    return animation_controller
+
+def load_morphable_graphs_generator_from_db(builder, db_path, skeleton_name, graph_id, use_all_joints=False, config=DEFAULT_ALGORITHM_CONFIG):
+    scene_object = SceneObject()
+    scene_object.scene = builder._scene
+    builder.create_component("morphablegraph_generator_from_db", scene_object,  db_path, skeleton_name, graph_id, use_all_joints, config)
+    builder._scene.addObject(scene_object)
+    return scene_object
+
+SceneObjectBuilder.register_file_handler("motion_graph", load_motion_graph_controller)
+
+SceneObjectBuilder.register_object("mg_generator_from_db", load_morphable_graphs_generator_from_db)
+SceneObjectBuilder.register_component("morphablegraph_generator_from_db", attach_mg_generator_from_db)
+SceneObjectBuilder.register_file_handler("zip", load_morphable_graphs_file)
+
+try:
+    from functools import partial
+    from tool.core.editor_window import EditorWindow, open_file_dialog
+
+    mg_menu_actions = [{"text": "Load Morphable Graph", "function": partial(open_file_dialog, "zip")}]
+    EditorWindow.add_actions_to_menu("File", mg_menu_actions)
+except:
+    pass        

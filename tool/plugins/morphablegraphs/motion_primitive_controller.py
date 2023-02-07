@@ -31,6 +31,7 @@ from anim_utils.animation_data import BVHWriter, MotionVector, SkeletonBuilder
 from anim_utils.utilities.io_helper_functions import load_json_file, write_to_json_file
 from anim_utils.utilities.log import set_log_mode, LOG_MODE_DEBUG
 from vis_utils.scene.utils import get_random_color
+from vis_utils.scene.scene_object_builder import SceneObjectBuilder, SceneObject
 from morphablegraphs.motion_model.motion_state_graph_node import MotionStateGraphNode
 from morphablegraphs.motion_generator.motion_primitive_generator import MotionPrimitiveGenerator
 from morphablegraphs.constraints.motion_primitive_constraints import MotionPrimitiveConstraints
@@ -287,3 +288,38 @@ class MotionPrimitiveController(LegacySkeletonAnimationController):
 
     def get_frame_time(self):
         return self.frameTime
+
+def load_motion_primitive(builder, file_path):
+    scene_object = SceneObject()
+    with open(file_path, "r") as in_file:
+        data = json.load(in_file)
+    name = file_path.split("/")[-1]
+    animation_controller = MotionPrimitiveController(scene_object, name, data, color=get_random_color())
+    scene_object.add_component("motion_primitive_controller", animation_controller)
+    scene_object.name = animation_controller.name
+    animation_controller.init_visualization()
+    builder._scene.addAnimationController(scene_object, "motion_primitive_controller")
+    return scene_object
+    
+def create_motion_primitive(builder, name, data, cluster_tree_data=None):
+    scene_object = SceneObject()
+    #data = json.loads(data_str)
+    animation_controller = MotionPrimitiveController(scene_object, name, data, color=get_random_color())
+    if cluster_tree_data is not None:
+        animation_controller.load_cluster_tree_from_json(cluster_tree_data)
+    scene_object.add_component("motion_primitive_controller", animation_controller)
+    scene_object.name = animation_controller.name
+    animation_controller.init_visualization()
+    builder._scene.addAnimationController(scene_object, "motion_primitive_controller")
+    return scene_object
+
+SceneObjectBuilder.register_object("motion_primitive", create_motion_primitive)
+SceneObjectBuilder.register_file_handler("mm.json", load_motion_primitive)
+try:
+    from functools import partial
+    from tool.core.editor_window import EditorWindow, open_file_dialog
+    mg_menu_actions = [{"text": "Load Morphable Model", "function": partial(open_file_dialog, "mm.json")}]
+
+    EditorWindow.add_actions_to_menu("File", mg_menu_actions)
+except:
+    pass
