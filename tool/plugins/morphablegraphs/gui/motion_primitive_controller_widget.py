@@ -25,10 +25,8 @@ from copy import deepcopy
 from PySide2.QtWidgets import QWidget, QFileDialog, QAction
 from .layout.mp_player_widget_ui import Ui_Form
 from tool.core.widget_manager import WidgetManager
-try:
-    from tool.core.dialogs import CopyMotionDialog, SetConfigDialog
-except:
-    pass
+from tool.core.dialogs.set_config_dialog import SetConfigDialog
+from tool.core.dialogs.copy_motion_dialog import CopyMotionDialog
 from tool.core.widgets.animation_player_widget import AnimationPlayerBaseWidget
 
 
