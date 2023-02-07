@@ -394,9 +394,9 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         print("model list", model_list)
         if model_list is None:
             return
-        for node_id, name in model_list:
+        for node_id, name, model_format in model_list:
             item = QListWidgetItem()
-            item.setText(name)
+            item.setText(name+"."+model_format)
             item.setData(Qt.UserRole, node_id)
             self.modelListWidget.addItem(item)
     
