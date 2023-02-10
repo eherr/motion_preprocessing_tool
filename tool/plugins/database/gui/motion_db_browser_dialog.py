@@ -46,7 +46,7 @@ from .motion_modelling_dialog import MotionModellingDialog
 from .graph_definition_dialog import GraphDefinitionDialog
 from .graph_table_view_dialog import GraphTableViewDialog
 from tool.core.dialogs.skeleton_editor_dialog import SkeletonEditorDialog
-from motion_db_interface import retarget_motion_in_db, start_cluster_job, ModelDBSession
+from motion_db_interface import retarget_motion_in_db, start_cluster_job, MGModelDBSession
 from vis_utils.io import load_json_file, save_json_file
 from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
 from anim_utils.animation_data import MotionVector, SkeletonBuilder
@@ -226,7 +226,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.rootItem = None
         self.db_url = db_constants.DB_URL
         self.session = SessionManager.session
-        self.mdb_session = ModelDBSession(self.db_url, self.session)
+        self.mdb_session = MGModelDBSession(self.db_url, self.session)
         print("set session", self.session)
         if self.session is not None and "user" in self.session:
             self.statusLabel.setText("Status: Authenticated as "+self.session["user"])
