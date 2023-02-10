@@ -376,11 +376,10 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         if motion_list is None:
             return
         print("loaded", len(motion_list), "aligned clips")
-        for node_id, name in motion_list:
+        for node_id, name, in motion_list:
             item = QListWidgetItem()
             item.setText(name)
             item.setData(Qt.UserRole, node_id)
-            print("loaded", name, node_id)
             self.alignedMotionListWidget.addItem(item)
         
     def _fill_model_list_from_db(self, idx=None):
@@ -713,7 +712,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         model_data = self.mdb_session.download_model(model_id)
         if model_data is not None:
             filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
-            with open(filename, "w") as out_file:
+            with open(filename, "wb") as out_file:
                 out_file.write(model_data)
 
     def slot_create_cluster_tree(self):
