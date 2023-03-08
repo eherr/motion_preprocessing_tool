@@ -243,13 +243,6 @@
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="useComputeClusterCheckBox">
-       <property name="text">
-        <string>Use Kubernetes</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="debugInfoButton">
        <property name="text">
         <string>Print Debug Info</string>
@@ -264,9 +257,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="generateMGFromFIleButton">
+      <widget class="QPushButton" name="generateModelGraphButton">
        <property name="text">
-        <string>Generate Morphable Graph </string>
+        <string>Generate Model Graph </string>
        </property>
       </widget>
      </item>
@@ -354,10 +347,10 @@
         <item row="0" column="0">
          <widget class="QListWidget" name="fileListWidget"/>
         </item>
-        <item row="1" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item row="3" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_34">
           <item>
-           <spacer name="horizontalSpacer">
+           <spacer name="horizontalSpacer_8">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -370,23 +363,23 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="loadMotionsButton">
+           <widget class="QPushButton" name="runDataTransformButton">
             <property name="text">
-             <string>Load Selected into Scene</string>
+             <string>Run Data Transform</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="deleteMotionButton">
+           <widget class="QPushButton" name="retargetMotionsButton">
             <property name="text">
-             <string>Delete Selected</string>
+             <string>Retarget Selected Motions</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="downloadMotionsButton">
+           <widget class="QPushButton" name="copyMotionsButton">
             <property name="text">
-             <string>Download Selected</string>
+             <string>Copy Selected Motions</string>
             </property>
            </widget>
           </item>
@@ -430,10 +423,10 @@
           </item>
          </layout>
         </item>
-        <item row="3" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_32">
+        <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <spacer name="horizontalSpacer_3">
+           <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -446,68 +439,23 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="alignMotionsButton">
+           <widget class="QPushButton" name="loadFilesButton">
             <property name="text">
-             <string>Align Motion Clips</string>
+             <string>Load Selected into Scene</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="createMotionModelButton">
+           <widget class="QPushButton" name="deleteFilesButton">
             <property name="text">
-             <string>Create Motion Model</string>
+             <string>Delete Selected</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="createClusterTreeButton">
+           <widget class="QPushButton" name="exportFilesButton">
             <property name="text">
-             <string>Create Cluster Tree</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="4" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_34">
-          <item>
-           <spacer name="horizontalSpacer_8">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="setTimeFunctionButton">
-            <property name="text">
-             <string>Set Time Function</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="editMotionsButton">
-            <property name="text">
-             <string>Edit Selected Motions</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="retargetMotionsButton">
-            <property name="text">
-             <string>Retarget Selected Motions</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="copyMotionsButton">
-            <property name="text">
-             <string>Copy Selected Motions</string>
+             <string>Export Selected</string>
             </property>
            </widget>
           </item>
@@ -515,7 +463,6 @@
         </item>
        </layout>
        <zorder>fileListWidget</zorder>
-       <zorder></zorder>
        <zorder></zorder>
        <zorder></zorder>
       </widget>

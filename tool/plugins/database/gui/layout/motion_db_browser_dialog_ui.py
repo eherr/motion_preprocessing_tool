@@ -169,11 +169,6 @@ class Ui_Dialog(object):
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer2)
 
-        self.useComputeClusterCheckBox = QCheckBox(Dialog)
-        self.useComputeClusterCheckBox.setObjectName(u"useComputeClusterCheckBox")
-
-        self.horizontalLayout_3.addWidget(self.useComputeClusterCheckBox)
-
         self.debugInfoButton = QPushButton(Dialog)
         self.debugInfoButton.setObjectName(u"debugInfoButton")
 
@@ -184,10 +179,10 @@ class Ui_Dialog(object):
 
         self.horizontalLayout_3.addWidget(self.exportDatabaseButton)
 
-        self.generateMGFromFIleButton = QPushButton(Dialog)
-        self.generateMGFromFIleButton.setObjectName(u"generateMGFromFIleButton")
+        self.generateModelGraphButton = QPushButton(Dialog)
+        self.generateModelGraphButton.setObjectName(u"generateModelGraphButton")
 
-        self.horizontalLayout_3.addWidget(self.generateMGFromFIleButton)
+        self.horizontalLayout_3.addWidget(self.generateModelGraphButton)
 
 
         self.gridLayout_3.addLayout(self.horizontalLayout_3, 5, 0, 1, 1)
@@ -243,29 +238,29 @@ class Ui_Dialog(object):
 
         self.gridLayout.addWidget(self.fileListWidget, 0, 0, 1, 1)
 
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalLayout_34 = QHBoxLayout()
+        self.horizontalLayout_34.setObjectName(u"horizontalLayout_34")
+        self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+        self.horizontalLayout_34.addItem(self.horizontalSpacer_8)
 
-        self.loadMotionsButton = QPushButton(self.clip_tab)
-        self.loadMotionsButton.setObjectName(u"loadMotionsButton")
+        self.runDataTransformButton = QPushButton(self.clip_tab)
+        self.runDataTransformButton.setObjectName(u"runDataTransformButton")
 
-        self.horizontalLayout_2.addWidget(self.loadMotionsButton)
+        self.horizontalLayout_34.addWidget(self.runDataTransformButton)
 
-        self.deleteMotionButton = QPushButton(self.clip_tab)
-        self.deleteMotionButton.setObjectName(u"deleteMotionButton")
+        self.retargetMotionsButton = QPushButton(self.clip_tab)
+        self.retargetMotionsButton.setObjectName(u"retargetMotionsButton")
 
-        self.horizontalLayout_2.addWidget(self.deleteMotionButton)
+        self.horizontalLayout_34.addWidget(self.retargetMotionsButton)
 
-        self.downloadMotionsButton = QPushButton(self.clip_tab)
-        self.downloadMotionsButton.setObjectName(u"downloadMotionsButton")
+        self.copyMotionsButton = QPushButton(self.clip_tab)
+        self.copyMotionsButton.setObjectName(u"copyMotionsButton")
 
-        self.horizontalLayout_2.addWidget(self.downloadMotionsButton)
+        self.horizontalLayout_34.addWidget(self.copyMotionsButton)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_34, 3, 0, 1, 1)
 
         self.horizontalLayout_31 = QHBoxLayout()
         self.horizontalLayout_31.setObjectName(u"horizontalLayout_31")
@@ -291,58 +286,29 @@ class Ui_Dialog(object):
 
         self.gridLayout.addLayout(self.horizontalLayout_31, 2, 0, 1, 1)
 
-        self.horizontalLayout_32 = QHBoxLayout()
-        self.horizontalLayout_32.setObjectName(u"horizontalLayout_32")
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_32.addItem(self.horizontalSpacer_3)
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
-        self.alignMotionsButton = QPushButton(self.clip_tab)
-        self.alignMotionsButton.setObjectName(u"alignMotionsButton")
+        self.loadFilesButton = QPushButton(self.clip_tab)
+        self.loadFilesButton.setObjectName(u"loadFilesButton")
 
-        self.horizontalLayout_32.addWidget(self.alignMotionsButton)
+        self.horizontalLayout_2.addWidget(self.loadFilesButton)
 
-        self.createMotionModelButton = QPushButton(self.clip_tab)
-        self.createMotionModelButton.setObjectName(u"createMotionModelButton")
+        self.deleteFilesButton = QPushButton(self.clip_tab)
+        self.deleteFilesButton.setObjectName(u"deleteFilesButton")
 
-        self.horizontalLayout_32.addWidget(self.createMotionModelButton)
+        self.horizontalLayout_2.addWidget(self.deleteFilesButton)
 
-        self.createClusterTreeButton = QPushButton(self.clip_tab)
-        self.createClusterTreeButton.setObjectName(u"createClusterTreeButton")
+        self.exportFilesButton = QPushButton(self.clip_tab)
+        self.exportFilesButton.setObjectName(u"exportFilesButton")
 
-        self.horizontalLayout_32.addWidget(self.createClusterTreeButton)
-
-
-        self.gridLayout.addLayout(self.horizontalLayout_32, 3, 0, 1, 1)
-
-        self.horizontalLayout_34 = QHBoxLayout()
-        self.horizontalLayout_34.setObjectName(u"horizontalLayout_34")
-        self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_34.addItem(self.horizontalSpacer_8)
-
-        self.setTimeFunctionButton = QPushButton(self.clip_tab)
-        self.setTimeFunctionButton.setObjectName(u"setTimeFunctionButton")
-
-        self.horizontalLayout_34.addWidget(self.setTimeFunctionButton)
-
-        self.editMotionsButton = QPushButton(self.clip_tab)
-        self.editMotionsButton.setObjectName(u"editMotionsButton")
-
-        self.horizontalLayout_34.addWidget(self.editMotionsButton)
-
-        self.retargetMotionsButton = QPushButton(self.clip_tab)
-        self.retargetMotionsButton.setObjectName(u"retargetMotionsButton")
-
-        self.horizontalLayout_34.addWidget(self.retargetMotionsButton)
-
-        self.copyMotionsButton = QPushButton(self.clip_tab)
-        self.copyMotionsButton.setObjectName(u"copyMotionsButton")
-
-        self.horizontalLayout_34.addWidget(self.copyMotionsButton)
+        self.horizontalLayout_2.addWidget(self.exportFilesButton)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout_34, 4, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
 
         self.tabWidget.addTab(self.clip_tab, "")
         self.fileListWidget.raise_()
@@ -420,29 +386,24 @@ class Ui_Dialog(object):
         self.newTagButton.setText(QCoreApplication.translate("Dialog", u"New", None))
         self.renameTagButton.setText(QCoreApplication.translate("Dialog", u"Rename", None))
         self.deleteTagButton.setText(QCoreApplication.translate("Dialog", u"Delete", None))
-        self.useComputeClusterCheckBox.setText(QCoreApplication.translate("Dialog", u"Use Kubernetes", None))
         self.debugInfoButton.setText(QCoreApplication.translate("Dialog", u"Print Debug Info", None))
         self.exportDatabaseButton.setText(QCoreApplication.translate("Dialog", u"Export Database To Folder", None))
-        self.generateMGFromFIleButton.setText(QCoreApplication.translate("Dialog", u"Generate Morphable Graph ", None))
+        self.generateModelGraphButton.setText(QCoreApplication.translate("Dialog", u"Generate Model Graph ", None))
         ___qtreewidgetitem = self.collectionTreeWidget.headerItem()
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("Dialog", u"Type", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("Dialog", u"Name", None));
         self.addCollectionButton.setText(QCoreApplication.translate("Dialog", u"Add Collection", None))
         self.editCollectionButton.setText(QCoreApplication.translate("Dialog", u"Edit Collection", None))
         self.deleteCollectionButton.setText(QCoreApplication.translate("Dialog", u"Delete Collection", None))
-        self.loadMotionsButton.setText(QCoreApplication.translate("Dialog", u"Load Selected into Scene", None))
-        self.deleteMotionButton.setText(QCoreApplication.translate("Dialog", u"Delete Selected", None))
-        self.downloadMotionsButton.setText(QCoreApplication.translate("Dialog", u"Download Selected", None))
+        self.runDataTransformButton.setText(QCoreApplication.translate("Dialog", u"Run Data Transform", None))
+        self.retargetMotionsButton.setText(QCoreApplication.translate("Dialog", u"Retarget Selected Motions", None))
+        self.copyMotionsButton.setText(QCoreApplication.translate("Dialog", u"Copy Selected Motions", None))
         self.importFileButton.setText(QCoreApplication.translate("Dialog", u"Import File", None))
         self.importCollectionButton.setText(QCoreApplication.translate("Dialog", u"Import Collection from Folder", None))
         self.exportCollectionButton.setText(QCoreApplication.translate("Dialog", u"Export Collection To Folder", None))
-        self.alignMotionsButton.setText(QCoreApplication.translate("Dialog", u"Align Motion Clips", None))
-        self.createMotionModelButton.setText(QCoreApplication.translate("Dialog", u"Create Motion Model", None))
-        self.createClusterTreeButton.setText(QCoreApplication.translate("Dialog", u"Create Cluster Tree", None))
-        self.setTimeFunctionButton.setText(QCoreApplication.translate("Dialog", u"Set Time Function", None))
-        self.editMotionsButton.setText(QCoreApplication.translate("Dialog", u"Edit Selected Motions", None))
-        self.retargetMotionsButton.setText(QCoreApplication.translate("Dialog", u"Retarget Selected Motions", None))
-        self.copyMotionsButton.setText(QCoreApplication.translate("Dialog", u"Copy Selected Motions", None))
+        self.loadFilesButton.setText(QCoreApplication.translate("Dialog", u"Load Selected into Scene", None))
+        self.deleteFilesButton.setText(QCoreApplication.translate("Dialog", u"Delete Selected", None))
+        self.exportFilesButton.setText(QCoreApplication.translate("Dialog", u"Export Selected", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.clip_tab), QCoreApplication.translate("Dialog", u"Files", None))
         self.smoothPlotCheckBox.setText(QCoreApplication.translate("Dialog", u"Smooth", None))
         self.plotExperimentButton.setText(QCoreApplication.translate("Dialog", u"Plot Log", None))

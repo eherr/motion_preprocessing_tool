@@ -27,15 +27,12 @@ import ssl
 import math
 import json
 import bson
-import bz2
 import numpy as np
 import threading
-from functools import partial
 import asyncio
 from concurrent.futures import ProcessPoolExecutor
 from multiprocessing import cpu_count
 import matplotlib.pyplot as plt
-import importlib
 from PySide2 import QtWidgets
 from PySide2.QtWidgets import QDialog, QListWidgetItem, QFileDialog, QTreeWidgetItem
 from PySide2.QtCore import Qt
@@ -47,12 +44,11 @@ from .project_dialog import ProjectDialog
 from .new_collection_dialog import NewCollectionDialog
 from .edit_collection_dialog import EditCollectionDialog
 from .motion_modelling_dialog import MotionModellingDialog
-from .graph_definition_dialog import GraphDefinitionDialog
 from .graph_table_view_dialog import GraphTableViewDialog
+from .data_transform_dialog import DataTransformDialog
 from tool.core.dialogs.skeleton_editor_dialog import SkeletonEditorDialog
 from motion_db_interface import retarget_motion_in_db, start_cluster_job, MGModelDBSession
 from vis_utils.io import load_json_file, save_json_file
-from anim_utils.animation_data.skeleton_models import SKELETON_MODELS
 from anim_utils.animation_data import MotionVector, SkeletonBuilder
 from anim_utils.retargeting.analytical import Retargeting, generate_joint_map
 from vis_utils.animation.animation_editor import AnimationEditorBase
@@ -67,7 +63,11 @@ from anim_utils.animation_data import SkeletonBuilder
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
 getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
-    
+
+from motion_db_interface.data_transform_interface import run_data_transform
+
+
+
 def normalize(v):
     return v/np.linalg.norm(v)
 
@@ -189,9 +189,9 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.newProjectButton.clicked.connect(self.slot_new_project)
         self.editProjectButton.clicked.connect(self.slot_edit_project)
         self.deleteProjectButton.clicked.connect(self.slot_delete_project)
-        self.loadMotionsButton.clicked.connect(self.slot_load_files)
-        self.downloadMotionsButton.clicked.connect(self.slot_export_file)
-        self.deleteMotionButton.clicked.connect(self.slot_delete_motion)
+        self.loadFilesButton.clicked.connect(self.slot_load_files)
+        self.exportFilesButton.clicked.connect(self.slot_export_file)
+        self.deleteFilesButton.clicked.connect(self.slot_delete_file)
         self.addCollectionButton.clicked.connect(self.slot_new_collection)
         self.editCollectionButton.clicked.connect(self.slot_edit_collection)
         self.deleteCollectionButton.clicked.connect(self.slot_delete_collection)
@@ -205,21 +205,22 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.deleteTagButton.clicked.connect(self.slot_delete_tag)
         self.importCollectionButton.clicked.connect(self.slot_import_collection_from_folder)
         self.exportCollectionButton.clicked.connect(self.slot_export_collection_to_folder)
-        self.alignMotionsButton.clicked.connect(self.slot_align_motions)
-        self.createMotionModelButton.clicked.connect(self.slot_create_motion_model)
         self.importFileButton.clicked.connect(self.slot_import_file)
         self.exportDatabaseButton.clicked.connect(self.slot_export_database_to_folder)
-        self.createClusterTreeButton.clicked.connect(self.slot_create_cluster_tree)
         self.retargetMotionsButton.clicked.connect(self.slot_retarget_motions_parallel)
         self.copyMotionsButton.clicked.connect(self.slot_copy_motions)
-        self.setTimeFunctionButton.clicked.connect(self.slot_set_timefunction)
-        self.editMotionsButton.clicked.connect(self.slot_edit_motions)
-        self.generateMGFromFIleButton.clicked.connect(self.slot_generate_graph_definition)
+        self.generateModelGraphButton.clicked.connect(self.slot_generate_graph_definition)
         self.editSkeletonButton.clicked.connect(self.slot_edit_skeleton)
         self.debugInfoButton.clicked.connect(self.slot_print_debug_info)
         self.plotExperimentButton.clicked.connect(self.slot_plot_experiment)
         self.exportExperimentButton.clicked.connect(self.slot_export_experiment)
         self.deleteExperimentButton.clicked.connect(self.slot_delete_experiment)
+        self.runDataTransformButton.clicked.connect(self.slot_run_data_transforms)
+        #self.alignMotionsButton.clicked.connect(self.slot_align_motions)
+        #self.createMotionModelButton.clicked.connect(self.slot_create_motion_model)
+        #self.setTimeFunctionButton.clicked.connect(self.slot_set_timefunction)
+        #self.editMotionsButton.clicked.connect(self.slot_edit_motions)
+        #self.createClusterTreeButton.clicked.connect(self.slot_create_cluster_tree)
         self.rootItem = None
         self.db_url = db_constants.DB_URL
         self.session = SessionManager.session
@@ -416,26 +417,27 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         if skeleton_data is None:
             print("Error: skeleton data is empty")
             return
-        item = self.fileListWidget.currentItem()
-        file_id = int(item.data(Qt.UserRole))
-        name = str(item.text())
-        data_type = name.split(".")[-1]
-        data_type_info = self.mdb_session.get_data_loader_info(data_type, "vis_utils")
-        print(data_type_info)
-        if data_type_info is not None and "script" in data_type_info:
-            loader_script = data_type_info["script"]
-            loader_script = loader_script.replace("\r\n", "\n")
-            self.scene.object_builder.load_dynamic_module(data_type, loader_script)
-            data = self.mdb_session.download_file(file_id)
-            if data is None:
-                return
-            self.scene.object_builder.create_object(data_type, skeleton_data, data)
-        else:
-            col = self.get_collection()
-            if col is None:
-                return
-            c_id, c_name, c_type = col
-            self.load_motion_from_db(file_id, skeleton_data, name, c_id)
+        items = self.fileListWidget.selectedItems()
+        for item in items:
+            file_id = int(item.data(Qt.UserRole))
+            name = str(item.text())
+            data_type = name.split(".")[-1]
+            data_type_info = self.mdb_session.get_data_loader_info(data_type, "vis_utils")
+            print(data_type_info)
+            if data_type_info is not None and "script" in data_type_info:
+                loader_script = data_type_info["script"]
+                loader_script = loader_script.replace("\r\n", "\n")
+                self.scene.object_builder.load_dynamic_module(data_type, loader_script)
+                data = self.mdb_session.download_file(file_id)
+                if data is None:
+                    return
+                self.scene.object_builder.create_object(data_type, name, skeleton_data, data)
+            else:
+                col = self.get_collection()
+                if col is None:
+                    return
+                c_id, c_name, c_type = col
+                self.load_motion_from_db(file_id, skeleton_data, name, c_id)
 
     def load_motion_from_db(self, motion_id, skeleton_data, motion_name, collection):
         motion_data = self.mdb_session.get_motion_data(motion_id, False)
@@ -447,15 +449,15 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         skeleton_model = None
         self.scene.object_builder.create_object("motion_from_json", skeleton_data, motion_data, motion_name, collection, motion_id, meta_info_str, skeleton_model, False, visible=visible)
 
-    def slot_delete_motion(self, is_processed=0):
+    def slot_delete_file(self):
         dialog = ConfirmationDialog()
         dialog.exec_()
         if dialog.success:
             items = self.fileListWidget.selectedItems()
             for item in items:
                 selected_id = int(item.data(Qt.UserRole))
-                print("delete", selected_id, is_processed)
-                self.mdb_session.delete_motion(selected_id, is_processed)
+                print("delete", selected_id)
+                self.mdb_session.delete_file(selected_id)
             self._fill_file_list_from_db()
 
     def slot_new_project(self):
@@ -564,17 +566,6 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             self.fill_combo_box_with_skeletons()
             self._fill_file_list_from_db()
 
-
-    def slot_new_tag(self):
-        return
-    
-    def slot_rename_tag(self):
-        return
-    
-    def slot_delete_tag(self):
-        return
-
-
     def slot_export_collection_to_folder(self):
         directory = QFileDialog.getExistingDirectory(self, "Select Directory")
         print("directory", directory)
@@ -611,22 +602,19 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             return
         c_id, c_name, c_type = col
         skeleton_name = str(self.skeletonListComboBox.currentText())
-        # TODO start process with detached window
-        if not self.useComputeClusterCheckBox.isChecked():
-            align_motions_in_db(self.db_url, skeleton_name, c_id, session=self.session)
-        else:
-            job_name = "alignment" +str(col[0])
-            parameter_str = self.db_url+ " " + skeleton_name + " "+ str(c_id)
-            if self.session is not None:
-                parameter_str += " --user "+ self.session["user"] + " --token " + self.session["token"]
-            job_desc = dict()
-            job_desc["command"] = "pip install -r requirements.txt; python run_alignment_in_db.py " + parameter_str
-            job_desc["exec_dir"] = self.mg_exec_dir
-            job_desc["repo_url"] = self.mg_repo_url
-            job_desc["aws"]  = None
-            start_cluster_job(self.db_url, self.k8s_imagename, job_name, job_desc, self.k8s_resources, self.session)
-            print("run on alignment on cluster")
-    
+        align_motions_in_db(self.db_url, skeleton_name, c_id, session=self.session)
+        #job_name = "alignment" +str(col[0])
+        parameter_str = self.db_url+ " " + skeleton_name + " "+ str(c_id)
+        #if self.session is not None:
+        #    parameter_str += " --user "+ self.session["user"] + " --token " + self.session["token"]
+        #job_desc = dict()
+        #job_desc["command"] = "pip install -r requirements.txt; python run_alignment_in_db.py " + parameter_str
+        #job_desc["exec_dir"] = self.mg_exec_dir
+        #job_desc["repo_url"] = self.mg_repo_url
+        #job_desc["aws"]  = None
+        #start_cluster_job(self.db_url, self.k8s_imagename, job_name, job_desc, self.k8s_resources, self.session)
+        #print("run on alignment on cluster")
+
     def slot_create_motion_model(self):
         """ run modeling of aligned data
             upload model to db
@@ -648,26 +636,24 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         name = dialog.name
         spline_basis_factor = dialog.spline_basis_factor
         animated_joints = dialog.animated_joints
-        if not self.useComputeClusterCheckBox.isChecked():
-            # TODO start process with detached window
-            create_motion_model_in_db(self.db_url, skeleton_name, c_id, name, spline_basis_factor, animated_joints, self.session)
-        else:
-            parameter_str = self.db_url+ " " + skeleton_name + " "+ str(c_id) +" " +name + " " + str(spline_basis_factor)
-            if animated_joints:
-                parameter_str += " --joint_filter "
-                for joint_name in animated_joints:
-                    parameter_str += " " + joint_name
-            parameter_str = self.db_url+ " " + skeleton_name + " "+ str(c_id)
-            if self.session is not None:
-                parameter_str += " --user "+ self.session["user"] + " --token " + self.session["token"]
-            job_name = "statistical" +str(col[0])
-            job_desc = dict()
-            job_desc["command"] = "pip install -r requirements.txt; python run_construction_in_db.py " + parameter_str
-            job_desc["exec_dir"] = self.mg_exec_dir
-            job_desc["repo_url"] = self.mg_repo_url
-            job_desc["aws"]  = None
-            start_cluster_job(self.db_url, self.k8s_imagename, job_name, job_desc, self.k8s_resources, self.session)
-            print("run on modelling on cluster")
+        create_motion_model_in_db(self.db_url, skeleton_name, c_id, name, spline_basis_factor, animated_joints, self.session)
+        
+        #parameter_str = self.db_url+ " " + skeleton_name + " "+ str(c_id) +" " +name + " " + str(spline_basis_factor)
+        #if animated_joints:
+        #    parameter_str += " --joint_filter "
+        #    for joint_name in animated_joints:
+        #        parameter_str += " " + joint_name
+        #parameter_str = self.db_url+ " " + skeleton_name + " "+ str(c_id)
+        #if self.session is not None:
+        #    parameter_str += " --user "+ self.session["user"] + " --token " + self.session["token"]
+        #job_name = "statistical" +str(col[0])
+        #job_desc = dict()
+        #job_desc["command"] = "pip install -r requirements.txt; python run_construction_in_db.py " + parameter_str
+        #job_desc["exec_dir"] = self.mg_exec_dir
+        #job_desc["repo_url"] = self.mg_repo_url
+        #job_desc["aws"]  = None
+        #start_cluster_job(self.db_url, self.k8s_imagename, job_name, job_desc, self.k8s_resources, self.session)
+        #print("run on modelling on cluster")
 
     def slot_import_file(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File', '.')[0]
@@ -765,7 +751,7 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
                 retarget_motion_in_db(self.db_url, retargeting, motion_id, motion_name, collection, target_skeleton_name, is_aligned, session=self.session)
                 count+=1
 
-    def slot_retarget_motions_parallel(self, is_aligned=0):
+    def slot_retarget_motions_parallel(self):
         col = self.get_collection()
         if col is None:
             return
@@ -777,48 +763,42 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
             target_skeleton_name = dialog.target_model
             src_scale = dialog.scale_factor
             place_on_ground = int(dialog.place_on_ground)
-            if self.useComputeClusterCheckBox.isChecked():
-                job_name = "retargeting" +str(col[0])
-                imagename = "python:3.5.3"
-                job_desc = dict()
-                parameter_str = self.db_url+ " " + src_skeleton_name + " "+ target_skeleton_name + " "+ str(col[0])+ " "+str(is_aligned) +" "+ str(src_scale) +" "+ str(place_on_ground) 
-                
-                if self.session is not None:
-                    parameter_str += " --user "+ self.session["user"] + " --token " + self.session["token"]
-                job_desc["command"] = "pip install -r requirements.txt; python run_retargeting_in_db.py " + parameter_str
-                job_desc["exec_dir"] = self.mg_exec_dir
-                job_desc["repo_url"] = self.mg_repo_url
-                job_desc["aws"]  = None
-                start_cluster_job(self.db_url, self.k8s_imagename, job_name, job_desc, self.k8s_resources, self.session)
-                print("run on retargeting on cluster")
+            #    job_name = "retargeting" +str(col[0])
+            #    imagename = "python:3.5.3"
+            #    job_desc = dict()
+            #    parameter_str = self.db_url+ " " + src_skeleton_name + " "+ target_skeleton_name + " "+ str(col[0])+ " "+str(is_aligned) +" "+ str(src_scale) +" "+ str(place_on_ground) 
+            #    
+            #    if self.session is not None:
+            #        parameter_str += " --user "+ self.session["user"] + " --token " + self.session["token"]
+            #    job_desc["command"] = "pip install -r requirements.txt; python run_retargeting_in_db.py " + parameter_str
+            #    job_desc["exec_dir"] = self.mg_exec_dir
+            #    job_desc["repo_url"] = self.mg_repo_url
+            #    job_desc["aws"]  = None
+            #    start_cluster_job(self.db_url, self.k8s_imagename, job_name, job_desc, self.k8s_resources, self.session)
+            #    print("run on retargeting on cluster")
+            items = self.fileListWidget.selectedItems()
+            n_motions = len(items)
             
-            else:
-                if is_aligned==0:
-                    items = self.fileListWidget.selectedItems()
-                else:
-                    items = self.fileListWidget.selectedItems()
-                n_motions = len(items)
-                
-                motions = []
-                for item in items:
-                    motion_id = int(item.data(Qt.UserRole))
-                    motion_name = str(item.text())
-                    motions.append((motion_id, motion_name))
-                src_skeleton = self.mdb_session.load_skeleton(src_skeleton_name)
-                target_skeleton = self.mdb_session.load_skeleton(target_skeleton_name)
-                joint_map = generate_joint_map(src_skeleton.skeleton_model, target_skeleton.skeleton_model)
-                retargeting = Retargeting(src_skeleton, target_skeleton, joint_map, src_scale, additional_rotation_map=None, place_on_ground=place_on_ground)
+            motions = []
+            for item in items:
+                motion_id = int(item.data(Qt.UserRole))
+                motion_name = str(item.text())
+                motions.append((motion_id, motion_name))
+            src_skeleton = self.mdb_session.load_skeleton(src_skeleton_name)
+            target_skeleton = self.mdb_session.load_skeleton(target_skeleton_name)
+            joint_map = generate_joint_map(src_skeleton.skeleton_model, target_skeleton.skeleton_model)
+            retargeting = Retargeting(src_skeleton, target_skeleton, joint_map, src_scale, additional_rotation_map=None, place_on_ground=place_on_ground)
 
-                n_workers = cpu_count()
-                if n_workers > n_motions:
-                    n_workers = n_motions
-                n_batches = int(len(motions) / n_workers)
-                pool = ProcessPoolExecutor(max_workers=n_workers)
-                tasks = []
-                for motion_batch in chunks(motions, n_batches):
-                    t = run_retargeting_process(pool, self.db_url, motion_batch, retargeting, collection, target_skeleton_name, is_aligned, self.session)
-                    tasks.append(t)
-                asyncio.get_event_loop().run_until_complete(asyncio.gather(*tasks))
+            n_workers = cpu_count()
+            if n_workers > n_motions:
+                n_workers = n_motions
+            n_batches = int(len(motions) / n_workers)
+            pool = ProcessPoolExecutor(max_workers=n_workers)
+            tasks = []
+            for motion_batch in chunks(motions, n_batches):
+                t = run_retargeting_process(pool, self.db_url, motion_batch, retargeting, collection, target_skeleton_name, is_aligned, self.session)
+                tasks.append(t)
+            asyncio.get_event_loop().run_until_complete(asyncio.gather(*tasks))
 
     def slot_copy_motions(self):
         dialog = CopyDBDialog(self.db_url)
@@ -843,7 +823,6 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         filename = str(filename)
         if os.path.isfile(filename):
             instructions = load_json_file(filename)
-            #action = str(self.actionListComboBox.currentText())
             col = self.get_collection()
             if col is None:
                 return
@@ -883,8 +862,6 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         filename = str(filename)
         if os.path.isfile(filename):
             temporal_data = load_json_file(filename)
-            #action = str(self.actionListComboBox.currentText())
-            #motion_primitive = str(self.motionPrimitiveListComboBox.currentText())
             items = self.fileListWidget.selectedItems()
             n_motions = len(items)
             count = 1
@@ -911,23 +888,6 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         dialog.exec_()
         if dialog.success:
             return
-        return
-
-        filename = QFileDialog.getOpenFileName(self, 'Open File', '.')[0]
-        filename = str(filename)
-        if os.path.isfile(filename):
-            graph_data = load_json_file(filename)
-        else:
-            graph_data = None
-        skeleton = str(self.skeletonListComboBox.currentText())
-        print(graph_data)
-        dialog = GraphDefinitionDialog(skeleton, self.db_url, graph_data=graph_data)
-        dialog.exec_()
-        if dialog.success:
-            filename = QFileDialog.getSaveFileName(self, 'Save To File', '.')[0]
-            filename = str(filename)
-            save_json_file(dialog.data, filename)
-        
     
     def slot_load_skeleton(self):
         skeleton_name = str(self.skeletonListComboBox.currentText())
@@ -1009,24 +969,28 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.addCollectionButton.setEnabled(False)
         self.editCollectionButton.setEnabled(False)
         self.deleteCollectionButton.setEnabled(False)
-        self.createMotionModelButton.setEnabled(False)
-        self.deleteMotionModelButton.setEnabled(False)
-        self.createClusterTreeButton.setEnabled(False)
         self.importMotionModelButton.setEnabled(False)
         self.newSkeletonButton.setEnabled(False)
         self.replaceSkeletonButton.setEnabled(False)
         self.deleteSkeletonButton.setEnabled(False)
         self.replaceSkeletonButton.setEnabled(False)
         self.editSkeletonButton.setEnabled(False)
-        self.deleteMotionButton.setEnabled(False)
+        self.deleteFilesButton.setEnabled(False)
         self.copyMotionsButton.setEnabled(False)
         self.deleteAlignedMotionButton.setEnabled(False)
         self.setTimeFunctionButton.setEnabled(False)
         self.retargetMotionsButton.setEnabled(False)
-        self.alignMotionsButton.setEnabled(False)
         self.retargetAlignedMotionsButton.setEnabled(False)
-        self.editMotionsButton.setEnabled(False)
         self.importCollectionButton.setEnabled(False)
+        self.runDataTransformButton.setEnabled(False)
+        self.newTagButton.setEnabled(False)
+        self.renameTagButton.setEnabled(False)
+        self.deleteTagButton.clicked.setEnabled(False)
+        
+        #self.createMotionModelButton.setEnabled(False)
+        #self.createClusterTreeButton.setEnabled(False)
+        #self.alignMotionsButton.setEnabled(False)
+        #self.editMotionsButton.setEnabled(False)
 
     def slot_generate_morphablegraph_directory(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File', '.')[0]
@@ -1131,4 +1095,31 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         filename = str(filename)
         run_data = self.get_plot_data()
         save_json_file(run_data, filename)
+
+
+    def slot_new_tag(self):
+        return
+    
+    def slot_rename_tag(self):
+        return
+    
+    def slot_delete_tag(self):
+        return
+
+    def slot_run_data_transforms(self):
+        col = self.get_collection()
+        if col is None:
+            return
+        c_id, c_name, c_type = col
+        input_skeleton = str(self.skeletonListComboBox.currentText())
+        dialog = DataTransformDialog(self.db_url, self.session, c_id, c_name, input_skeleton)
+        dialog.exec_()
+        if dialog.success and dialog.data_transform_id is not None:
+            data_transform_id = dialog.data_transform_id
+            exp_name = dialog.name
+            parameters = dialog.parameters
+            input_data = dialog.input_data
+            output_skeleton = dialog.output_skeleton
+            store_log = dialog.store_log
+            run_data_transform(self.db_url, data_transform_id, exp_name, input_skeleton, c_id, input_data, output_skeleton, parameters, store_log, self.session)
         
