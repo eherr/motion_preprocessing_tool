@@ -242,10 +242,6 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.tabWidget.currentChanged.connect(self.on_tab_change)
         self.n_samples = 10000
         self.n_subdivisions_per_level = 4
-        self.k8s_resources = db_constants.K8S_RESOURCES
-        self.k8s_imagename = db_constants.K8S_IMAGE_NAME
-        self.mg_repo_url =  db_constants.MG_REPO_URL
-        self.mg_exec_dir =  db_constants.MG_EXEC_DIR
         self.model_filter = None
         self.show()
 
