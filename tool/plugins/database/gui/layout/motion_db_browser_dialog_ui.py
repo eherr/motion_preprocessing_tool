@@ -249,16 +249,6 @@ class Ui_Dialog(object):
 
         self.horizontalLayout_34.addWidget(self.runDataTransformButton)
 
-        self.retargetMotionsButton = QPushButton(self.clip_tab)
-        self.retargetMotionsButton.setObjectName(u"retargetMotionsButton")
-
-        self.horizontalLayout_34.addWidget(self.retargetMotionsButton)
-
-        self.copyMotionsButton = QPushButton(self.clip_tab)
-        self.copyMotionsButton.setObjectName(u"copyMotionsButton")
-
-        self.horizontalLayout_34.addWidget(self.copyMotionsButton)
-
 
         self.gridLayout.addLayout(self.horizontalLayout_34, 3, 0, 1, 1)
 
@@ -306,6 +296,11 @@ class Ui_Dialog(object):
         self.exportFilesButton.setObjectName(u"exportFilesButton")
 
         self.horizontalLayout_2.addWidget(self.exportFilesButton)
+
+        self.copyMotionsButton = QPushButton(self.clip_tab)
+        self.copyMotionsButton.setObjectName(u"copyMotionsButton")
+
+        self.horizontalLayout_2.addWidget(self.copyMotionsButton)
 
 
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
@@ -396,14 +391,13 @@ class Ui_Dialog(object):
         self.editCollectionButton.setText(QCoreApplication.translate("Dialog", u"Edit Collection", None))
         self.deleteCollectionButton.setText(QCoreApplication.translate("Dialog", u"Delete Collection", None))
         self.runDataTransformButton.setText(QCoreApplication.translate("Dialog", u"Run Data Transform", None))
-        self.retargetMotionsButton.setText(QCoreApplication.translate("Dialog", u"Retarget Selected Motions", None))
-        self.copyMotionsButton.setText(QCoreApplication.translate("Dialog", u"Copy Selected Motions", None))
         self.importFileButton.setText(QCoreApplication.translate("Dialog", u"Import File", None))
         self.importCollectionButton.setText(QCoreApplication.translate("Dialog", u"Import Collection from Folder", None))
         self.exportCollectionButton.setText(QCoreApplication.translate("Dialog", u"Export Collection To Folder", None))
         self.loadFilesButton.setText(QCoreApplication.translate("Dialog", u"Load Selected into Scene", None))
         self.deleteFilesButton.setText(QCoreApplication.translate("Dialog", u"Delete Selected", None))
         self.exportFilesButton.setText(QCoreApplication.translate("Dialog", u"Export Selected", None))
+        self.copyMotionsButton.setText(QCoreApplication.translate("Dialog", u"Copy Selected Motions", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.clip_tab), QCoreApplication.translate("Dialog", u"Files", None))
         self.smoothPlotCheckBox.setText(QCoreApplication.translate("Dialog", u"Smooth", None))
         self.plotExperimentButton.setText(QCoreApplication.translate("Dialog", u"Plot Log", None))

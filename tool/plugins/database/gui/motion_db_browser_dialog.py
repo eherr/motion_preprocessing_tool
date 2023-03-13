@@ -207,7 +207,6 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.exportCollectionButton.clicked.connect(self.slot_export_collection_to_folder)
         self.importFileButton.clicked.connect(self.slot_import_file)
         self.exportDatabaseButton.clicked.connect(self.slot_export_database_to_folder)
-        self.retargetMotionsButton.clicked.connect(self.slot_retarget_motions_parallel)
         self.copyMotionsButton.clicked.connect(self.slot_copy_motions)
         self.generateModelGraphButton.clicked.connect(self.slot_generate_graph_definition)
         self.editSkeletonButton.clicked.connect(self.slot_edit_skeleton)
@@ -216,11 +215,6 @@ class MotionDBBrowserDialog(QDialog, Ui_Dialog):
         self.exportExperimentButton.clicked.connect(self.slot_export_experiment)
         self.deleteExperimentButton.clicked.connect(self.slot_delete_experiment)
         self.runDataTransformButton.clicked.connect(self.slot_run_data_transforms)
-        #self.alignMotionsButton.clicked.connect(self.slot_align_motions)
-        #self.createMotionModelButton.clicked.connect(self.slot_create_motion_model)
-        #self.setTimeFunctionButton.clicked.connect(self.slot_set_timefunction)
-        #self.editMotionsButton.clicked.connect(self.slot_edit_motions)
-        #self.createClusterTreeButton.clicked.connect(self.slot_create_cluster_tree)
         self.rootItem = None
         self.db_url = db_constants.DB_URL
         self.session = SessionManager.session
