@@ -5,6 +5,10 @@
 Visualization and editing tool for skeleton animations and statistical models It uses the OpenGL renderer of the [vis_utils](https://github.com/eherr/vis_utils) and provides functionality to retarget and edit animations based on the [anim_utils](https://github.com/eherr/anim_utils).  
 Using an integrated database browser, motions can be downloaded from [https://motion.dfki.de](https://motion.dfki.de/index.php/motion-capture-data/). The code for the database is available in a separate [repository](https://github.com/eherr/motion_database_server), so a custom database can also be set up.
 
+<p align="center">
+  <img src="images/screenshot.png">
+<em>Screenshot of the main window .</em>
+</p>
 
 ## Setup Instructions
 
@@ -51,10 +55,7 @@ To show the animation controls select the corresponding object in the scene obje
 Character meshes with skeletons can also be imported from the [GLTF](https://github.com/KhronosGroup/glTF) format.  
 
 The integrated database browser gives the option to download animations from a [motion database](https://github.com/eherr/motion_database_server) as hosted on motion.dfki.de. New motions can be uploaded by selecting scene objects and opening the Upload Dialog "Database>Upload Selected Motions". 
-![Screenshot](images/screenshot.png)
-<p align="center">
-<em>Screenshot of the main window and the database browser.</em>
-</p>
+
 Skeleton animations can be edited by opening an editor window via the animation controls. The editor offers functions to change joint parameters directly or applying inverse kinematics. Furthermore, it is possible to create semantic annotations in a separate editor. The annotation can be used to cut the motions which results in new copies in the scene.
 
 The tool also offers the retargeting of motions to different skeletons. For this purpose a skeleton model has to be defined first locally or in the database. The skeleton model contains the definition of a mapping of the skeleton joints to a standard joint list and local coordinate systems for each joint. It can be defined via a skeleton editor which can be opened in the animation player widget or directly in the database browser. Locally and remotely defined skeletons can be synchronized by clicking on "Database>Synchronize Skeleton Definitions" and selecting which skeletons to upload or download. The skeletons will be stored locally in json files in the data directory specified in the config file.
