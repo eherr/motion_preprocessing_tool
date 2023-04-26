@@ -56,16 +56,18 @@ from tool.core.application_manager import ApplicationManager
 from .layout.motion_db_browser_dialog_ui import Ui_Dialog
 from tool.plugins.database.session_manager import SessionManager
 from tool.plugins.database import constants as db_constants
-from morphablegraphs.utilities.db_interface import create_motion_model_in_db, align_motions_in_db, get_standard_config, create_cluster_tree_from_model, load_cluster_tree_from_json
-from morphablegraphs.utilities import convert_to_mgrd_skeleton
-from morphablegraphs.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
 from anim_utils.animation_data import SkeletonBuilder
+from motion_db_interface.data_transform_interface import run_data_transform
+try:
+    from morphablegraphs.utilities.db_interface import create_motion_model_in_db, align_motions_in_db, get_standard_config, create_cluster_tree_from_model, load_cluster_tree_from_json
+    from morphablegraphs.utilities import convert_to_mgrd_skeleton
+    from morphablegraphs.motion_model.motion_primitive_wrapper import MotionPrimitiveModelWrapper
+except:
+    pass
+
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
 getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
-
-from motion_db_interface.data_transform_interface import run_data_transform
-
 
 
 def normalize(v):
